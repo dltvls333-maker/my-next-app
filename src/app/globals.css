@@ -1,0 +1,38 @@
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
+}
+
+@layer base {
+  html, body {
+    /* 폰트 적용 (Arial 등을 지우고 Pretendard 우선) */
+    font-family: var(--font-sans);
+    background-color: #f4f7f9;
+    color: #1e293b;
+    letter-spacing: -0.025em;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-sans);
+    letter-spacing: -0.04em;
+    color: #0f172a;
+  }
+}
+
+.t-green {
+  color:#006C60;
+}
+
+.green_gradient-bg {
+  background: linear-gradient(135deg, #dcedc8, #b2dfdb);
+}
+
+/* 기존 스타일과 맞추기 위해 추가 */
+.sk-plan-container {
+  font-family: 'Pretendard', sans-serif; /* 사용자 선호 폰트 */
+  font-size: 16px; 
+}
