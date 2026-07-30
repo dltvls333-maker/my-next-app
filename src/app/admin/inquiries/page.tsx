@@ -4,7 +4,7 @@ import { authOptions } from "@/lib/auth";
 import InquiryClient from './InquiryClient';
 
 export default async function AdminInquiriesPage() {
-  const session = await getServerSession(authOptions);
+  const session = await getServerSession(authOptions as any);
   
   // ★ consultationRequest 로 수정
   const rawInquiries = await prisma.consultationRequest.findMany({
