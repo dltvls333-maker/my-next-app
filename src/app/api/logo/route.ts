@@ -3,7 +3,7 @@ import { prisma } from '@/lib/prisma';
 
 export async function GET() {
   try {
-    const logo = await prisma.siteSettings.findUnique({ where: { id: 1 } });
+    const logo = await prisma.site_settings.findUnique({ where: { id: 1 } });
     
     // 데이터가 있으면 반환, 없으면 빈 값을 가진 객체 반환
     return NextResponse.json(logo || { logo_path: '', logo_name: '' });

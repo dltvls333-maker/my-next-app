@@ -109,11 +109,11 @@ export default function InternetCarrierPage() {
   const [tvIndex, setTvIndex] = useState(0);
   const handlePrev = () => setStartIndex((prev) => Math.max(prev - 1, 0));
   const handleNext = () => setStartIndex((prev) => Math.min(prev + 1, totalPages - 1));
-  const handleCarrierChange = (c) => {
+  const handleCarrierChange = (c: any) => {
     setSelectedCarrier(c);
     
     // 1. 새로운 통신사 데이터 가져오기
-    const newData = CARRIER_PLANS[c.id];
+    const newData = CARRIER_PLANS[c.id as keyof typeof CARRIER_PLANS];
     
     // 2. 인터넷과 TV 모두 새로운 통신사의 첫 번째 항목으로 초기화
     setSelectedPlan(newData.internet[0]);

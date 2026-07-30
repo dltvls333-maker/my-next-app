@@ -16,7 +16,8 @@ import { authOptions } from "@/lib/auth";
 import Link from "next/link"; // ★ Link 컴포넌트 추가
 
 export default async function AdminPage() {
-const session = await getServerSession(authOptions as any); 
+const session = (await getServerSession(authOptions as any)) as any;
+const userData = session?.user;
   
   async function handleServerSubmit(formData: FormData) {
     'use server'; 
@@ -62,7 +63,6 @@ const session = await getServerSession(authOptions as any);
     });
   }
 
-  const userData = session?.user as any;
   const banners = await prisma.banners.findMany({ orderBy: { sort_order: 'asc' } });
   const siteSettings = await prisma.site_settings.findUnique({ where: { id: 1 } });
   const info = await prisma.companyinfo.findUnique({ where: { id: 1 } });

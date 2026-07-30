@@ -89,7 +89,7 @@ export async function DELETE(
 ) {
   try {
     // 1. 관리자 권한 확인 (세션 체크)
-    const session = await getServerSession(authOptions);
+    const session = (await getServerSession(authOptions as any)) as any;
 
     if (!session || session.user?.level !== 9) {
       return NextResponse.json(
