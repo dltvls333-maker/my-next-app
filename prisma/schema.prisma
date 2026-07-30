@@ -24,7 +24,8 @@ model companyinfo {
   business_reg_num   String? @db.VarChar(50)
   mail_order_reg_num String? @db.VarChar(50)
   address            String? @db.VarChar(255)
-  @@map("companyinfo") 
+
+  @@map("companyinfo")
 }
 
 model site_settings {
@@ -32,13 +33,14 @@ model site_settings {
   logo_name  String   @db.VarChar(255)
   logo_path  String   @db.VarChar(255)
   updated_at DateTime @default(now()) @db.Timestamp(0)
-  @@map("site_settings") // 
+
+  @@map("site_settings")
 }
 
 model Review {
-  category    String 
+  category    String
   id          Int      @id @default(autoincrement())
-  title       String   
+  title       String
   user_name   String
   phone_last  String
   password    String
@@ -50,19 +52,23 @@ model Review {
   likes       Int      @default(0)
   admin_reply String?  @db.Text
   created_at  DateTime @default(now())
-   
+
   @@map("reviews")
 }
+
 model User {
-  id       Int     @id @default(autoincrement())
-  email    String  @unique
-  password String
-  name     String
-  role     String  @default("USER")
-  level    Int     @default(1)
-  permissionLevel PermissionLevel @relation(fields: [level], references: [level])
+  id              Int             @id @default(autoincrement())
+  email           String          @unique
+  password        String
+  name            String
+  role            String          @default("USER")
+  level           Int             @default(1)
+  permissionLevel PermissionLevel @relation(fields: [level], references: [level], onDelete: NoAction)
+
+  @@index([level], map: "user_level_fkey")
   @@map("user")
 }
+
 model ConsultationRequest {
   id        Int      @id @default(autoincrement())
   name      String   @db.VarChar(50)
@@ -72,16 +78,15 @@ model ConsultationRequest {
 
   @@map("consultation_requests")
 }
+
 model PermissionLevel {
   level     Int    @id
   levelName String @map("level_name")
-  users     User[] // 이 레벨을 가진 사용자 목록
+  users     User[]
 
-  @@map("permissionlevel") //
+  @@map("permissionlevel")
 }
 
-
-// 메뉴 관리 테이블
 model menu_items {
   id            Int     @id @default(autoincrement())
   name          String
@@ -90,7 +95,6 @@ model menu_items {
   is_external   Boolean @default(false)
 }
 
-// 통신사 테이블
 model carriers {
   id             Int              @id @default(autoincrement())
   name           String
@@ -98,21 +102,18 @@ model carriers {
   product_prices product_prices[]
 }
 
-// 인터넷 상품(속도) 테이블
 model internet_plans {
   id             Int              @id @default(autoincrement())
   speed_name     String
   product_prices product_prices[]
 }
 
-// TV 상품(채널) 테이블
 model tv_plans {
   id             Int              @id @default(autoincrement())
   name           String
   product_prices product_prices[]
 }
 
-// 가격 관리 (연결 테이블)
 model product_prices {
   id                    Int            @id @default(autoincrement())
   carrier_id            Int
@@ -120,7 +121,11 @@ model product_prices {
   tv_plan_id            Int
   price                 Int
   mobile_discount_price Int?
-  carrier               carriers       @relation(fields: [carrier_id], references: [id])
-  internet_plan         internet_plans @relation(fields: [internet_plan_id], references: [id])
-  tv_plan               tv_plans       @relation(fields: [tv_plan_id], references: [id])
+  carrier               carriers       @relation(fields: [carrier_id], references: [id], onDelete: NoAction)
+  internet_plan         internet_plans @relation(fields: [internet_plan_id], references: [id], onDelete: NoAction)
+  tv_plan               tv_plans       @relation(fields: [tv_plan_id], references: [id], onDelete: NoAction)
+
+  @@index([carrier_id], map: "product_prices_carrier_id_fkey")
+  @@index([internet_plan_id], map: "product_prices_internet_plan_id_fkey")
+  @@index([tv_plan_id], map: "product_prices_tv_plan_id_fkey")
 }

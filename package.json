@@ -2,12 +2,12 @@
   "name": "my-next-app",
   "version": "0.1.0",
   "private": true,
- "scripts": {
-  "dev": "next dev",
-  "build": "prisma generate && next build",
-  "start": "next start",
-  "lint": "next lint"
-},
+  "scripts": {
+    "dev": "next dev",
+    "build": "prisma generate && next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
   "dependencies": {
     "@fortawesome/free-solid-svg-icons": "^7.3.1",
     "@fortawesome/react-fontawesome": "^3.4.0",
@@ -16,6 +16,7 @@
     "embla-carousel-react": "^8.6.0",
     "framer-motion": "^12.42.0",
     "lucide-react": "^1.22.0",
+    "mysql2": "^3.23.2",
     "next": "16.2.9",
     "next-auth": "^4.24.14",
     "react": "19.2.4",
