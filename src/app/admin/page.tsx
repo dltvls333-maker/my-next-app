@@ -16,7 +16,7 @@ import { authOptions } from "@/lib/auth";
 import Link from "next/link"; // ★ Link 컴포넌트 추가
 
 export default async function AdminPage() {
-const session = await getServerSession(authOptions); 
+const session = await getServerSession(authOptions as any); 
   
   async function handleServerSubmit(formData: FormData) {
     'use server'; 
