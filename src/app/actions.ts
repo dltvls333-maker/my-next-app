@@ -81,7 +81,7 @@ export async function updateBannerWithFile(id: number, formData: FormData) {
 
 // 3. 회사 정보 수정 함수 (필요 시 유지)
 export async function updateCompanyInfo(formData: FormData) {
-  await prisma.companyInfo.update({
+  await prisma.companyinfo.update({
     where: { id: 1 },
     data: {
       company_name: formData.get('company_name') as string,
