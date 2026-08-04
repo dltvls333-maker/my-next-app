@@ -49,8 +49,8 @@ export default function RollingBanner() {
     setItems(generateRandomItems(40));
   }, []);
 
-  // Embla Carousel 설정
-  const [emblaRef] = useEmblaCarousel(
+  // Embla Carousel 설정 (stopOnInteraction을 false로 두어 마우스 뗄 때 즉시 재시작되도록 조정)
+  const [emblaRef, emblaApi] = useEmblaCarousel(
     { 
       loop: true, 
       align: 'start',
@@ -60,10 +60,34 @@ export default function RollingBanner() {
       AutoScroll({ 
         speed: 0.7, 
         stopOnInteraction: false, 
-        stopOnMouseEnter: true, 
+        stopOnMouseEnter: false, // 기본 딜레이 유발 옵션 해제 후 수동 이벤트로 제어
       })
     ]
   );
+
+  // 마우스 올렸을 때 즉시 멈추고 뗄 때 즉시 시작하도록 핸들러 추가
+  useEffect(() => {
+    const autoScroll = emblaApi?.plugins()?.autoScroll;
+    if (!autoScroll) return;
+
+    const viewportNode = emblaApi.rootNode();
+
+    const onMouseEnter = () => {
+      autoScroll.stop();
+    };
+
+    const onMouseLeave = () => {
+      autoScroll.play();
+    };
+
+    viewportNode.addEventListener('mouseenter', onMouseEnter);
+    viewportNode.addEventListener('mouseleave', onMouseLeave);
+
+    return () => {
+      viewportNode.removeEventListener('mouseenter', onMouseEnter);
+      viewportNode.removeEventListener('mouseleave', onMouseLeave);
+    };
+  }, [emblaApi]);
 
   return (
     <div className="w-full bg-slate-50 py-12 md:py-20">
