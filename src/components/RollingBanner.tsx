@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import useEmblaCarousel from 'embla-carousel-react';
 import AutoScroll from 'embla-carousel-auto-scroll';
 
-// --- 1. 데이터 생성 로직 (원본 그대로 유지) ---
+// --- 1. 데이터 생성 로직 (원본 유지) ---
 const generateRandomItems = (count: number) => {
   const banks = ['카카오뱅크', '신한은행', '국민은행', '하나은행', '우리은행'];
   const accountPatterns = ['3333-01', '110-32', '100-24', '285-09', '1002-45'];
@@ -37,118 +37,108 @@ const generateRandomItems = (count: number) => {
       account: `${randomPattern}-***${Math.floor(Math.random() * 9000 + 1000)}`,
       desc: randomDesc,
       date: dateString,
-      // 상단바 시간용 (입금 시간과 동일하게 설정)
       topTime: `${hours}:${minutes}` 
     };
   });
 };
 
-// --- 2. 스타일 상수 ---
-const CARD_WIDTH_MD = 280; // 카드 너비 고정
-
 export default function RollingBanner() {
   const [items, setItems] = useState<any[]>([]);
 
   useEffect(() => {
-    // 충분한 양의 데이터 생성
     setItems(generateRandomItems(40));
   }, []);
 
-  // Embla Carousel 설정: 한 줄로 무한 롤링
+  // Embla Carousel 설정
   const [emblaRef] = useEmblaCarousel(
     { 
       loop: true, 
       align: 'start',
-      watchDrag: false // 자동 롤링만 되도록 드래그 방지
+      watchDrag: false 
     }, 
     [
       AutoScroll({ 
-        speed: 0.7, // 부드러운 속도
+        speed: 0.7, 
         stopOnInteraction: false, 
-        stopOnMouseEnter: true, // 마우스 올리면 멈춤
+        stopOnMouseEnter: true, 
       })
     ]
   );
 
   return (
-    <div className="w-full bg-slate-50 py-16 md:py-20 overflow-hidden">
-      <h3 className="text-center text-2xl md:text-3xl font-extrabold mb-12 md:mb-16 text-slate-900 tracking-tight">
+    <div className="w-full bg-slate-50 py-12 md:py-20 overflow-hidden">
+      <h3 className="text-center text-xl md:text-3xl font-extrabold mb-8 md:mb-16 text-slate-900 tracking-tight">
         실시간 입금 현황
       </h3>
       
       {/* 롤링 배너 컨테이너 */}
       <div className="relative w-full overflow-hidden" ref={emblaRef}>
-        {/* Flex 트랙 */}
-        <div className="flex gap-5">
+        {/* Flex 트랙: 간격 축소 */}
+        <div className="flex gap-3 md:gap-5">
           {items.map((item, index) => (
             <div 
               key={`roll-${index}`} 
-              // 카드 너비 고정, 간격 설정
-              className="flex-[0_0_280px] h-[400px] select-none"
+              // 모바일에서는 카드가 컴팩트하게 보이도록 너비 축소 (210px ~ 260px)
+              className="flex-[0_0_210px] md:flex-[0_0_280px] h-[310px] md:h-[400px] select-none"
             >
-              {/* --- 스마트폰 문자 카드 디자인 시작 --- */}
-              <div className="w-full h-full bg-[#1e1e1e] rounded-[32px] p-6 flex flex-col text-white shadow-lg shadow-slate-200 border border-slate-700/50 relative overflow-hidden">
+              {/* --- 스마트폰 문자 카드 디자인 (컴팩트 버전) --- */}
+              <div className="w-full h-full bg-[#1e1e1e] rounded-[24px] md:rounded-[32px] p-4 md:p-6 flex flex-col text-white shadow-lg shadow-slate-200 border border-slate-700/50 relative overflow-hidden">
                 
-                {/* 아이폰 스타일 상단바 */}
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1/3 h-7 bg-black rounded-b-2xl z-10 flex items-center justify-between px-4">
-                  <span className="text-[12px] font-semibold text-gray-100 tracking-tight">{item.topTime}</span>
-                  {/* 카메라/센서 노치 */}
-                  <div className="flex gap-1.5 items-center">
-                    <div className="w-1.5 h-1.5 rounded-full bg-gray-700"></div>
-                    <div className="w-3 h-3 rounded-full bg-gray-900 border border-gray-700"></div>
+                {/* 상단바 */}
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1/3 h-5 md:h-7 bg-black rounded-b-xl z-10 flex items-center justify-between px-3 md:px-4">
+                  <span className="text-[10px] md:text-[12px] font-semibold text-gray-100 tracking-tight">{item.topTime}</span>
+                  <div className="flex gap-1 items-center">
+                    <div className="w-1 h-1 md:w-1.5 md:h-1.5 rounded-full bg-gray-700"></div>
+                    <div className="w-2.5 h-2.5 md:w-3 md:h-3 rounded-full bg-gray-900 border border-gray-700"></div>
                   </div>
                 </div>
 
-                {/* 카드 내부 콘텐츠 (상단바 아래 여백 포함) */}
-                <div className="flex flex-col flex-grow mt-10">
+                {/* 카드 내부 콘텐츠 */}
+                <div className="flex flex-col flex-grow mt-6 md:mt-10">
                   
-                  {/* 헤더: 발신자 정보 */}
-                  <div className="flex items-center gap-3 mb-6 pb-4 border-b border-white/5">
-                    {/* 발신자 아이콘 (단순화) */}
-                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-2xl font-bold shadow-inner">
+                  {/* 헤더 */}
+                  <div className="flex items-center gap-2.5 md:gap-3 mb-3 md:mb-6 pb-3 md:pb-4 border-b border-white/5">
+                    <div className="w-9 h-9 md:w-12 md:h-12 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-lg md:text-2xl font-bold shadow-inner flex-shrink-0">
                       {item.bank.charAt(0)}
                     </div>
-                    <div>
-                      <div className="text-lg font-bold text-white">[Web 발신]</div>
-                      <div className="text-base text-gray-300">{item.bank}</div>
+                    <div className="min-w-0">
+                      <div className="text-xs md:text-lg font-bold text-white truncate">[Web 발신]</div>
+                      <div className="text-xs md:text-base text-gray-300 truncate">{item.bank}</div>
                     </div>
                   </div>
 
-                  {/* 문자 본문 박스 (이미지의 회색 박스 영역) */}
-                  <div className="bg-[#2c2c2c] rounded-3xl p-5 flex-grow flex flex-col justify-between border border-white/5">
+                  {/* 문자 본문 박스 */}
+                  <div className="bg-[#2c2c2c] rounded-2xl md:rounded-3xl p-3.5 md:p-5 flex-grow flex flex-col justify-between border border-white/5">
                     <div>
-                      {/* 계좌번호 (고정된 폰트 스타일) */}
-                      <p className="text-gray-400 text-xs font-mono tracking-wide">{item.account}</p>
+                      <p className="text-[11px] md:text-xs text-gray-400 font-mono tracking-wide">{item.account}</p>
                       
-                      {/* 입금 설명 (있을 때만 표시) */}
                       {item.desc && (
-                        <p className="text-sm text-gray-300 mt-1">{item.desc}</p>
+                        <p className="text-xs md:text-sm text-gray-300 mt-0.5">{item.desc}</p>
                       )}
                       
-                      {/* 입금 금액 (강조 - 노란색) */}
-                      <p className="text-3xl font-extrabold text-[#FFD700] tracking-tight mt-4 mb-1">
+                      {/* 금액 */}
+                      <p className="text-xl md:text-3xl font-extrabold text-[#FFD700] tracking-tight mt-2 md:mt-4 mb-1">
                         {item.amount}
                       </p>
                       
-                      {/* 상태 (입금대기/완료 - 원본 색상 유지) */}
-                      <span className={`inline-block text-sm font-semibold px-2.5 py-1 rounded-full mt-1 ${
+                      {/* 상태 */}
+                      <span className={`inline-block text-[11px] md:text-sm font-semibold px-2 py-0.5 md:px-2.5 md:py-1 rounded-full mt-0.5 md:mt-1 ${
                         item.status === '입금완료' ? 'bg-blue-950 text-blue-300' : 'bg-orange-950 text-orange-300'
                       }`}>
                         {item.status}
                       </span>
                     </div>
 
-                    {/* 하단 시간 정보 (원본 날짜 데이터) */}
-                    <p className="text-xs text-gray-500 mt-5 border-t border-white/5 pt-2">
+                    {/* 날짜 */}
+                    <p className="text-[10px] md:text-xs text-gray-500 mt-3 md:mt-5 border-t border-white/5 pt-1.5 md:pt-2">
                       {item.date}
                     </p>
                   </div>
 
-                  {/* 아이폰 홈버튼 라인 */}
-                  <div className="w-1/3 h-1 bg-gray-700 rounded-full mx-auto mt-5"></div>
+                  {/* 홈버튼 라인 */}
+                  <div className="w-1/3 h-1 bg-gray-700 rounded-full mx-auto mt-3 md:mt-5"></div>
                 </div>
               </div>
-              {/* --- 디자인 끝 --- */}
             </div>
           ))}
         </div>
