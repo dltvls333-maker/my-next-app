@@ -8,7 +8,7 @@ export default async function ReviewPage() {
   const reviews = await prisma.review.findMany({
     orderBy: { created_at: 'desc' },
   });
-
+console.log("DB에서 조회한 리뷰 데이터:", reviews); // 이 로그가 찍히는지, 빈 배열([])로 나오는지 확인!
   // DB 데이터를 컴포넌트가 사용하기 좋은 형태로 가공
   const formattedReviews = reviews.map((r) => ({
     id: r.id,
