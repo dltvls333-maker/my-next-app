@@ -122,9 +122,9 @@ export default function BannerSliderWithForm({ banners }: { banners: any[] }) {
           </div>
 
           {/* ========================================================= */}
-          {/* 2. Swiper 배너 슬라이드 영역 (배경 제거 및 이미지 꽉 채우기)       */}
+          {/* 2. Swiper 배너 슬라이드 영역 (이미지 잘림 방지: object-contain 적용) */}
           {/* ========================================================= */}
-          <div className="w-full lg:flex-1 overflow-hidden rounded-2xl md:rounded-3xl shadow-xl bg-transparent">
+          <div className="w-full lg:flex-1 overflow-hidden rounded-2xl md:rounded-3xl shadow-xl bg-slate-900">
             <Swiper 
               modules={[Autoplay, Pagination]} 
               loop={true} 
@@ -137,11 +137,12 @@ export default function BannerSliderWithForm({ banners }: { banners: any[] }) {
             >
               {banners.map((banner, index) => (
                 <SwiperSlide key={banner.id || index}>
-                  <div className="w-full h-full relative flex items-center justify-center bg-transparent">
+                  {/* bg-slate-900 또는 이미지가 가진 여백 색상과 맞춘 배경을 주어 찌그러짐/잘림 없이 온전한 이미지가 중앙에 오도록 처리 */}
+                  <div className="w-full h-full relative flex items-center justify-center bg-[#111827]">
                     <img 
                       src={banner.image_url} 
                       alt={banner.title || '배너 이미지'} 
-                      className="w-full h-full object-cover object-center" 
+                      className="w-full h-full object-contain object-center" 
                     />
                     
                     {/* 이미지 위 텍스트 오버레이 */}
