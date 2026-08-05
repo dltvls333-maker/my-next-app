@@ -52,11 +52,18 @@ export default function Header() {
             </a>
           </div>
 
-          {/* PC용 전화번호 영역 */}
-          <div className="hidden md:flex items-center">
+          {/* PC용 메뉴 + 전화번호 통합 영역 (전화번호를 메뉴보다 왼쪽에 배치) */}
+          <div className="hidden md:flex items-center gap-10">
             <a href="tel:1661-0588" className="flex items-center gap-2 px-5 py-2.5 bg-blue-50 border border-blue-100 rounded-full text-blue-600 font-bold hover:bg-blue-100 transition text-[16px]">
               <span>📞</span> 1661-0588
             </a>
+            <nav className="flex space-x-10">
+              {menuItems.map((item, index) => (
+                <a key={index} href={item.link} className="text-[17px] font-semibold text-[#334155] hover:text-[#2563eb] transition">
+                  {item.name}
+                </a>
+              ))}
+            </nav>
           </div>
 
           {/* 모바일 햄버거 메뉴 + 전화번호 */}
@@ -72,16 +79,14 @@ export default function Header() {
           </div>
         </div>
 
-        {/* ========================================================= */}
-        {/* 네비게이션 영역: PC에서는 양끝(로고~전화번호)에 딱 맞춰 꽉 차게 배치 */}
-        {/* ========================================================= */}
-        <div className="py-3.5 border-t border-slate-100 overflow-x-auto whitespace-nowrap scrollbar-none">
-          <nav className="flex items-center justify-between md:justify-between w-full text-[15px] font-semibold text-[#334155] px-1 md:px-0">
+        {/* 모바일 전용 로고 밑 가로 메뉴 영역 */}
+        <div className="md:hidden py-3 px-2 border-t border-slate-100 overflow-x-auto whitespace-nowrap scrollbar-none">
+          <nav className="flex items-center justify-between w-full text-[15px] font-semibold text-[#334155]">
             {menuItems.map((item, index) => (
               <a 
                 key={index} 
                 href={item.link} 
-                className="hover:text-blue-600 transition px-2 md:px-0"
+                className="hover:text-blue-600 transition px-2"
               >
                 {item.name}
               </a>
