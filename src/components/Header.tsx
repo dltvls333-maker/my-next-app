@@ -80,21 +80,21 @@ export default function Header() {
         </div>
 
         {/* ========================================================= */}
-        {/* 모바일 전용: 로고 밑에 | 로 구분된 네비게이션 가로 나열 영역       */}
+        {/* 모바일 전용: 양쪽 끝에 밀착시키고 사이 간격을 균등하게 맞춘 영역 */}
         {/* ========================================================= */}
-        <div className="md:hidden py-2.5 border-t border-slate-100 overflow-x-auto whitespace-nowrap scrollbar-none">
-          <nav className="flex items-center justify-between gap-2 text-[13px] font-medium text-slate-600">
+        <div className="md:hidden py-2.5 px-4 border-t border-slate-100">
+          <nav className="flex items-center justify-between text-[13px] font-medium text-slate-600">
             {menuItems.map((item, index) => (
               <div key={index} className="flex items-center">
                 <a 
                   href={item.link} 
-                  className="hover:text-blue-600 transition px-1"
+                  className="hover:text-blue-600 transition"
                 >
                   {item.name}
                 </a>
-                {/* 마지막 메뉴가 아닐 때만 | 기호 출력 */}
+                {/* 마지막 메뉴가 아닐 때만 우측에 | 기호와 적당한 간격 부여 */}
                 {index < menuItems.length - 1 && (
-                  <span className="text-slate-300 ml-2">|</span>
+                  <span className="text-slate-300 ml-3 sm:ml-4">|</span>
                 )}
               </div>
             ))}
