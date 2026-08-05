@@ -9,30 +9,80 @@ import 'swiper/css/pagination';
 export default function BannerSliderWithForm({ banners }: { banners: any[] }) {
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
-  const [agreed, setAgreed] = useState(false);
+  const [agreed, setAgreed] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // 연락처 자동 하이픈 추가 및 유효성 검사 로직
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let value = e.target.value;
+    if (/[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/.test(value)) {
+      setTimeout(() => alert('연락처는 숫자만 입력 가능합니다.'), 0);
+      value = value.replace(/[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/g, '');
+    }
+    const numbers = value.replace(/[^0-9]/g, '');
+    let formattedValue = numbers;
+    if (numbers.length > 3 && numbers.length <= 7) {
+      formattedValue = `${numbers.slice(0, 3)}-${numbers.slice(3)}`;
+    } else if (numbers.length > 7) {
+      formattedValue = `${numbers.slice(0, 3)}-${numbers.slice(3, 7)}-${numbers.slice(7, 11)}`;
+    }
+    setPhone(formattedValue);
+  };
+
+  // 실제 DB 전송을 위한 폼 제출 핸들러
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    
     if (!name.trim()) {
       alert('성함을 입력해주세요.');
       return;
     }
-    if (!phone.trim()) {
-      alert('연락처를 입력해주세요.');
+    if (phone.length < 12) {
+      alert('올바른 연락처를 입력해주세요.');
       return;
     }
-    alert('비밀지원금 신청이 정상적으로 접수되었습니다.');
+    if (!agreed) {
+      alert('개인정보 수집 및 이용에 동의해주세요.');
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch('/api/consultation', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name, phone }),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        alert('비밀지원금 신청이 정상적으로 접수되었습니다.');
+        setName('');
+        setPhone('');
+        setAgreed(true);
+      } else {
+        alert(result.message || '신청 중 오류가 발생했습니다.');
+      }
+    } catch (error) {
+      alert('서버 통신 중 오류가 발생했습니다.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
     <div className="w-full bg-transparent py-6 md:py-10">
       <div className="w-full px-4 md:px-8">
         
-        {/* 컨테이너: 모바일에서는 슬라이드가 위, 폼이 아래 */}
+        {/* 컨테이너: 모바일에서는 슬라이드가 위, 폼이 아래 / 데스크탑은 좌우 나란히 */}
         <div className="flex flex-col-reverse lg:flex-row items-stretch gap-6">
           
           {/* ========================================================= */}
-          {/* 1. 비밀지원금 신청 폼                                       */}
+          {/* 1. 비밀지원금 신청 폼 (DB 연동 및 유효성 검사 적용 완료)            */}
           {/* ========================================================= */}
           <div className="w-full lg:w-[420px] bg-white rounded-2xl md:rounded-3xl shadow-2xl p-6 md:p-8 flex flex-col justify-between shrink-0 border border-slate-100">
             <div>
@@ -55,10 +105,12 @@ export default function BannerSliderWithForm({ banners }: { banners: any[] }) {
                   </label>
                   <input
                     type="text"
+                    name="name"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="홍길동"
                     className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-sm focus:outline-none focus:border-blue-600 focus:bg-white transition-all placeholder:text-slate-400"
+                    required
                   />
                 </div>
 
@@ -67,15 +119,18 @@ export default function BannerSliderWithForm({ banners }: { banners: any[] }) {
                     연락처
                   </label>
                   <input
-                    type="text"
+                    type="tel"
+                    name="phone"
                     value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
+                    onChange={handlePhoneChange}
+                    maxLength={13}
                     placeholder="010-1234-5678"
                     className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-sm focus:outline-none focus:border-blue-600 focus:bg-white transition-all placeholder:text-slate-400"
+                    required
                   />
                 </div>
 
-                <div className="hidden md:block space-y-4">
+                <div className="space-y-4">
                   <div className="bg-slate-50 border border-slate-200/60 rounded-xl p-3.5 space-y-1.5 text-xs text-slate-600">
                     <div className="flex gap-1">
                       <span className="font-semibold text-slate-700">① 수집 목적:</span>
@@ -95,6 +150,7 @@ export default function BannerSliderWithForm({ banners }: { banners: any[] }) {
                   <label className="flex items-center gap-2.5 cursor-pointer pt-1">
                     <input
                       type="checkbox"
+                      id="agree"
                       checked={agreed}
                       onChange={(e) => setAgreed(e.target.checked)}
                       className="w-4 h-4 text-blue-600 border-slate-300 rounded focus:ring-blue-500"
@@ -107,16 +163,17 @@ export default function BannerSliderWithForm({ banners }: { banners: any[] }) {
 
                 <button
                   type="submit"
-                  className="w-full mt-3 bg-blue-600 hover:bg-blue-700 active:scale-[0.98] text-white font-bold py-4 px-4 rounded-xl shadow-lg shadow-blue-600/30 transition-all text-base"
+                  disabled={isSubmitting}
+                  className="w-full mt-3 bg-blue-600 hover:bg-blue-700 active:scale-[0.98] text-white font-bold py-4 px-4 rounded-xl shadow-lg shadow-blue-600/30 transition-all text-base disabled:bg-slate-400"
                 >
-                  비밀지원금 문자 받기
+                  {isSubmitting ? '처리 중...' : '비밀지원금 문자 받기'}
                 </button>
               </form>
             </div>
           </div>
 
           {/* ========================================================= */}
-          {/* 2. Swiper 배너 슬라이드 영역 (비율 가변 적용으로 여백 제거)       */}
+          {/* 2. Swiper 배너 슬라이드 영역                                */}
           {/* ========================================================= */}
           <div className="w-full lg:flex-1 overflow-hidden rounded-2xl md:rounded-3xl shadow-xl bg-transparent">
             <Swiper 
@@ -127,13 +184,11 @@ export default function BannerSliderWithForm({ banners }: { banners: any[] }) {
                 disableOnInteraction: false 
               }} 
               pagination={{ clickable: true }} 
-              // aspect ratio를 주어 화면 너비에 맞게 높이가 유연하게 조절되도록 수정
               className="w-full aspect-[16/10] md:aspect-[21/9] lg:h-full" 
             >
               {banners.map((banner, index) => (
                 <SwiperSlide key={banner.id || index}>
                   <div className="w-full h-full relative">
-                    {/* 모바일 이미지와 PC 이미지가 따로 있다면 아래처럼 분기 가능, 없다면 하나의 이미지로 object-cover 적용 */}
                     <img 
                       src={banner.mobile_image_url || banner.image_url} 
                       alt={banner.title || '배너 이미지'} 
