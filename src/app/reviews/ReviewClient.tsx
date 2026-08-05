@@ -1,4 +1,3 @@
-// 목록 페이지 파일 상단에 추가
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 import React, { useState } from 'react';
@@ -33,10 +32,7 @@ const hasImage = (url: any) => {
 };
 
 export default function ReviewClient({ initialReviews }: { initialReviews: any[] }) {
-  console.log(
- "DATABASE:",
- process.env.DATABASE_URL
-);
+ 
   const { data: session } = useSession();
   const isAdmin = session?.user?.level === 9;
   const [search, setSearch] = useState('');
