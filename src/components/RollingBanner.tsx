@@ -49,7 +49,7 @@ export default function RollingBanner() {
     setItems(generateRandomItems(40));
   }, []);
 
-  // Embla Carousel 설정 (stopOnInteraction을 false로 두어 마우스 뗄 때 즉시 재시작되도록 조정)
+  // Embla Carousel 설정 (속도를 살짝 높여 반응성 체감 개선)
   const [emblaRef, emblaApi] = useEmblaCarousel(
     { 
       loop: true, 
@@ -58,9 +58,9 @@ export default function RollingBanner() {
     }, 
     [
       AutoScroll({ 
-        speed: 0.7, 
+        speed: 1.2, // 속도감 조절 (기존 0.7 -> 1.2)
         stopOnInteraction: false, 
-        stopOnMouseEnter: false, // 기본 딜레이 유발 옵션 해제 후 수동 이벤트로 제어
+        stopOnMouseEnter: false, 
       })
     ]
   );
@@ -98,7 +98,7 @@ export default function RollingBanner() {
         </h3>
         
         {/* 롤링 배너 컨테이너 */}
-        <div className="relative w-full overflow-hidden" ref={emblaRef}>
+        <div className="relative w-full overflow-hidden py-4" ref={emblaRef}>
           {/* Flex 트랙 */}
           <div className="flex gap-3 md:gap-5">
             {items.map((item, index) => (
@@ -106,8 +106,8 @@ export default function RollingBanner() {
                 key={`roll-${index}`} 
                 className="flex-[0_0_210px] md:flex-[0_0_280px] h-[310px] md:h-[400px] select-none"
               >
-                {/* --- 스마트폰 문자 카드 디자인 (컴팩트 버전) --- */}
-                <div className="w-full h-full bg-[#1e1e1e] rounded-[24px] md:rounded-[32px] p-4 md:p-6 flex flex-col text-white shadow-lg shadow-slate-200 border border-slate-700/50 relative overflow-hidden">
+                {/* --- 스마트폰 문자 카드 디자인 (호버 애니메이션 적용) --- */}
+                <div className="w-full h-full bg-[#1e1e1e] rounded-[24px] md:rounded-[32px] p-4 md:p-6 flex flex-col text-white shadow-lg shadow-slate-200 border border-slate-700/50 relative overflow-hidden transition-all duration-300 ease-out hover:-translate-y-2 hover:scale-[1.02] hover:shadow-2xl hover:border-blue-500/50 cursor-pointer">
                   
                   {/* 상단바 */}
                   <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1/3 h-5 md:h-7 bg-black rounded-b-xl z-10 flex items-center justify-between px-3 md:px-4">
