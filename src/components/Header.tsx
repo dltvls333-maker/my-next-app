@@ -52,8 +52,8 @@ export default function Header() {
             </a>
           </div>
 
-          {/* PC용 전화번호 및 우측 영역 (전화번호는 우측 상단 유지) */}
-          <div className="hidden md:flex items-center gap-4">
+          {/* PC용 전화번호 영역 */}
+          <div className="hidden md:flex items-center">
             <a href="tel:1661-0588" className="flex items-center gap-2 px-5 py-2.5 bg-blue-50 border border-blue-100 rounded-full text-blue-600 font-bold hover:bg-blue-100 transition text-[16px]">
               <span>📞</span> 1661-0588
             </a>
@@ -73,15 +73,15 @@ export default function Header() {
         </div>
 
         {/* ========================================================= */}
-        {/* 공통(모바일 + PC): 로고 밑에 기호 없이 균등하게 나열되는 네비게이션 영역 */}
+        {/* 네비게이션 영역: PC에서는 양끝(로고~전화번호)에 딱 맞춰 꽉 차게 배치 */}
         {/* ========================================================= */}
-        <div className="py-3 px-2 border-t border-slate-100 overflow-x-auto whitespace-nowrap scrollbar-none">
-          <nav className="flex items-center justify-between sm:justify-center sm:gap-12 w-full text-[15px] font-semibold text-[#334155]">
+        <div className="py-3.5 border-t border-slate-100 overflow-x-auto whitespace-nowrap scrollbar-none">
+          <nav className="flex items-center justify-between md:justify-between w-full text-[15px] font-semibold text-[#334155] px-1 md:px-0">
             {menuItems.map((item, index) => (
               <a 
                 key={index} 
                 href={item.link} 
-                className="hover:text-blue-600 transition px-2"
+                className="hover:text-blue-600 transition px-2 md:px-0"
               >
                 {item.name}
               </a>
