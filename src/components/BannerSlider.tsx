@@ -26,7 +26,7 @@ export default function BannerSliderWithForm({ banners }: { banners: any[] }) {
 
   return (
     <div className="w-full bg-transparent py-6 md:py-10">
-      {/* 전체 화면 폭을 꽉 채우도록 설정 (배경색 제거됨) */}
+      {/* 전체 화면 폭을 꽉 채우도록 설정 */}
       <div className="w-full px-4 md:px-8">
         
         {/* 컨테이너: 모바일에서는 슬라이드가 위, 폼이 아래 */}
@@ -122,9 +122,9 @@ export default function BannerSliderWithForm({ banners }: { banners: any[] }) {
           </div>
 
           {/* ========================================================= */}
-          {/* 2. Swiper 배너 슬라이드 영역 (이미지 잘림 방지 및 안정성 확보)     */}
+          {/* 2. Swiper 배너 슬라이드 영역 (배경 제거 및 이미지 꽉 채우기)       */}
           {/* ========================================================= */}
-          <div className="w-full lg:flex-1 overflow-hidden rounded-2xl md:rounded-3xl shadow-2xl bg-slate-900">
+          <div className="w-full lg:flex-1 overflow-hidden rounded-2xl md:rounded-3xl shadow-xl bg-transparent">
             <Swiper 
               modules={[Autoplay, Pagination]} 
               loop={true} 
@@ -133,15 +133,15 @@ export default function BannerSliderWithForm({ banners }: { banners: any[] }) {
                 disableOnInteraction: false 
               }} 
               pagination={{ clickable: true }} 
-              className="w-full h-[350px] md:h-[520px] lg:h-full min-h-[350px]" 
+              className="w-full h-[320px] md:h-[480px] lg:h-full min-h-[320px]" 
             >
               {banners.map((banner, index) => (
                 <SwiperSlide key={banner.id || index}>
-                  <div className="w-full h-full relative flex items-center justify-center bg-slate-900">
+                  <div className="w-full h-full relative flex items-center justify-center bg-transparent">
                     <img 
                       src={banner.image_url} 
                       alt={banner.title || '배너 이미지'} 
-                      className="w-full h-full object-contain md:object-cover object-center" 
+                      className="w-full h-full object-cover object-center" 
                     />
                     
                     {/* 이미지 위 텍스트 오버레이 */}
@@ -155,7 +155,7 @@ export default function BannerSliderWithForm({ banners }: { banners: any[] }) {
                     </div>
 
                     {/* 어두운 그라디언트 오버레이 */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none"></div>
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none"></div>
                   </div>
                 </SwiperSlide>
               ))}
