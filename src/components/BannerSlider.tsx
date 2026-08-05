@@ -26,7 +26,6 @@ export default function BannerSliderWithForm({ banners }: { banners: any[] }) {
 
   return (
     <div className="w-full bg-transparent py-6 md:py-10">
-      {/* 전체 화면 폭을 꽉 채우도록 설정 */}
       <div className="w-full px-4 md:px-8">
         
         {/* 컨테이너: 모바일에서는 슬라이드가 위, 폼이 아래 */}
@@ -37,7 +36,6 @@ export default function BannerSliderWithForm({ banners }: { banners: any[] }) {
           {/* ========================================================= */}
           <div className="w-full lg:w-[420px] bg-white rounded-2xl md:rounded-3xl shadow-2xl p-6 md:p-8 flex flex-col justify-between shrink-0 border border-slate-100">
             <div>
-              {/* 타이틀 영역 */}
               <div className="mb-6 pb-4 border-b border-slate-100">
                 <span className="inline-block bg-blue-50 text-blue-600 text-xs font-bold px-2.5 py-1 rounded-full mb-2">
                   SPECIAL EVENT
@@ -51,7 +49,6 @@ export default function BannerSliderWithForm({ banners }: { banners: any[] }) {
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-4">
-                {/* 성함 입력 */}
                 <div>
                   <label className="block text-xs md:text-sm font-semibold text-slate-700 mb-1.5">
                     성함
@@ -65,7 +62,6 @@ export default function BannerSliderWithForm({ banners }: { banners: any[] }) {
                   />
                 </div>
 
-                {/* 연락처 입력 */}
                 <div>
                   <label className="block text-xs md:text-sm font-semibold text-slate-700 mb-1.5">
                     연락처
@@ -79,7 +75,6 @@ export default function BannerSliderWithForm({ banners }: { banners: any[] }) {
                   />
                 </div>
 
-                {/* PC 버전에서만 보이는 개인정보 수집 이용 동의 및 안내 박스 */}
                 <div className="hidden md:block space-y-4">
                   <div className="bg-slate-50 border border-slate-200/60 rounded-xl p-3.5 space-y-1.5 text-xs text-slate-600">
                     <div className="flex gap-1">
@@ -110,7 +105,6 @@ export default function BannerSliderWithForm({ banners }: { banners: any[] }) {
                   </label>
                 </div>
 
-                {/* 제출 버튼 */}
                 <button
                   type="submit"
                   className="w-full mt-3 bg-blue-600 hover:bg-blue-700 active:scale-[0.98] text-white font-bold py-4 px-4 rounded-xl shadow-lg shadow-blue-600/30 transition-all text-base"
@@ -122,7 +116,7 @@ export default function BannerSliderWithForm({ banners }: { banners: any[] }) {
           </div>
 
           {/* ========================================================= */}
-          {/* 2. Swiper 배너 슬라이드 영역 (배경 제거 및 이미지 꽉 채우기)       */}
+          {/* 2. Swiper 배너 슬라이드 영역 (비율 가변 적용으로 여백 제거)       */}
           {/* ========================================================= */}
           <div className="w-full lg:flex-1 overflow-hidden rounded-2xl md:rounded-3xl shadow-xl bg-transparent">
             <Swiper 
@@ -133,28 +127,33 @@ export default function BannerSliderWithForm({ banners }: { banners: any[] }) {
                 disableOnInteraction: false 
               }} 
               pagination={{ clickable: true }} 
-              className="w-full h-[320px] md:h-[480px] lg:h-full min-h-[320px]" 
+              // aspect ratio를 주어 화면 너비에 맞게 높이가 유연하게 조절되도록 수정
+              className="w-full aspect-[16/10] md:aspect-[21/9] lg:h-full" 
             >
               {banners.map((banner, index) => (
                 <SwiperSlide key={banner.id || index}>
-                  <div className="w-full h-full relative flex items-center justify-center bg-transparent">
+                  <div className="w-full h-full relative">
+                    {/* 모바일 이미지와 PC 이미지가 따로 있다면 아래처럼 분기 가능, 없다면 하나의 이미지로 object-cover 적용 */}
+                    <img 
+                      src={banner.mobile_image_url || banner.image_url} 
+                      alt={banner.title || '배너 이미지'} 
+                      className="w-full h-full object-cover object-center md:hidden" 
+                    />
                     <img 
                       src={banner.image_url} 
                       alt={banner.title || '배너 이미지'} 
-                      className="w-full h-full object-cover object-center" 
+                      className="w-full h-full object-cover object-center hidden md:block" 
                     />
                     
-                    {/* 이미지 위 텍스트 오버레이 */}
                     <div className="absolute bottom-[15%] left-[6%] right-[6%] text-white z-10 pointer-events-none">
-                      <h2 className="text-2xl md:text-4xl lg:text-5xl font-extrabold drop-shadow-md tracking-tight">
+                      <h2 className="text-xl md:text-4xl lg:text-5xl font-extrabold drop-shadow-md tracking-tight">
                         {banner.title}
                       </h2>
-                      <p className="text-sm md:text-lg lg:text-xl mt-3 text-slate-200 drop-shadow">
+                      <p className="text-xs md:text-lg lg:text-xl mt-2 text-slate-200 drop-shadow">
                         {banner.subtitle}
                       </p>
                     </div>
 
-                    {/* 어두운 그라디언트 오버레이 */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none"></div>
                   </div>
                 </SwiperSlide>
