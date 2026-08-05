@@ -21,16 +21,15 @@ export default function BannerSliderWithForm({ banners }: { banners: any[] }) {
       alert('연락처를 입력해주세요.');
       return;
     }
-    // 모바일에서는 체크박스가 숨겨지므로 PC에서만 체크 여부 검증 혹은 기본 동의 처리
     alert('비밀지원금 신청이 정상적으로 접수되었습니다.');
   };
 
   return (
-    <div className="w-full bg-slate-900 py-6 md:py-10">
-      {/* 전체 화면 폭을 꽉 채우도록 설정 */}
+    <div className="w-full bg-transparent py-6 md:py-10">
+      {/* 전체 화면 폭을 꽉 채우도록 설정 (배경색 제거됨) */}
       <div className="w-full px-4 md:px-8">
         
-        {/* 컨테이너: flex-col-reverse를 사용하여 모바일에서는 슬라이드가 위, 폼이 아래로 배치되도록 설정 */}
+        {/* 컨테이너: 모바일에서는 슬라이드가 위, 폼이 아래 */}
         <div className="flex flex-col-reverse lg:flex-row items-stretch gap-6">
           
           {/* ========================================================= */}
@@ -80,7 +79,7 @@ export default function BannerSliderWithForm({ banners }: { banners: any[] }) {
                   />
                 </div>
 
-                {/* PC 버전에서만 보이는 개인정보 수집 이용 동의 및 안내 박스 (모바일에서는 숨김) */}
+                {/* PC 버전에서만 보이는 개인정보 수집 이용 동의 및 안내 박스 */}
                 <div className="hidden md:block space-y-4">
                   <div className="bg-slate-50 border border-slate-200/60 rounded-xl p-3.5 space-y-1.5 text-xs text-slate-600">
                     <div className="flex gap-1">
@@ -123,23 +122,26 @@ export default function BannerSliderWithForm({ banners }: { banners: any[] }) {
           </div>
 
           {/* ========================================================= */}
-          {/* 2. Swiper 배너 슬라이드 영역 (모바일에서 상단에 위치)           */}
+          {/* 2. Swiper 배너 슬라이드 영역 (이미지 잘림 방지 및 안정성 확보)     */}
           {/* ========================================================= */}
-          <div className="w-full lg:flex-1 overflow-hidden rounded-2xl md:rounded-3xl shadow-2xl">
+          <div className="w-full lg:flex-1 overflow-hidden rounded-2xl md:rounded-3xl shadow-2xl bg-slate-900">
             <Swiper 
               modules={[Autoplay, Pagination]} 
               loop={true} 
-              autoplay={{ delay: 3000, disableOnInteraction: false }} 
+              autoplay={{ 
+                delay: 3500, 
+                disableOnInteraction: false 
+              }} 
               pagination={{ clickable: true }} 
-              className="w-full h-[380px] md:h-[520px] lg:h-full min-h-[460px]" 
+              className="w-full h-[350px] md:h-[520px] lg:h-full min-h-[350px]" 
             >
               {banners.map((banner, index) => (
                 <SwiperSlide key={banner.id || index}>
-                  <div className="w-full h-full relative bg-slate-900">
+                  <div className="w-full h-full relative flex items-center justify-center bg-slate-900">
                     <img 
                       src={banner.image_url} 
                       alt={banner.title || '배너 이미지'} 
-                      className="w-full h-full object-cover object-center" 
+                      className="w-full h-full object-contain md:object-cover object-center" 
                     />
                     
                     {/* 이미지 위 텍스트 오버레이 */}
@@ -153,7 +155,7 @@ export default function BannerSliderWithForm({ banners }: { banners: any[] }) {
                     </div>
 
                     {/* 어두운 그라디언트 오버레이 */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent pointer-events-none"></div>
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none"></div>
                   </div>
                 </SwiperSlide>
               ))}
