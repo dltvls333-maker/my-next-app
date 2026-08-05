@@ -14,10 +14,11 @@ export default function ReviewWritePage() {
     content: '',
   });
 
-  const [fileList, setFileList] = useState<File[]>([]);
+  // 💡 핵심 수정: File 객체 대신 Base64 문자열 배열로 상태 관리
+  const [fileList, setFileList] = useState<string[]>([]);
 
-  // 1:1 비율 크롭 함수 (Canvas API 활용)
-  const cropImageToSquare = (file: File): Promise<File> => {
+  // 💡 핵심 수정: 1:1 크롭 후 Base64 데이터 URL로 반환하는 함수
+  const cropImageToSquareBase64 = (file: File): Promise<string> => {
     return new Promise((resolve) => {
       const reader = new FileReader();
       reader.readAsDataURL(file);
@@ -38,7 +39,6 @@ export default function ReviewWritePage() {
           let startX = 0;
           let startY = 0;
 
-          // 중앙 기준으로 정사각형 크롭 영역 계산
           if (width > height) {
             startX = (width - height) / 2;
             width = height;
@@ -51,18 +51,9 @@ export default function ReviewWritePage() {
             ctx.drawImage(img, startX, startY, width, height, 0, 0, size, size);
           }
 
-          // Blob 파일로 변환 후 반환
-          canvas.toBlob((blob) => {
-            if (blob) {
-              const croppedFile = new File([blob], file.name, {
-                type: 'image/jpeg',
-                lastModified: Date.now(),
-              });
-              resolve(croppedFile);
-            } else {
-              resolve(file); // 변환 실패시 원본 반환 안전장치
-            }
-          }, 'image/jpeg', 0.9);
+          // 💡 핵심 수정: Base64 문자열로 변환 (data:image/jpeg;base64,...)
+          const base64Data = canvas.toDataURL('image/jpeg', 0.9);
+          resolve(base64Data);
         };
       };
     });
@@ -72,17 +63,20 @@ export default function ReviewWritePage() {
     if (!files) return;
     const fileArray = Array.from(files);
 
-    // 선택된 모든 이미지를 1:1 정사각형 크롭 함수 통과시키기
-    const processedFiles = await Promise.all(
+    // 선택된 모든 이미지를 1:1 정사각형 크롭 및 Base64 변환 함수 통과시키기
+    const processedBase64s = await Promise.all(
       fileArray.map(async (file) => {
         if (file.type.startsWith('image/')) {
-          return await cropImageToSquare(file);
+          return await cropImageToSquareBase64(file);
         }
-        return file;
+        return ''; // 이미지가 아닌 파일은 무시하거나 별도 처리
       })
     );
 
-    setFileList((prev) => [...prev, ...processedFiles]);
+    // 빈 문자열 필터링
+    const validBase64s = processedBase64s.filter(base64 => base64 !== '');
+
+    setFileList((prev) => [...prev, ...validBase64s]);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -96,7 +90,8 @@ export default function ReviewWritePage() {
     data.append('title', formData.title);
     data.append('content', formData.content);
     
-    fileList.forEach((file) => data.append('images[]', file));
+    // 💡 핵심 수정: Base64 문자열 배열을 FormData에 append
+    fileList.forEach((base64String) => data.append('images[]', base64String));
 
     const res = await fetch('/api/reviews', {
       method: 'POST',
@@ -107,6 +102,9 @@ export default function ReviewWritePage() {
       alert('소중한 후기를 남겨주셔서 감사합니다!');
       router.push('/reviews');
     } else {
+      // 에러 메시지 확인을 위한 로깅 추가
+      const errorResult = await res.json();
+      console.error('서버 등록 실패:', errorResult);
       alert('등록 실패, 다시 시도해주세요.');
     }
   };
@@ -181,9 +179,10 @@ export default function ReviewWritePage() {
               </label>
               {fileList.length > 0 && (
                 <div className="mt-4 space-y-2">
-                  {fileList.map((file, i) => (
+                  {fileList.map((base64String, i) => (
                     <div key={i} className="flex justify-between p-3 bg-slate-50 rounded-lg border border-slate-200">
-                      <span className="text-sm font-medium truncate">{file.name} (정사각형 변환 완료)</span>
+                      <img src={base64String} alt={`미리보기 ${i + 1}`} className="w-16 h-16 object-cover mr-3" />
+                      <span className="text-sm font-medium truncate">Base64 이미지 {i + 1} (정사각형 변환 완료)</span>
                     </div>
                   ))}
                 </div>
