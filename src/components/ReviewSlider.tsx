@@ -28,61 +28,61 @@ export default function ReviewSlider({ reviews }: { reviews: any[] }) {
   const duration = reviews.length * 4;
 
   return (
-    <div className="w-full py-12 md:py-16 bg-slate-50">
-      <h2 className="text-2xl text-center py-8 md:text-4xl font-extrabold text-slate-900 tracking-tight">
-        일일넷 인터넷 가입 후기
-      </h2>
+    <div className="w-full py-12 md:py-16 bg-slate-50 overflow-hidden">
+      <div className="max-w-[1240px] mx-auto px-4 mb-8">
+        <h2 className="text-2xl text-center md:text-4xl font-extrabold text-slate-900 tracking-tight">
+          일일넷 인터넷 가입 후기
+        </h2>
+      </div>
       
-      {/* PC 레이아웃 기준(1240px) 및 overflow-hidden 적용 영역 */}
-      <div className="max-w-[1240px] mx-auto px-4 overflow-hidden">
-        <div className="flex w-full py-4">
-          <motion.div 
-            className="flex gap-4 md:gap-6 will-change-transform"
-            animate={{ x: ["0%", "-50%"] }} 
-            transition={{ 
-              duration: duration, 
-              ease: "linear", 
-              repeat: Infinity 
-            }}
-            style={{ backfaceVisibility: 'hidden', WebkitFontSmoothing: 'antialiased' }}
-          >
-            {duplicatedReviews.map((review, i) => (
-              <Link 
-                key={`${review.id}-${i}`}
-                href={`/reviews/${review.id}`}
-                className="block flex-shrink-0"
+      {/* 무한 자동 롤링 슬라이드 영역 */}
+      <div className="w-full flex py-2">
+        <motion.div 
+          className="flex gap-4 md:gap-6 will-change-transform px-4"
+          animate={{ x: ["0%", "-50%"] }} 
+          transition={{ 
+            duration: duration, 
+            ease: "linear", 
+            repeat: Infinity 
+          }}
+          style={{ backfaceVisibility: 'hidden', WebkitFontSmoothing: 'antialiased' }}
+        >
+          {duplicatedReviews.map((review, i) => (
+            <Link 
+              key={`${review.id}-${i}`}
+              href={`/reviews/${review.id}`}
+              className="block flex-shrink-0"
+            >
+              <div 
+                className="w-[280px] md:w-[400px] bg-white rounded-2xl md:rounded-[28px] p-4 md:p-5 shadow-[0_4px_20px_rgba(0,0,0,0.04)] md:shadow-[0_10px_30px_rgba(0,0,0,0.04)] border border-slate-100 flex flex-row items-center gap-4 md:gap-5 hover:shadow-lg transition h-full"
               >
-                <div 
-                  className="w-[280px] md:w-[380px] bg-white rounded-2xl md:rounded-[28px] p-4 md:p-5 shadow-[0_4px_20px_rgba(0,0,0,0.04)] md:shadow-[0_10px_30px_rgba(0,0,0,0.04)] border border-slate-100 flex flex-row items-center gap-4 md:gap-5 hover:shadow-lg transition h-full"
-                >
-                  {/* 좌측: 이미지가 찌그러짐 없이 꽉 차도록 수정된 영역 */}
-                  {review.image_url && (
-                    <div className="w-[90px] h-[90px] md:w-[130px] md:h-[130px] flex-shrink-0 rounded-xl md:rounded-2xl overflow-hidden relative bg-slate-100">
-                      <img 
-                        src={review.image_url} 
-                        className="w-full h-full object-cover" 
-                        alt="후기 이미지" 
-                      />
-                    </div>
-                  )}
-                  
-                  {/* 우측: 텍스트 영역 */}
-                  <div className="flex flex-col justify-center flex-1 min-w-0 text-left">
-                    <div className="flex items-center gap-1 mb-1">
-                      <StarRating />
-                    </div>
-                    <span className="text-[11px] md:text-xs text-slate-500 font-medium mb-1">
-                      {maskName(review.user_name)} 고객님
-                    </span>
-                    <h3 className="font-bold text-xs md:text-base text-slate-900 truncate" title={review.title}>
-                      {review.title || "제목 텍스트"}
-                    </h3>
+                {/* 좌측: 이미지가 잘리지 않고 꽉 차 보이도록 개선된 영역 */}
+                {review.image_url && (
+                  <div className="w-[90px] h-[90px] md:w-[130px] md:h-[130px] flex-shrink-0 rounded-xl md:rounded-2xl overflow-hidden relative bg-[#f8fafc] flex items-center justify-center border border-slate-100">
+                    <img 
+                      src={review.image_url} 
+                      className="w-full h-full object-contain p-1" 
+                      alt="후기 이미지" 
+                    />
                   </div>
+                )}
+                
+                {/* 우측: 텍스트 영역 */}
+                <div className="flex flex-col justify-center flex-1 min-w-0 text-left">
+                  <div className="flex items-center gap-1 mb-1">
+                    <StarRating />
+                  </div>
+                  <span className="text-[11px] md:text-xs text-slate-500 font-medium mb-1">
+                    {maskName(review.user_name)} 고객님
+                  </span>
+                  <h3 className="font-bold text-xs md:text-base text-slate-900 truncate" title={review.title}>
+                    {review.title || "제목 텍스트"}
+                  </h3>
                 </div>
-              </Link>
-            ))}
-          </motion.div>
-        </div>
+              </div>
+            </Link>
+          ))}
+        </motion.div>
       </div>
     </div>
   );
