@@ -1,4 +1,6 @@
 import { prisma } from '@/lib/prisma';
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 import ReviewClient from './ReviewClient';
 
 export default async function ReviewPage() {
