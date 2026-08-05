@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import useEmblaCarousel from 'embla-carousel-react';
 import AutoScroll from 'embla-carousel-auto-scroll';
 
-// --- 1. 데이터 생성 로직 (원본 유지) ---
+// --- 1. 데이터 생성 로직 (시간 랜덤화 적용) ---
 const generateRandomItems = (count: number) => {
   const banks = ['카카오뱅크', '신한은행', '국민은행', '하나은행', '우리은행'];
   const accountPatterns = ['3333-01', '110-32', '100-24', '285-09', '1002-45'];
@@ -17,12 +17,23 @@ const generateRandomItems = (count: number) => {
     const date = new Date();
     date.setDate(date.getDate() - randomDays);
     
-    // MM/DD HH:mm 형식으로 변환
+    // 0~23시, 0~59분 사이의 랜덤 시간 생성
+    const randomHours = Math.floor(Math.random() * 24);
+    const randomMinutes = Math.floor(Math.random() * 60);
+
+    date.setHours(randomHours);
+    date.setMinutes(randomMinutes);
+    
+    // MM/DD HH:mm 형식으로 변환 (본문 날짜/시간용)
     const month = (date.getMonth() + 1).toString().padStart(2, '0');
     const day = date.getDate().toString().padStart(2, '0');
-    const hours = date.getHours().toString().padStart(2, '0');
-    const minutes = date.getMinutes().toString().padStart(2, '0');
-    const dateString = `${month}/${day} ${hours}:${minutes}`;
+    const hoursStr = randomHours.toString().padStart(2, '0');
+    const minutesStr = randomMinutes.toString().padStart(2, '0');
+    const dateString = `${month}/${day} ${hoursStr}:${minutesStr}`;
+
+    // 상단바 시간용 (본문 시간과 미세하게 다르거나 동일하게 연출 가능, 여기서는 동일한 시분 사용 혹은 독립적인 랜덤 시분 부여)
+    const topHoursStr = randomHours.toString().padStart(2, '0');
+    const topMinutesStr = randomMinutes.toString().padStart(2, '0');
 
     // 기타 데이터 생성
     const randomAmount = (Math.floor(Math.random() * (110 - 56 + 1)) + 56) * 10000;
@@ -37,7 +48,7 @@ const generateRandomItems = (count: number) => {
       account: `${randomPattern}-***${Math.floor(Math.random() * 9000 + 1000)}`,
       desc: randomDesc,
       date: dateString,
-      topTime: `${hours}:${minutes}` 
+      topTime: `${topHoursStr}:${topMinutesStr}` 
     };
   });
 };
@@ -49,7 +60,7 @@ export default function RollingBanner() {
     setItems(generateRandomItems(40));
   }, []);
 
-  // Embla Carousel 설정 (속도를 살짝 높여 반응성 체감 개선)
+  // Embla Carousel 설정
   const [emblaRef, emblaApi] = useEmblaCarousel(
     { 
       loop: true, 
@@ -58,7 +69,7 @@ export default function RollingBanner() {
     }, 
     [
       AutoScroll({ 
-        speed: 1.2, // 속도감 조절 (기존 0.7 -> 1.2)
+        speed: 1.2, 
         stopOnInteraction: false, 
         stopOnMouseEnter: false, 
       })
@@ -109,7 +120,7 @@ export default function RollingBanner() {
                 {/* --- 스마트폰 문자 카드 디자인 (호버 애니메이션 적용) --- */}
                 <div className="w-full h-full bg-[#1e1e1e] rounded-[24px] md:rounded-[32px] p-4 md:p-6 flex flex-col text-white shadow-lg shadow-slate-200 border border-slate-700/50 relative overflow-hidden transition-all duration-300 ease-out hover:-translate-y-2 hover:scale-[1.02] hover:shadow-2xl hover:border-blue-500/50 cursor-pointer">
                   
-                  {/* 상단바 */}
+                  {/* 상단바 (랜덤 시간이 적용됨) */}
                   <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1/3 h-5 md:h-7 bg-black rounded-b-xl z-10 flex items-center justify-between px-3 md:px-4">
                     <span className="text-[10px] md:text-[12px] font-semibold text-gray-100 tracking-tight">{item.topTime}</span>
                     <div className="flex gap-1 items-center">
