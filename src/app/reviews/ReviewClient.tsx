@@ -33,6 +33,10 @@ const hasImage = (url: any) => {
 };
 
 export default function ReviewClient({ initialReviews }: { initialReviews: any[] }) {
+  console.log(
+ "DATABASE:",
+ process.env.DATABASE_URL
+);
   const { data: session } = useSession();
   const isAdmin = session?.user?.level === 9;
   const [search, setSearch] = useState('');
