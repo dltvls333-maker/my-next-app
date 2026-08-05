@@ -15,74 +15,8 @@ export default function ReviewWritePage() {
   });
 
   const [fileList, setFileList] = useState<File[]>([]);
-
-  // 1:1 비율 크롭 함수 (Canvas API 활용)
-  const cropImageToSquare = (file: File): Promise<File> => {
-    return new Promise((resolve) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = (event) => {
-        const img = new Image();
-        img.src = event.target?.result as string;
-        img.onload = () => {
-          const canvas = document.createElement('canvas');
-          const ctx = canvas.getContext('2d');
-
-          // 고정 썸네일 기준 크기 (500x500 픽셀)
-          const size = 500;
-          canvas.width = size;
-          canvas.height = size;
-
-          let width = img.width;
-          let height = img.height;
-          let startX = 0;
-          let startY = 0;
-
-          // 중앙 기준으로 정사각형 크롭 영역 계산
-          if (width > height) {
-            startX = (width - height) / 2;
-            width = height;
-          } else {
-            startY = (height - width) / 2;
-            height = width;
-          }
-
-          if (ctx) {
-            ctx.drawImage(img, startX, startY, width, height, 0, 0, size, size);
-          }
-
-          // Blob 파일로 변환 후 반환
-          canvas.toBlob((blob) => {
-            if (blob) {
-              const croppedFile = new File([blob], file.name, {
-                type: 'image/jpeg',
-                lastModified: Date.now(),
-              });
-              resolve(croppedFile);
-            } else {
-              resolve(file); // 변환 실패시 원본 반환 안전장치
-            }
-          }, 'image/jpeg', 0.9);
-        };
-      };
-    });
-  };
-
-  const handleFiles = async (files: FileList | null) => {
-    if (!files) return;
-    const fileArray = Array.from(files);
-
-    // 선택된 모든 이미지를 1:1 정사각형 크롭 함수 통과시키기
-    const processedFiles = await Promise.all(
-      fileArray.map(async (file) => {
-        if (file.type.startsWith('image/')) {
-          return await cropImageToSquare(file);
-        }
-        return file;
-      })
-    );
-
-    setFileList((prev) => [...prev, ...processedFiles]);
+  const handleFiles = (files: FileList | null) => {
+    if (files) setFileList((prev) => [...prev, ...Array.from(files)]);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -144,7 +78,7 @@ export default function ReviewWritePage() {
             </div>
           </div>
 
-          {/* 제목 */}
+          {/* 제목 (value 추가) */}
           <div className="flex items-center gap-8 border-b border-slate-200 pb-8">
             <label className={labelClass}>제목</label>
             <input name="title" type="text" placeholder="제목을 입력하세요." className={inputClass}
@@ -161,7 +95,7 @@ export default function ReviewWritePage() {
               onChange={(e) => setFormData({ ...formData, content: e.target.value })} required />
           </div>
 
-          {/* 사진 첨부 (1:1 크롭 적용 완료) */}
+          {/* 사진 첨부 */}
           <div className="flex gap-8 border-b border-slate-200 pb-8">
             <label className={`${labelClass} pt-4`}>사진 첨부</label>
             <div className="flex-1">
@@ -175,7 +109,7 @@ export default function ReviewWritePage() {
                 }}
               >
                 <div className="w-full h-32 border-2 border-dashed border-slate-300 flex flex-col items-center justify-center rounded-lg group-hover:border-slate-900 transition-all">
-                  <span className="text-slate-500 font-bold group-hover:text-slate-900">클릭하거나 파일을 드래그하세요 (자동 1:1 변환)</span>
+                  <span className="text-slate-500 font-bold group-hover:text-slate-900">클릭하거나 파일을 드래그하세요</span>
                 </div>
                 <input type="file" multiple accept="image/*" className="hidden" onChange={(e: ChangeEvent<HTMLInputElement>) => handleFiles(e.target.files)} />
               </label>
@@ -183,7 +117,7 @@ export default function ReviewWritePage() {
                 <div className="mt-4 space-y-2">
                   {fileList.map((file, i) => (
                     <div key={i} className="flex justify-between p-3 bg-slate-50 rounded-lg border border-slate-200">
-                      <span className="text-sm font-medium truncate">{file.name} (정사각형 변환 완료)</span>
+                      <span className="text-sm font-medium truncate">{file.name}</span>
                     </div>
                   ))}
                 </div>
