@@ -71,8 +71,8 @@ export default function ReviewDetailContent({ review }: { review: any }) {
         </div>
 
         {review.image_url && (
-          <div className="my-8 rounded-2xl overflow-hidden border border-slate-200 bg-slate-50">
-            <img src={review.image_url} alt="후기 이미지" className="w-full max-h-[500px] object-cover rounded-xl" />
+          <div className="my-8 rounded-2xl overflow-hidden border border-slate-200 bg-slate-50 flex justify-center items-center">
+            <img src={review.image_url} alt="후기 이미지" className="w-full max-h-[500px] object-contain rounded-xl" />
           </div>
         )}
    
