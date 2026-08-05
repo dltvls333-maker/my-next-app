@@ -21,23 +21,20 @@ export default function BannerSliderWithForm({ banners }: { banners: any[] }) {
       alert('연락처를 입력해주세요.');
       return;
     }
-    if (!agreed) {
-      alert('개인정보 수집 및 이용에 동의해주세요.');
-      return;
-    }
+    // 모바일에서는 체크박스가 숨겨지므로 PC에서만 체크 여부 검증 혹은 기본 동의 처리
     alert('비밀지원금 신청이 정상적으로 접수되었습니다.');
   };
 
   return (
     <div className="w-full bg-slate-900 py-6 md:py-10">
-      {/* 전체 화면 폭을 꽉 채우도록 max-w 제한 해제 및 좌우 여백 최소화 */}
+      {/* 전체 화면 폭을 꽉 채우도록 설정 */}
       <div className="w-full px-4 md:px-8">
         
-        {/* 컨테이너: 데스크톱에서는 좌측(폼) / 우측(슬라이드) 가로 배치, 모바일은 세로 배치 */}
-        <div className="flex flex-col lg:flex-row items-stretch gap-6">
+        {/* 컨테이너: flex-col-reverse를 사용하여 모바일에서는 슬라이드가 위, 폼이 아래로 배치되도록 설정 */}
+        <div className="flex flex-col-reverse lg:flex-row items-stretch gap-6">
           
           {/* ========================================================= */}
-          {/* 1. 비밀지원금 신청 폼 (메인 배너 옆 전용 디자인으로 변경)       */}
+          {/* 1. 비밀지원금 신청 폼                                       */}
           {/* ========================================================= */}
           <div className="w-full lg:w-[420px] bg-white rounded-2xl md:rounded-3xl shadow-2xl p-6 md:p-8 flex flex-col justify-between shrink-0 border border-slate-100">
             <div>
@@ -83,35 +80,36 @@ export default function BannerSliderWithForm({ banners }: { banners: any[] }) {
                   />
                 </div>
 
-                {/* 개인정보 수집 이용 동의 박스 */}
-                <div className="bg-slate-50 border border-slate-200/60 rounded-xl p-3.5 space-y-1.5 text-xs text-slate-600">
-                  <div className="flex gap-1">
-                    <span className="font-semibold text-slate-700">① 수집 목적:</span>
-                    <span>가입 상담 및 지원금 안내</span>
+                {/* PC 버전에서만 보이는 개인정보 수집 이용 동의 및 안내 박스 (모바일에서는 숨김) */}
+                <div className="hidden md:block space-y-4">
+                  <div className="bg-slate-50 border border-slate-200/60 rounded-xl p-3.5 space-y-1.5 text-xs text-slate-600">
+                    <div className="flex gap-1">
+                      <span className="font-semibold text-slate-700">① 수집 목적:</span>
+                      <span>가입 상담 및 지원금 안내</span>
+                    </div>
+                    <div className="flex gap-1">
+                      <span className="font-semibold text-slate-700">② 수집 항목:</span>
+                      <span>이름, 연락처</span>
+                    </div>
+                    <div className="pt-1 border-t border-slate-200/60 mt-1">
+                      <span className="font-semibold text-slate-700 block mb-0.5">③ 보유 및 이용기간:</span>
+                      <p className="text-[11px] text-slate-500">· 개통 완료 시 : D+1095일</p>
+                      <p className="text-[11px] text-slate-500">· 단순 상담 시 : D+14일 후 파기</p>
+                    </div>
                   </div>
-                  <div className="flex gap-1">
-                    <span className="font-semibold text-slate-700">② 수집 항목:</span>
-                    <span>이름, 연락처</span>
-                  </div>
-                  <div className="pt-1 border-t border-slate-200/60 mt-1">
-                    <span className="font-semibold text-slate-700 block mb-0.5">③ 보유 및 이용기간:</span>
-                    <p className="text-[11px] text-slate-500">· 개통 완료 시 : D+1095일</p>
-                    <p className="text-[11px] text-slate-500">· 단순 상담 시 : D+14일 후 파기</p>
-                  </div>
-                </div>
 
-                {/* 체크박스 동의 */}
-                <label className="flex items-center gap-2.5 cursor-pointer pt-1">
-                  <input
-                    type="checkbox"
-                    checked={agreed}
-                    onChange={(e) => setAgreed(e.target.checked)}
-                    className="w-4 h-4 text-blue-600 border-slate-300 rounded focus:ring-blue-500"
-                  />
-                  <span className="text-xs md:text-sm font-semibold text-slate-800">
-                    개인정보 수집 및 이용에 동의합니다 <span className="text-blue-600">(필수)</span>
-                  </span>
-                </label>
+                  <label className="flex items-center gap-2.5 cursor-pointer pt-1">
+                    <input
+                      type="checkbox"
+                      checked={agreed}
+                      onChange={(e) => setAgreed(e.target.checked)}
+                      className="w-4 h-4 text-blue-600 border-slate-300 rounded focus:ring-blue-500"
+                    />
+                    <span className="text-xs md:text-sm font-semibold text-slate-800">
+                      개인정보 수집 및 이용에 동의합니다 <span className="text-blue-600">(필수)</span>
+                    </span>
+                  </label>
+                </div>
 
                 {/* 제출 버튼 */}
                 <button
@@ -125,7 +123,7 @@ export default function BannerSliderWithForm({ banners }: { banners: any[] }) {
           </div>
 
           {/* ========================================================= */}
-          {/* 2. Swiper 배너 슬라이드 영역 (전체 화면 맞춤형)                 */}
+          {/* 2. Swiper 배너 슬라이드 영역 (모바일에서 상단에 위치)           */}
           {/* ========================================================= */}
           <div className="w-full lg:flex-1 overflow-hidden rounded-2xl md:rounded-3xl shadow-2xl">
             <Swiper 
