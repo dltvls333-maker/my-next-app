@@ -13,7 +13,7 @@ export default async function ReviewPage() {
 const reviews = await prisma.review.findMany({
   orderBy: { id: 'desc' }, // created_at 대신 id 기준 내림차순
 });
-
+console.log(11)
   // DB 데이터를 컴포넌트가 사용하기 좋은 형태로 가공
   const formattedReviews = reviews.map((r) => ({
     id: r.id,
