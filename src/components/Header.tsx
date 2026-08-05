@@ -78,9 +78,31 @@ export default function Header() {
             </button>
           </div>
         </div>
+
+        {/* ========================================================= */}
+        {/* 모바일 전용: 로고 밑에 | 로 구분된 네비게이션 가로 나열 영역       */}
+        {/* ========================================================= */}
+        <div className="md:hidden py-2.5 border-t border-slate-100 overflow-x-auto whitespace-nowrap scrollbar-none">
+          <nav className="flex items-center justify-start sm:justify-center gap-2 text-[13px] font-medium text-slate-600">
+            {menuItems.map((item, index) => (
+              <div key={index} className="flex items-center">
+                <a 
+                  href={item.link} 
+                  className="hover:text-blue-600 transition px-1"
+                >
+                  {item.name}
+                </a>
+                {/* 마지막 메뉴가 아닐 때만 | 기호 출력 */}
+                {index < menuItems.length - 1 && (
+                  <span className="text-slate-300 ml-2">|</span>
+                )}
+              </div>
+            ))}
+          </nav>
+        </div>
       </div>
 
-      {/* 모바일 메뉴 펼침 */}
+      {/* 모바일 햄버거 메뉴 클릭 시 펼쳐지는 영역 (기존 유지) */}
       {isOpen && (
         <div className="md:hidden bg-white border-t border-slate-100 p-4 space-y-1">
           {menuItems.map((item, index) => (
