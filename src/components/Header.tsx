@@ -83,7 +83,7 @@ export default function Header() {
         {/* 모바일 전용: 로고 밑에 | 로 구분된 네비게이션 가로 나열 영역       */}
         {/* ========================================================= */}
         <div className="md:hidden py-2.5 border-t border-slate-100 overflow-x-auto whitespace-nowrap scrollbar-none">
-          <nav className="flex items-center justify-start sm:justify-center gap-2 text-[13px] font-medium text-slate-600">
+          <nav className="flex items-center justify-center sm:justify-center gap-2 text-[13px] font-medium text-slate-600">
             {menuItems.map((item, index) => (
               <div key={index} className="flex items-center">
                 <a 
