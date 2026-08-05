@@ -54,6 +54,9 @@ export async function POST(req: Request) {
       imageUrl = `data:${file.type};base64,${base64Data}`;
     }
 
+    // 💡 한국 시간(KST) 기준 Date 객체 생성
+    const kstDate = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Seoul' }));
+
     // Prisma 저장
     const newReview = await prisma.review.create({
       data: {
@@ -65,6 +68,7 @@ export async function POST(req: Request) {
         content,
         image_url: imageUrl, // Base64 문자열이 DB에 저장됨
         ip_address,
+        created_at: kstDate, // 한국 시간이 반영된 날짜 저장
       },
     });
 
