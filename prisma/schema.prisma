@@ -45,7 +45,7 @@ model Review {
   phone_last  String
   password    String
   content     String   @db.Text
-  image_url   String?
+  image_url   String?  @db.LongText
   ip_address  String
   views       Int      @default(0)
   status      String   @default("pending")

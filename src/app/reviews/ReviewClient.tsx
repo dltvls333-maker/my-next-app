@@ -1,5 +1,6 @@
-'use client';
-
+// 목록 페이지 파일 상단에 추가
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { Search, ChevronLeft, ChevronRight, Trash2, Camera } from 'lucide-react';
