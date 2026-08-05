@@ -1,7 +1,6 @@
 'use client';
 
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useState } from 'react';
 import Link from 'next/link';
 
 // 1. 이름 마스킹 함수
@@ -12,85 +11,104 @@ const maskName = (name: string) => {
 
 // 2. 별점 컴포넌트
 const StarRating = () => (
-  <div className="flex text-yellow-400 text-base">
+  <div className="flex text-yellow-400 text-xs md:text-base">
     {'★'.repeat(5)}
   </div>
 );
 
 export default function ReviewSlider({ reviews }: { reviews: any[] }) {
+  const [currentIndex, setCurrentIndex] = useState(0);
+
   // 데이터가 없을 경우 방어 코드
   if (!reviews || reviews.length === 0) return <div className="text-center py-10">후기가 없습니다.</div>;
 
-  // 무한 롤링을 위해 데이터를 2배로 복제
-  const duplicatedReviews = [...reviews, ...reviews];
-  
-  // 데이터 개수에 비례하여 애니메이션 속도 결정 (개당 4초)
-  const duration = reviews.length * 4;
+  // 다음 슬라이드 (모바일은 2개씩, PC는 2개씩 순환)
+  const nextSlide = () => {
+    setCurrentIndex((prev) => (prev + 2) % reviews.length);
+  };
+
+  // 이전 슬라이드
+  const prevSlide = () => {
+    setCurrentIndex((prev) => (prev - 2 + reviews.length) % reviews.length);
+  };
 
   return (
-    <div className="w-full py-16 bg-slate-50 overflow-hidden">
-      <h2 className="text-3xl text-center py-12 md:text-4xl font-extrabold text-slate-900 tracking-tight">
-        <span className="t-green">실제</span> 고객 후기
+    <div className="w-full py-12 md:py-16 bg-slate-50 overflow-hidden">
+      <h2 className="text-2xl text-center py-8 md:text-4xl font-extrabold text-slate-900 tracking-tight">
+        일일넷 인터넷 가입 후기
       </h2>
-      
-      {/* 롤링 애니메이션 영역 (하드웨어 가속 최적화) */}
-      <div className="flex w-full overflow-hidden py-4">
-        <motion.div 
-          className="flex gap-8 will-change-transform"
-          animate={{ x: ["0%", "-50%"] }} 
-          transition={{ 
-            duration: duration, 
-            ease: "linear", 
-            repeat: Infinity 
-          }}
-          style={{ backfaceVisibility: 'hidden', WebkitFontSmoothing: 'antialiased' }}
+
+      {/* 슬라이드 컨테이너 영역 */}
+      <div className="max-w-[1240px] mx-auto px-2 md:px-6 relative flex items-center justify-center">
+        
+        {/* 왼쪽 화살표 버튼 */}
+        <button 
+          onClick={prevSlide}
+          className="absolute left-1 md:left-4 z-10 w-9 h-9 md:w-12 md:h-12 rounded-full bg-white border border-slate-200 shadow-md flex items-center justify-center text-slate-700 hover:bg-slate-100 transition"
+          aria-label="이전 후기"
         >
-          {duplicatedReviews.map((review, i) => (
-            <Link 
-              key={`${review.id}-${i}`}
-              href={`/reviews/${review.id}`}
-              className="block flex-shrink-0"
-            >
-              <div 
-                className="w-[480px] bg-white rounded-3xl shadow-[0_10px_35px_rgba(0,0,0,0.06)] overflow-hidden border border-slate-100 cursor-pointer transition-shadow duration-300 hover:shadow-xl flex flex-col"
-              >
-                {/* 상단: 원래 비율을 살린 가로로 긴 배너 이미지 영역 */}
-                {review.image_url && (
-                  <div className="w-full aspect-[21/9] bg-slate-900 overflow-hidden relative">
-                    <img 
-                      src={review.image_url} 
-                      className="w-full h-full object-cover" 
-                      alt="후기 이미지" 
-                    />
-                  </div>
-                )}
-                
-                {/* 하단: 텍스트 영역 */}
-                <div className="p-6 flex flex-col gap-2.5 flex-1 justify-between">
-                  <div>
-                    <div className="flex items-center justify-between mb-1.5">
-                      <StarRating />
-                      <span className="text-xs text-slate-400 font-medium">{review.date}</span>
+          <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
+          </svg>
+        </button>
+
+        {/* 카드 내용 영역 */}
+        <div className="w-full max-w-[1000px] overflow-hidden px-6 md:px-4">
+          <div className="grid grid-cols-2 gap-3 md:gap-6">
+            {[0, 1].map((offset) => {
+              const reviewIndex = (currentIndex + offset) % reviews.length;
+              const review = reviews[reviewIndex];
+
+              return (
+                <Link 
+                  key={`${review.id}-${reviewIndex}`}
+                  href={`/reviews/${review.id}`}
+                  className="block"
+                >
+                  <div className="bg-white rounded-2xl md:rounded-[32px] p-3.5 md:p-6 shadow-[0_4px_20px_rgba(0,0,0,0.04)] border border-[#2d4a3e]/20 flex flex-col md:flex-row items-center gap-3 md:gap-5 hover:shadow-lg transition h-full min-h-[130px] md:min-h-[180px]">
+                    
+                    {/* 정사각형 이미지 영역 (모바일에서 아기자기하게 크기 축소) */}
+                    {review.image_url && (
+                      <div className="w-full md:w-[130px] h-[90px] md:h-[130px] flex-shrink-0 bg-slate-100 rounded-xl md:rounded-2xl overflow-hidden relative">
+                        <img 
+                          src={review.image_url} 
+                          className="w-full h-full object-cover" 
+                          alt="후기 이미지" 
+                        />
+                      </div>
+                    )}
+                    
+                    {/* 별점, 고객명, 제목 텍스트 영역 */}
+                    <div className="flex flex-col justify-center flex-1 min-w-0 w-full text-center md:text-left">
+                      <div className="flex items-center justify-center md:justify-start gap-1 mb-1">
+                        <StarRating />
+                      </div>
+                      <span className="text-[11px] md:text-sm text-slate-500 font-medium mb-1">
+                        {maskName(review.user_name)} 고객님
+                      </span>
+                      <h3 className="font-bold text-xs md:text-lg text-slate-900 truncate" title={review.title}>
+                        {review.title || "제목 텍스트"}
+                      </h3>
                     </div>
-                    
-                    <h3 className="font-bold text-lg text-slate-900 truncate mb-1" title={review.title}>
-                      {review.title}
-                    </h3>
-                    
-                    <p className="text-slate-600 text-sm line-clamp-2 leading-relaxed">
-                      {review.content}
-                    </p>
+
                   </div>
-                  
-                  <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-sm">
-                    <span className="font-extrabold text-indigo-600">{maskName(review.user_name)} 고객님</span>
-                    <span className="text-xs text-blue-600 font-semibold bg-blue-50 px-2.5 py-1 rounded-full">상세보기 &rarr;</span>
-                  </div>
-                </div>
-              </div>
-            </Link>
-          ))}
-        </motion.div>
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* 오른쪽 화살표 버튼 */}
+        <button 
+          onClick={nextSlide}
+          className="absolute right-1 md:right-4 z-10 w-9 h-9 md:w-12 md:h-12 rounded-full bg-white border border-slate-200 shadow-md flex items-center justify-center text-slate-700 hover:bg-slate-100 transition"
+          aria-label="다음 후기"
+        >
+          <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
+
       </div>
     </div>
   );
