@@ -212,25 +212,35 @@ export default function SkPlan() {
       </div>
 
       {/* 두 번째, 제휴카드 할인 */}
-      <div className="flex items-center justify-center gap-2 text-center pt-10 pb-6">
+      <div className="flex items-center justify-center gap-2 text-center pt-10 pb-6 px-4">
         <span className="text-3xl lg:text-5xl">💳</span>
         <div className="text-primary text-3xl lg:text-5xl font-extrabold tracking-tight">두 번째, 제휴카드 할인!</div>
       </div>
-      
-      <div className="min-w-[767px] mx-auto rounded-[10px] overflow-hidden shadow-[0_4px_24px_0_rgba(0,0,0,0.08)] border border-stone-300">
-        <div className="bg-blue-600 grid grid-cols-3 py-4 text-white font-bold text-center text-sm lg:text-lg">
-          <span>카드사</span><span>카드명</span><span>할인 혜택</span>
-        </div>
-        {[
-          ["롯데카드", "SK브로드밴드 B롯데카드", "50만원 이상 실적 10,000원 할인"],
-          ["삼성카드", "SK브로드밴드 삼성카드", "30만원 이상 실적 7,000원 할인"]
-        ].map((row, i) => (
-          <div key={i} className="grid grid-cols-3 border-t border-stone-300 text-center py-5 font-medium text-sm lg:text-base">
-            <div className="border-r border-stone-300 font-bold">{row[0]}</div>
-            <div className="border-r border-stone-300 font-bold text-blue-600">{row[1]}</div>
-            <div className="font-bold">{row[2]}</div>
+
+      {/* 핵심 수정 부분: 외부 컨테이너에 스크롤 설정, 내부 컨테이너에 최소 너비 설정 */}
+      <div className="w-full max-w-[1100px] mx-auto px-4 mb-10">
+        <div className="overflow-x-auto shadow-[0_4px_24px_0_rgba(0,0,0,0.08)] rounded-[10px] border border-stone-300">
+          {/* 표 내용이 최소 너비보다 작아지지 않도록 설정 */}
+          <div className="min-w-[767px]">
+            <div className="bg-blue-600 grid grid-cols-3 py-4 text-white font-bold text-center text-sm lg:text-lg rounded-t-[10px]">
+              <span>카드사</span><span>카드명</span><span>할인 혜택</span>
+            </div>
+            {[
+              ["롯데카드", "SK브로드밴드 B롯데카드", "50만원 이상 실적 10,000원 할인"],
+              ["삼성카드", "SK브로드밴드 삼성카드", "30만원 이상 실적 7,000원 할인"]
+            ].map((row, i) => (
+              <div key={i} className="grid grid-cols-3 border-t border-stone-300 text-center py-5 font-medium text-sm lg:text-base last:rounded-b-[10px]">
+                <div className="border-r border-stone-300 font-bold">{row[0]}</div>
+                <div className="border-r border-stone-300 font-bold text-blue-600 px-1">{row[1]}</div>
+                <div className="font-bold px-1">{row[2]}</div>
+              </div>
+            ))}
           </div>
-        ))}
+        </div>
+        {/* 모바일에서 스크롤 가능함을 시각적으로 표시하는 힌트 (선택 사항) */}
+        <div className="text-center text-xs text-slate-400 mt-2 md:hidden">
+          ← 좌우로 스크롤 하여 확인하세요 →
+        </div>
       </div>
 
       <p className="text-stone-500 lg:text-2xl text-lg text-center font-medium leading-relaxed pt-10">
