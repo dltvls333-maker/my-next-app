@@ -181,36 +181,75 @@ export default function KtPlan() {
   <div className="text-primary text-3xl lg:text-5xl font-extrabold tracking-tight">두 번째, 제휴카드 할인!</div>
 </div>
 
-<div className="min-w-[767px] mx-auto rounded-[10px] overflow-hidden shadow-[0_4px_24px_0_rgba(0,0,0,0.08)] border border-stone-300">
-  <div className="bg-blue-600 grid grid-cols-3 py-4 text-white font-bold text-center text-sm lg:text-lg">
-    <span>카드사</span><span>카드명</span><span>할인 혜택</span>
-  </div>
-
-  {[
-    { company: "KB국민카드", cards: ["KB국민 CLiP 카드"], benefit: ["30만원 이상 실적 12,000원 할인"] },
-    { company: "현대카드", cards: ["KT-현대카드M Edition3(청구할인형)", "KT-현대카드M Edition3(통신할인형2.0)", "KT-현대카드M Edition3(청구할인형2.0)"], benefit: ["30만원 이상 실적 7,000원 할인", "30만원 이상 실적 7,000원 할인", "100만원 이상 실적 22,000원 할인(1~36개월)"] },
-    { company: "신한카드", cards: ["KT 신한 체크카드", "KT 가족만족 DC 신한카드"], benefit: ["30만원 이상 실적 3,000원 캐시백", "30만원 이상 실적 7,000원 할인"] },
-    { company: "IBK 카드", cards: ["olleh super DC IBK 카드"], benefit: ["30만원 이상 실적 7,000원 할인"] },
-    { company: "삼성카드", cards: ["KT 삼성카드"], benefit: ["30만원 이상 실적 7,000원 할인"] },
-    { company: "우리카드", cards: ["KT NU Plus 우리카드"], benefit: ["40만원 이상 실적 10,000원 할인"] },
-    { company: "하나카드", cards: ["KT super DC 하나카드", "KT DC Plus 고객용 더 심플 하나카드"], benefit: ["30만원 이상 실적 7,000원 할인", "30만원 이상 실적 10,000원 할인"] },
-    { company: "NH농협카드", cards: ["KT 할부 Plus NH농협카드"], benefit: ["40만원 이상 실적 5,000원(할부와 할인 중복 불가)"] },
-    { company: "롯데카드", cards: ["KT LOCA X 구독 롯데카드", "KT DC Plus 롯데카드"], benefit: ["30만원 이상 10,000원 할인", "40만원 이상 10,000원 할인"] },
-    { company: "비씨카드", cards: ["KT BC바로 SUPER 카드", "KT BC바로 SUPER+ 카드", "KT DC Plus BC 바로카드"], benefit: ["30만원 이상 실적 13,000원 할인(1~24개월)", "50만원 이상 실적 15,000원 할인(1~24개월)", "30만원 이상 실적 7,000원 할인"] },
-    { company: "케이뱅크", cards: ["KT멤버십x케이뱅크 더블혜택 체크카드"], benefit: ["20만원 이상 실적 카드 이용금액 5% 캐시백(최대 5,000원)"] }
-  ].map((item, i) => (
-    <div key={i} className="grid grid-cols-3 border-t border-stone-300 text-center font-medium text-sm lg:text-base">
-      <div className="border-r border-stone-300 font-bold flex items-center justify-center p-4 bg-stone-50">{item.company}</div>
-      <div className="col-span-2">
-        {item.cards.map((card, idx) => (
-          <div key={idx} className={`grid grid-cols-2 ${idx !== item.cards.length - 1 ? 'border-b border-stone-300' : ''}`}>
-            <div className="p-4 border-r border-stone-300 font-bold text-blue-600 flex items-center justify-center">{card}</div>
-            <div className="p-4 flex items-center justify-center font-bold text-stone-600">{item.benefit[idx]}</div>
-          </div>
-        ))}
+{/* 위쪽 컨텐츠들과 width 및 패딩을 완벽히 맞춘 컨테이너 */}
+<div className="w-full max-w-[1100px] mx-auto mb-10">
+  <div className="overflow-x-auto shadow-[0_4px_24px_0_rgba(0,0,0,0.08)] rounded-[10px] border border-stone-300 bg-white">
+    
+    {/* 모바일 화면에서 잘리지 않고 가로 스크롤되도록 최소 너비 설정 */}
+    <div className="min-w-[767px]">
+      
+      {/* 테이블 헤더: 150px, 1fr, 1fr 구조 */}
+      <div className="bg-blue-600 grid grid-cols-[150px,1fr,1fr] py-4 text-white font-bold text-center text-sm lg:text-lg rounded-t-[10px]">
+        <span>카드사</span>
+        <span>카드명</span>
+        <span>할인 혜택</span>
       </div>
+
+      {/* 테이블 바디 */}
+      {[
+        { company: "KB국민카드", cards: ["KB국민 CLiP 카드"], benefit: ["30만원 이상 실적 12,000원 할인"] },
+        { company: "현대카드", cards: ["KT-현대카드M Edition3(청구할인형)", "KT-현대카드M Edition3(통신할인형2.0)", "KT-현대카드M Edition3(청구할인형2.0)"], benefit: ["30만원 이상 실적 7,000원 할인", "30만원 이상 실적 7,000원 할인", "100만원 이상 실적 22,000원 할인(1~36개월)"] },
+        { company: "신한카드", cards: ["KT 신한 체크카드", "KT 가족만족 DC 신한카드"], benefit: ["30만원 이상 실적 3,000원 캐시백", "30만원 이상 실적 7,000원 할인"] },
+        { company: "IBK 카드", cards: ["olleh super DC IBK 카드"], benefit: ["30만원 이상 실적 7,000원 할인"] },
+        { company: "삼성카드", cards: ["KT 삼성카드"], benefit: ["30만원 이상 실적 7,000원 할인"] },
+        { company: "우리카드", cards: ["KT NU Plus 우리카드"], benefit: ["40만원 이상 실적 10,000원 할인"] },
+        { company: "하나카드", cards: ["KT super DC 하나카드", "KT DC Plus 고객용 더 심플 하나카드"], benefit: ["30만원 이상 실적 7,000원 할인", "30만원 이상 실적 10,000원 할인"] },
+        { company: "NH농협카드", cards: ["KT 할부 Plus NH농협카드"], benefit: ["40만원 이상 실적 5,000원(할부와 할인 중복 불가)"] },
+        { company: "롯데카드", cards: ["KT LOCA X 구독 롯데카드", "KT DC Plus 롯데카드"], benefit: ["30만원 이상 10,000원 할인", "40만원 이상 10,000원 할인"] },
+        { company: "비씨카드", cards: ["KT BC바로 SUPER 카드", "KT BC바로 SUPER+ 카드", "KT DC Plus BC 바로카드"], benefit: ["30만원 이상 실적 13,000원 할인(1~24개월)", "50만원 이상 실적 15,000원 할인(1~24개월)", "30만원 이상 실적 7,000원 할인"] },
+        { company: "케이뱅크", cards: ["KT멤버십x케이뱅크 더블혜택 체크카드"], benefit: ["20만원 이상 실적 카드 이용금액 5% 캐시백(최대 5,000원)"] }
+      ].map((item, i) => {
+        const rowSpan = item.cards.length;
+        return (
+          <div key={i} className="grid grid-cols-[150px,1fr,1fr] border-t border-stone-300 text-center font-medium text-sm lg:text-base last:rounded-b-[10px] items-stretch">
+            
+            {/* 카드사 영역 (고정 너비 150px, 세로 중앙 정렬) */}
+            <div className="border-r border-stone-300 font-bold flex items-center justify-center p-4 bg-stone-50">
+              {item.company}
+            </div>
+
+            {/* 카드가 1개일 때 */}
+            {rowSpan === 1 ? (
+              <>
+                <div className="border-r border-stone-300 font-bold text-blue-600 flex items-center justify-center p-4 px-1">
+                  {item.cards[0]}
+                </div>
+                <div className="flex items-center justify-center font-bold text-stone-600 p-4 px-1">
+                  {item.benefit[0]}
+                </div>
+              </>
+            ) : (
+              /* 카드가 2개 이상(현대, 신한, 하나, 롯데, 비씨 등)일 때 남은 두 칸을 채우며 세로로 나열 */
+              <div className="col-span-2 flex flex-col w-full">
+                {item.cards.map((card, idx) => (
+                  <div key={idx} className={`grid grid-cols-2 w-full ${idx !== rowSpan - 1 ? 'border-b border-stone-300' : ''}`}>
+                    <div className="border-r border-stone-300 font-bold text-blue-600 flex items-center justify-center p-4 px-1">
+                      {card}
+                    </div>
+                    <div className="flex items-center justify-center font-bold text-stone-600 p-4 px-1">
+                      {item.benefit[idx]}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+          </div>
+        );
+      })}
+
     </div>
-  ))}
+  </div>
 </div>
 
   <p className="text-stone-500 lg:text-2xl text-lg text-center font-medium leading-relaxed pt-10">

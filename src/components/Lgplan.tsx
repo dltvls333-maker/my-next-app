@@ -347,75 +347,85 @@ export default function LgPlan() {
 
 
       {/* 두 번째, 제휴카드 할인 */}
-      <div className="flex items-center justify-center gap-2 text-center pt-10 pb-6">
-        <span className="text-3xl lg:text-5xl">💳</span>
-        {/* 텍스트 색상을 기존 text-primary에서 blue-600으로 명시적으로 변경 */}
-        <div className="text-blue-600 text-3xl lg:text-5xl font-extrabold tracking-tight">두 번째, 제휴카드 할인!</div>
+<div className="flex items-center justify-center gap-2 text-center pt-10 pb-6">
+  <span className="text-3xl lg:text-5xl">💳</span>
+  <div className="text-blue-600 text-3xl lg:text-5xl font-extrabold tracking-tight">두 번째, 제휴카드 할인!</div>
+</div>
+
+{/* 위쪽 컨텐츠들과 width 및 패딩을 완벽히 맞춘 컨테이너 */}
+<div className="w-full max-w-[1100px] mx-auto mb-10">
+  <div className="overflow-x-auto shadow-[0_4px_24px_0_rgba(0,0,0,0.08)] rounded-[10px] border border-stone-300 bg-white">
+    
+    {/* 모바일 화면에서 잘리지 않고 가로 스크롤되도록 최소 너비 설정 */}
+    <div className="min-w-[767px]">
+      
+      {/* 테이블 헤더: 150px, 1fr, 1fr 구조 */}
+      <div className="bg-blue-600 grid grid-cols-[150px,1fr,1fr] py-4 text-white font-bold text-center text-sm lg:text-lg rounded-t-[10px]">
+        <span>카드사</span>
+        <span>카드명</span>
+        <span>할인 혜택</span>
       </div>
 
-      {/* 위쪽 컨텐츠들과 width 및 패딩을 완벽히 맞춘 컨테이너 */}
-      <div className="w-full max-w-[1100px] mx-auto mb-10">
-        <div className="overflow-x-auto shadow-[0_4px_24px_0_rgba(0,0,0,0.08)] rounded-[10px] border border-stone-300 bg-white">
-          
-          {/* 핵심 수정: 모바일에서는 가로 스크롤이 되도록 고정 너비 설정 */}
-          <div className="min-w-[767px]">
-            {/* 테이블 헤더 */}
-            <div className="bg-blue-600 grid grid-cols-[150px,1fr,1fr] py-4 text-white font-bold text-center text-sm lg:text-lg rounded-t-[10px]">
-              <span>카드사</span>
-              <span>카드명</span>
-              <span>할인 혜택</span>
+      {/* 테이블 바디 */}
+      {[
+        { company: "삼성카드", cards: ["LG U+ 삼성카드"], benefit: ["30만원 이상 실적 7,000원 할인"] },
+        { company: "KB국민카드", cards: ["LG U+ 현대카드M Edition3 (통신할인형2.0)"], benefit: ["50만원 이상 실적 15,000원 할인 (1~24개월)"] },
+        { 
+          company: "하나카드", 
+          cards: ["더 심플 하나카드", "LG U+ Family 하나카드"], 
+          benefit: [
+            "30만원 이상 실적 10,000원 할인", 
+            "30만원 이상 실적 통신료 25% 청구할인 (25개월 이후 15% 청구할인)"
+          ] 
+        },
+        { company: "신한카드", cards: ["LG U+ 사장님 통할인 신한카드"], benefit: ["70만원 이상 실적 10,000원 할인 (25개월 이후 6,000원 할인)"] },
+        { company: "롯데카드", cards: ["LG U+ x LOCA 롯데카드"], benefit: ["30만원 이상 실적 10,000원 할인 (25개월 이후 6,000원 할인)"] },
+        { company: "NH카드", cards: ["NH올원 LG U+ 카드"], benefit: ["30만원 이상 실적 9,000원 할인"] }
+      ].map((item, i) => {
+        const rowSpan = item.cards.length;
+        return (
+          <div key={i} className="grid grid-cols-[150px,1fr,1fr] border-t border-stone-300 text-center font-medium text-sm lg:text-base last:rounded-b-[10px] items-stretch">
+            
+            {/* 카드사 영역: 여러 줄인 경우 행 전체 높이를 채우거나 세로 중앙 정렬 */}
+            <div className="border-r border-stone-300 font-bold flex items-center justify-center p-4 bg-stone-50">
+              {item.company}
             </div>
 
-            {/* 테이블 바디 */}
-            {[
-              { company: "삼성카드", cards: ["LG U+ 삼성카드"], benefit: ["30만원 이상 실적 7,000원 할인"] },
-              { company: "KB국민카드", cards: ["LG U+ 현대카드M Edition3 (통신할인형2.0)"], benefit: ["50만원 이상 실적 15,000원 할인 (1~24개월)"] },
-              { 
-                company: "하나카드", 
-                cards: ["더 심플 하나카드", "LG U+ Family 하나카드"], 
-                benefit: [
-                  "30만원 이상 실적 10,000원 할인", 
-                  "30만원 이상 실적 통신료 25% 청구할인 (25개월 이후 15% 청구할인)"
-                ] 
-              },
-              { company: "신한카드", cards: ["LG U+ 사장님 통할인 신한카드"], benefit: ["70만원 이상 실적 10,000원 할인 (25개월 이후 6,000원 할인)"] },
-              { company: "롯데카드", cards: ["LG U+ x LOCA 롯데카드"], benefit: ["30만원 이상 실적 10,000원 할인 (25개월 이후 6,000원 할인)"] },
-              { company: "NH카드", cards: ["NH올원 LG U+ 카드"], benefit: ["30만원 이상 실적 9,000원 할인"] }
-            ].map((item, i) => {
-              const rowSpan = item.cards.length;
-              return (
-                <div key={i} className="grid grid-cols-[150px,1fr] border-t border-stone-300 text-center font-medium text-sm lg:text-base last:rounded-b-[10px] items-stretch">
-                  
-                  {/* 카드사 영역 (고정 너비, 행 병합 효과를 위해 flex 사용) */}
-                  <div className="border-r border-stone-300 font-bold flex items-center justify-center p-4 bg-stone-50 h-full">
-                    {item.company}
-                  </div>
-
-                  {/* 카드명 및 혜택 영역 (이 부분을 다시 그리드로 나누어 처리) */}
-                  <div className={`flex flex-col ${rowSpan > 1 ? '' : 'justify-center'}`}>
-                    {item.cards.map((card, idx) => (
-                      <div key={idx} className={`grid grid-cols-[1fr,1fr] h-full ${idx !== rowSpan - 1 ? 'border-b border-stone-300' : ''}`}>
-                        
-                        {/* 카드명 셀 */}
-                        <div className="border-r border-stone-300 font-bold text-blue-600 flex items-center justify-center p-4 px-1 h-full">
-                          {card}
-                        </div>
-
-                        {/* 할인 혜택 셀 */}
-                        <div className="flex items-center justify-center font-bold text-stone-600 p-4 px-1 h-full">
-                          {item.benefit[idx]}
-                        </div>
-
-                      </div>
-                    ))}
-                  </div>
-
+            {/* 카드가 1개일 때와 2개 이상일 때를 분기 처리하여 완벽하게 정렬 */}
+            {rowSpan === 1 ? (
+              <>
+                {/* 카드명 */}
+                <div className="border-r border-stone-300 font-bold text-blue-600 flex items-center justify-center p-4 px-1">
+                  {item.cards[0]}
                 </div>
-              );
-            })}
+                {/* 할인 혜택 */}
+                <div className="flex items-center justify-center font-bold text-stone-600 p-4 px-1">
+                  {item.benefit[0]}
+                </div>
+              </>
+            ) : (
+              /* 카드가 2개 이상인 경우 (하나카드 등) 두 컬럼을 통째로 차지하며 내부에서 세로로 쪼개짐 */
+              <div className="col-span-2 flex flex-col w-full">
+                {item.cards.map((card, idx) => (
+                  <div key={idx} className={`grid grid-cols-2 w-full ${idx !== rowSpan - 1 ? 'border-b border-stone-300' : ''}`}>
+                    <div className="border-r border-stone-300 font-bold text-blue-600 flex items-center justify-center p-4 px-1">
+                      {card}
+                    </div>
+                    <div className="flex items-center justify-center font-bold text-stone-600 p-4 px-1">
+                      {item.benefit[idx]}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
           </div>
-        </div>
-      </div>
+        );
+      })}
+
+    </div>
+  </div>
+</div>
 
   <p className="text-stone-500 lg:text-3xl text-xl text-center !leading-[1.3] lg:pt-10 pt-6">
 
