@@ -203,28 +203,58 @@ export default function Lghellovisionplan() {
           <div className="text-primary text-3xl lg:text-5xl font-extrabold tracking-tight">두 번째, 제휴카드 할인!</div>
         </div>
 
-        <div className="min-w-[767px] mx-auto rounded-[10px] overflow-hidden shadow-[0_4px_24px_0_rgba(0,0,0,0.08)] border border-stone-300">
-          <div className="bg-blue-600 grid grid-cols-3 py-4 text-white font-bold text-center text-sm lg:text-lg">
-            <span>카드사</span><span>카드명</span><span>할인 혜택</span>
-          </div>
-
-          {[
-            { company: "국민카드", cards: ["LG헬로비전 KB국민카드"], benefit: ["전월 30만원 이상 실적 12,000원 할인"] },
-            { company: "롯데카드", cards: ["LG헬로비전 롯데카드"], benefit: ["전월 30만원 이상 실적 15,000원 할인"] },
-            { company: "하나카드", cards: ["LG헬로비전 더 심플 하나카드"], benefit: ["전월 30만원 이상 실적 10,000원 할인"] }
-          ].map((item, i) => (
-            <div key={i} className="grid grid-cols-3 border-t border-stone-300 text-center font-medium text-sm lg:text-base">
-              <div className="border-r border-stone-300 font-bold flex items-center justify-center p-4 bg-stone-50">{item.company}</div>
-              <div className="col-span-2">
-                {item.cards.map((card, idx) => (
-                  <div key={idx} className={`grid grid-cols-2 ${idx !== item.cards.length - 1 ? 'border-b border-stone-300' : ''}`}>
-                    <div className="p-4 border-r border-stone-300 font-bold text-blue-600 flex items-center justify-center">{card}</div>
-                    <div className="p-4 flex items-center justify-center font-bold text-stone-600">{item.benefit[idx]}</div>
-                  </div>
-                ))}
+        {/* 위쪽 컨텐츠들과 width 및 패딩을 완벽히 맞춘 컨테이너 */}
+        <div className="w-full max-w-[1100px] mx-auto mb-10">
+          <div className="overflow-x-auto shadow-[0_4px_24px_0_rgba(0,0,0,0.08)] rounded-[10px] border border-stone-300 bg-white">
+            
+            {/* 모바일 화면에서 잘리지 않고 가로 스크롤되도록 최소 너비 설정 */}
+            <div className="min-w-[767px]">
+              {/* 테이블 헤더 */}
+              <div className="bg-blue-600 grid grid-cols-[150px,1fr,1fr] py-4 text-white font-bold text-center text-sm lg:text-lg rounded-t-[10px]">
+                <span>카드사</span>
+                <span>카드명</span>
+                <span>할인 혜택</span>
               </div>
+
+              {/* 테이블 바디 */}
+              {[
+                { company: "국민카드", cards: ["LG헬로비전 KB국민카드"], benefit: ["전월 30만원 이상 실적 12,000원 할인"] },
+                { company: "롯데카드", cards: ["LG헬로비전 롯데카드"], benefit: ["전월 30만원 이상 실적 15,000원 할인"] },
+                { company: "하나카드", cards: ["LG헬로비전 더 심플 하나카드"], benefit: ["전월 30만원 이상 실적 10,000원 할인"] }
+              ].map((item, i) => {
+                const rowSpan = item.cards.length;
+                return (
+                  <div key={i} className="grid grid-cols-[150px,1fr] border-t border-stone-300 text-center font-medium text-sm lg:text-base last:rounded-b-[10px] items-stretch">
+                    
+                    {/* 카드사 영역 (고정 너비) */}
+                    <div className="border-r border-stone-300 font-bold flex items-center justify-center p-4 bg-stone-50 h-full">
+                      {item.company}
+                    </div>
+
+                    {/* 카드명 및 할인 혜택 영역 */}
+                    <div className={`flex flex-col ${rowSpan > 1 ? '' : 'justify-center'}`}>
+                      {item.cards.map((card, idx) => (
+                        <div key={idx} className={`grid grid-cols-[1fr,1fr] h-full ${idx !== rowSpan - 1 ? 'border-b border-stone-300' : ''}`}>
+                          
+                          {/* 카드명 셀 */}
+                          <div className="border-r border-stone-300 font-bold text-blue-600 flex items-center justify-center p-4 px-1 h-full">
+                            {card}
+                          </div>
+
+                          {/* 할인 혜택 셀 */}
+                          <div className="flex items-center justify-center font-bold text-stone-600 p-4 px-1 h-full">
+                            {item.benefit[idx]}
+                          </div>
+
+                        </div>
+                      ))}
+                    </div>
+
+                  </div>
+                );
+              })}
             </div>
-          ))}
+          </div>
         </div>
 
         <p className="text-stone-500 lg:text-3xl text-xl text-center !leading-[1.3] lg:pt-10 pt-6">

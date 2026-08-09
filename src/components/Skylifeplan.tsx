@@ -171,34 +171,51 @@ export default function Skylifeplan() {
           </div>
         </div>
 
-        {/* 두 번째, 제휴카드 할인 */}
-        <div className="flex items-center justify-center gap-2 text-center pt-10 pb-6">
-          <span className="text-3xl lg:text-5xl">💳</span>
-          <div className="text-blue-600 text-3xl lg:text-5xl font-extrabold tracking-tight">두 번째, 제휴카드 할인!</div>
-        </div>
+       {/* 두 번째, 제휴카드 할인 */}
+      <div className="flex items-center justify-center gap-2 text-center pt-10 pb-6">
+        <span className="text-3xl lg:text-5xl">💳</span>
+        <div className="text-blue-600 text-3xl lg:text-5xl font-extrabold tracking-tight">두 번째, 제휴카드 할인!</div>
+      </div>
 
-        <div className="min-w-[767px] mx-auto rounded-[10px] overflow-hidden shadow-[0_4px_24px_0_rgba(0,0,0,0.08)] border border-stone-300">
-          <div className="bg-blue-600 grid grid-cols-3 py-4 text-white font-bold text-center text-sm lg:text-lg">
-            <span>카드사</span><span>카드명</span><span>할인 혜택</span>
-          </div>
-
-          {[
-            { company: "하나카드", cards: ["스카이라이프X하나카드"], benefit: ["30만원 이상 실적 13,000원 할인"] },
-            { company: "국민카드", cards: ["KB국민 알뜰폰 Hub"], benefit: ["30만원~70만원 미만 실적 13,000원 할인"] }
-          ].map((item, i) => (
-            <div key={i} className="grid grid-cols-3 border-t border-stone-300 text-center font-medium text-sm lg:text-base">
-              <div className="border-r border-stone-300 font-bold flex items-center justify-center p-4 bg-stone-50">{item.company}</div>
-              <div className="col-span-2">
-                {item.cards.map((card, idx) => (
-                  <div key={idx} className={`grid grid-cols-2 ${idx !== item.cards.length - 1 ? 'border-b border-stone-300' : ''}`}>
-                    <div className="p-4 border-r border-stone-300 font-bold text-blue-600 flex items-center justify-center">{card}</div>
-                    <div className="p-4 flex items-center justify-center font-bold text-stone-600">{item.benefit[idx]}</div>
-                  </div>
-                ))}
-              </div>
+      {/* 위쪽 컨텐츠들과 width 및 패딩을 완벽히 맞춘 컨테이너 */}
+      <div className="w-full max-w-[1100px] mx-auto mb-10">
+        <div className="overflow-x-auto shadow-[0_4px_24px_0_rgba(0,0,0,0.08)] rounded-[10px] border border-stone-300 bg-white">
+          {/* 핵심 수정: 모바일에서는 가로 스크롤이 되도록 고정 너비 설정 */}
+          <div className="min-w-[767px]">
+            {/* 테이블 헤더 */}
+            <div className="bg-blue-600 grid grid-cols-[150px,1fr,1fr] py-4 text-white font-bold text-center text-sm lg:text-lg rounded-t-[10px]">
+              <span>카드사</span>
+              <span>카드명</span>
+              <span>할인 혜택</span>
             </div>
-          ))}
+
+            {/* 테이블 바디 */}
+            {[
+              { company: "하나카드", cards: ["스카이라이프X하나카드"], benefit: ["30만원 이상 실적 13,000원 할인"] },
+              { company: "국민카드", cards: ["KB국민 알뜰폰 Hub"], benefit: ["30만원~70만원 미만 실적 13,000원 할인"] }
+            ].map((item, i) => (
+              <div key={i} className="grid grid-cols-[150px,1fr,1fr] border-t border-stone-300 text-center font-medium text-sm lg:text-base items-stretch last:rounded-b-[10px]">
+                
+                {/* 카드사 영역 (고정 너비) */}
+                <div className="border-r border-stone-300 font-bold flex items-center justify-center p-4 bg-stone-50 h-full">
+                  {item.company}
+                </div>
+
+                {/* 카드명 영역 */}
+                <div className="border-r border-stone-300 font-bold text-blue-600 flex items-center justify-center p-4 px-1 h-full">
+                  {item.cards[0]}
+                </div>
+
+                {/* 할인 혜택 영역 */}
+                <div className="flex items-center justify-center font-bold text-stone-600 p-4 px-1 h-full">
+                  {item.benefit[0]}
+                </div>
+
+              </div>
+            ))}
+          </div>
         </div>
+      </div>
 
         <p className="text-stone-500 lg:text-3xl text-xl text-center !leading-[1.5] lg:pt-10 pt-6">
           아니 안그래도 싼데 제휴카드할인까지 받으면 대체 얼마에 이용이 가능한거야?<br />
