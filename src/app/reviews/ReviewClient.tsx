@@ -81,18 +81,28 @@ export default function ReviewClient({ initialReviews }: { initialReviews: any[]
 
   return (
     <main className="min-h-screen bg-slate-50 mb-10">
-      {/* 헤더 섹션: REVIEW 글자가 아래 카드와 정확히 width 라인이 맞도록 내부 컨테이너 구조 수정 */}
-      <div className="border-b border-slate-100 mb-8 md:mb-10 bg-white">
-        <div className="mx-auto w-full max-w-[1100px] py-12 md:py-16 px-4 relative overflow-hidden">
-          <div className="relative z-10">
+      {/* 헤더 섹션: Grid 레이아웃으로 변경하여 텍스트와 워터마크를 완벽하게 중앙 정렬 */}
+      <div className="border-b border-slate-100 mb-8 md:mb-10 bg-white relative overflow-hidden">
+        {/* 핵심 수정: mx-auto w-full max-w-[1100px] 컨테이너 안에 grid 배치 */}
+        <div className="mx-auto w-full max-w-[1100px] py-12 md:py-16 px-4 grid grid-cols-1 md:grid-cols-[1fr,auto,1fr] items-center gap-8 relative">
+          
+          {/* 왼쪽 영역 (빈 공간) */}
+          <div></div>
+
+          {/* 중앙 영역: 텍스트 콘텐츠 */}
+          <div className="text-center md:text-left relative z-10">
             <h1 className="text-3xl md:text-4xl font-extrabold text-slate-950 tracking-tight">고객 후기</h1>
             <p className="text-slate-600 mt-3 md:mt-4 text-xs md:text-sm font-medium leading-relaxed">
               이음통신을 이용하신 고객님들의 실제 목소리입니다. <br />
               소중한 경험을 나누어 주셔서 감사합니다.
             </p>
           </div>
-          {/* REVIEW 글자가 카드 container width 안쪽 우측에 딱 맞게 정렬되도록 조정 */}
-          <span className="hidden md:block absolute right-0 bottom-0 translate-y-4 text-[160px] font-black text-slate-100/80 pointer-events-none select-none leading-none z-0">
+          
+          {/* 오른쪽 영역 (빈 공간) */}
+          <div></div>
+
+          {/* 배경 워터마크 (Grid 중앙 셀에 맞춰 배치됨) */}
+          <span className="hidden md:block absolute inset-y-0 left-1/2 -translate-x-1/2 text-[240px] font-black text-slate-100/60 pointer-events-none select-none leading-none self-center z-0">
             REVIEW
           </span>
         </div>
