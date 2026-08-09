@@ -102,7 +102,7 @@ export default function ReviewClient({ initialReviews }: { initialReviews: any[]
           <div></div>
 
           {/* 배경 워터마크 (Grid 중앙 셀에 맞춰 배치됨) */}
-          <span className="hidden md:block absolute inset-y-0 left-1/2 -translate-x-1/2 text-[240px] font-black text-slate-100/60 pointer-events-none select-none leading-none self-center z-0">
+          <span className="hidden md:block absolute inset-y-0 left-1/2 -translate-x-1/2 text-[120px] font-black text-slate-100/60 pointer-events-none select-none leading-none self-center z-0">
             REVIEW
           </span>
         </div>
