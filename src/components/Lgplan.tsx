@@ -346,7 +346,7 @@ export default function LgPlan() {
 </section>
 
 
-      {/* 두 번째, 제휴카드 할인 */}
+     {/* 두 번째, 제휴카드 할인 */}
 <div className="flex items-center justify-center gap-2 text-center pt-10 pb-6">
   <span className="text-3xl lg:text-5xl">💳</span>
   <div className="text-blue-600 text-3xl lg:text-5xl font-extrabold tracking-tight">두 번째, 제휴카드 할인!</div>
@@ -356,7 +356,7 @@ export default function LgPlan() {
 <div className="w-full max-w-[1100px] mx-auto mb-10">
   <div className="overflow-x-auto shadow-[0_4px_24px_0_rgba(0,0,0,0.08)] rounded-[10px] border border-stone-300 bg-white">
     
-    {/* 모바일 화면에서 잘리지 않고 가로 스크롤되도록 최소 너비 설정 */}
+    {/* 핵심 수정: 모바일 화면에서 잘리지 않고 가로 스크롤이 되도록 고정 너비 설정 */}
     <div className="min-w-[767px]">
       
       {/* 테이블 헤더: 150px, 1fr, 1fr 구조 */}
@@ -391,27 +391,27 @@ export default function LgPlan() {
               {item.company}
             </div>
 
-            {/* 카드가 1개일 때와 2개 이상일 때를 분기 처리하여 완벽하게 정렬 */}
+            {/* 핵심 수정: 그리드 자식 요소가 레이아웃을 벗어나지 않고 스크롤되도록 min-w-0 추가 */}
             {rowSpan === 1 ? (
               <>
                 {/* 카드명 */}
-                <div className="border-r border-stone-300 font-bold text-blue-600 flex items-center justify-center p-4 px-1">
+                <div className="border-r border-stone-300 font-bold text-blue-600 flex items-center justify-center p-4 px-1 min-w-0">
                   {item.cards[0]}
                 </div>
                 {/* 할인 혜택 */}
-                <div className="flex items-center justify-center font-bold text-stone-600 p-4 px-1">
+                <div className="flex items-center justify-center font-bold text-stone-600 p-4 px-1 min-w-0">
                   {item.benefit[0]}
                 </div>
               </>
             ) : (
               /* 카드가 2개 이상인 경우 (하나카드 등) 두 컬럼을 통째로 차지하며 내부에서 세로로 쪼개짐 */
-              <div className="col-span-2 flex flex-col w-full">
+              <div className="col-span-2 flex flex-col w-full min-w-0">
                 {item.cards.map((card, idx) => (
                   <div key={idx} className={`grid grid-cols-2 w-full ${idx !== rowSpan - 1 ? 'border-b border-stone-300' : ''}`}>
-                    <div className="border-r border-stone-300 font-bold text-blue-600 flex items-center justify-center p-4 px-1">
+                    <div className="border-r border-stone-300 font-bold text-blue-600 flex items-center justify-center p-4 px-1 min-w-0">
                       {card}
                     </div>
-                    <div className="flex items-center justify-center font-bold text-stone-600 p-4 px-1">
+                    <div className="flex items-center justify-center font-bold text-stone-600 p-4 px-1 min-w-0">
                       {item.benefit[idx]}
                     </div>
                   </div>
