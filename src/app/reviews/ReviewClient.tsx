@@ -6,7 +6,6 @@ import Link from 'next/link';
 import { Search, ChevronLeft, ChevronRight, Trash2, Camera, Star } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 
-// Helper functions (unchanged)
 const maskName = (name: string) => {
   if (!name || name.length <= 1) return name;
   return name.charAt(0) + '*'.repeat(name.length - 1);
@@ -29,9 +28,8 @@ const hasImage = (url: any) => {
   return trimmed !== '' && trimmed !== 'null' && trimmed !== 'undefined' && trimmed !== 'none';
 };
 
-// Mock function to get a placeholder star rating (since it's not in the original data)
 const getStarRating = (id: number) => {
-  return 5; // All reviews get 5 stars as per the example design
+  return 5;
 };
 
 export default function ReviewClient({ initialReviews }: { initialReviews: any[] }) {
@@ -41,7 +39,7 @@ export default function ReviewClient({ initialReviews }: { initialReviews: any[]
   const [category, setCategory] = useState('전체');
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
-  const ITEMS_PER_PAGE = 9; // Changed to a multiple of 3 for grid layout
+  const ITEMS_PER_PAGE = 9;
 
   const filteredReviews = initialReviews.filter((review) => {
     const matchesCategory = category === '전체' || review.category === category;
@@ -92,8 +90,8 @@ export default function ReviewClient({ initialReviews }: { initialReviews: any[]
             소중한 경험을 나누어 주셔서 감사합니다.
           </p>
         </div>
-        {/* 워터마크 */}
-        <span className="absolute -right-10 -bottom-10 text-[180px] font-black text-slate-100/70 rotate-[-5deg] pointer-events-none select-none">
+        {/* 모바일에서는 숨기고 PC에서만 보이도록 hidden md:block 적용 */}
+        <span className="hidden md:block absolute -right-10 -bottom-10 text-[180px] font-black text-slate-100/70 rotate-[-5deg] pointer-events-none select-none">
           REVIEW
         </span>
       </div>
@@ -138,11 +136,10 @@ export default function ReviewClient({ initialReviews }: { initialReviews: any[]
           </div>
         )}
 
-        {/* [공통] 앨범형 그리드 뷰 */}
+        {/* 앨범형 그리드 뷰 */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {currentReviews.map((review) => (
             <div key={review.id} className="bg-white border border-slate-100 rounded-2xl p-4 flex flex-col gap-4 shadow-sm hover:shadow-lg transition-shadow duration-300 relative group">
-              {/* 관리자 체크박스 */}
               {isAdmin && (
                 <div className="absolute top-4 right-4 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
                   <input 
@@ -154,7 +151,6 @@ export default function ReviewClient({ initialReviews }: { initialReviews: any[]
                 </div>
               )}
 
-              {/* 이미지 영역 */}
               <Link href={`/reviews/${review.id}`} className="block aspect-[4/3] overflow-hidden rounded-xl relative bg-slate-100">
                 {hasImage(review.image_url) ? (
                   <img 
@@ -167,11 +163,9 @@ export default function ReviewClient({ initialReviews }: { initialReviews: any[]
                     <Camera size={40} strokeWidth={1.5} />
                   </div>
                 )}
-                {/* 카테고리 태그 */}
                 <span className="absolute top-3 left-3 font-bold text-[10px] tracking-wider text-indigo-700 bg-indigo-50 px-2.5 py-1 rounded-full uppercase shadow-inner">
                   {review.category}
                 </span>
-                {/* N 마크 */}
                 {isNewPost(review.date) && (
                   <span className="absolute top-3 right-3 bg-red-500 text-white text-[10px] font-extrabold px-1.5 py-0.5 rounded-full leading-none">
                     N
@@ -179,7 +173,6 @@ export default function ReviewClient({ initialReviews }: { initialReviews: any[]
                 )}
               </Link>
 
-              {/* 텍스트 영역 */}
               <div className="flex-1 flex flex-col justify-between gap-4">
                 <div className="flex flex-col gap-1.5">
                   <Link href={`/reviews/${review.id}`} className="hover:underline">
@@ -187,7 +180,6 @@ export default function ReviewClient({ initialReviews }: { initialReviews: any[]
                       {review.title}
                     </h3>
                   </Link>
-                  {/* 별점 예시 (데이터에 없으므로 고정값) */}
                   <div className="flex items-center gap-0.5 text-amber-400">
                     {[...Array(getStarRating(review.id))].map((_, i) => (
                       <Star key={i} size={14} fill="currentColor" strokeWidth={0} />
@@ -195,7 +187,6 @@ export default function ReviewClient({ initialReviews }: { initialReviews: any[]
                   </div>
                 </div>
 
-                {/* 작성자 정보 및 날짜 */}
                 <div className="flex items-center justify-between text-sm text-slate-600 border-t border-slate-100 pt-4">
                   <span className="font-medium">{maskName(review.user_name)}</span>
                   <span className="text-slate-400 text-xs">{review.date}</span>
