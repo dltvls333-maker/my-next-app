@@ -293,7 +293,7 @@ export default function LgPlan() {
     {/* 모바일 화면에서 잘리지 않고 가로 스크롤되도록 최소 너비 설정 */}
     <div className="min-w-[767px]">
       
-      {/* 테이블 헤더 */}
+      {/* 테이블 헤더: 160px, 1fr, 1fr 구조 */}
       <div className="bg-blue-600 grid grid-cols-[160px_1fr_1fr] py-4 text-white font-bold text-center text-sm lg:text-lg rounded-t-[10px]">
         <span>카드사</span>
         <span>카드명</span>
@@ -318,39 +318,38 @@ export default function LgPlan() {
       ].map((item, i) => {
         const rowSpan = item.cards.length;
         return (
-          <div key={i} className="grid grid-cols-[160px_1fr] border-t border-stone-300 text-center font-medium text-sm lg:text-base last:rounded-b-[10px] items-stretch">
+          <div key={i} className="grid grid-cols-[160px_1fr_1fr] border-t border-stone-300 text-center font-medium text-sm lg:text-base last:rounded-b-[10px] items-stretch">
             
-            {/* 카드사 영역 (세로로 길게 병합된 것처럼 가운데 정렬) */}
+            {/* 카드사 영역 */}
             <div className="border-r border-stone-300 font-bold flex items-center justify-center p-4 bg-stone-50 min-w-0">
               {item.company}
             </div>
 
-            {/* 카드명 및 할인 혜택 영역 */}
-            <div className="grid grid-cols-2 w-full min-w-0">
-              {rowSpan === 1 ? (
-                <>
-                  <div className="border-r border-stone-300 font-bold text-blue-600 flex items-center justify-center p-4 px-1 min-w-0">
-                    {item.cards[0]}
-                  </div>
-                  <div className="flex items-center justify-center font-bold text-stone-600 p-4 px-1 min-w-0">
-                    {item.benefit[0]}
-                  </div>
-                </>
-              ) : (
-                <div className="col-span-2 flex flex-col w-full min-w-0">
-                  {item.cards.map((card, idx) => (
-                    <div key={idx} className={`grid grid-cols-2 w-full ${idx !== rowSpan - 1 ? 'border-b border-stone-300' : ''}`}>
-                      <div className="border-r border-stone-300 font-bold text-blue-600 flex items-center justify-center p-4 px-1 min-w-0">
-                        {card}
-                      </div>
-                      <div className="flex items-center justify-center font-bold text-stone-600 p-4 px-1 min-w-0">
-                        {item.benefit[idx]}
-                      </div>
-                    </div>
-                  ))}
+            {/* 카드가 1개일 때 */}
+            {rowSpan === 1 ? (
+              <>
+                <div className="border-r border-stone-300 font-bold text-blue-600 flex items-center justify-center p-4 px-1 min-w-0">
+                  {item.cards[0]}
                 </div>
-              )}
-            </div>
+                <div className="flex items-center justify-center font-bold text-stone-600 p-4 px-1 min-w-0">
+                  {item.benefit[0]}
+                </div>
+              </>
+            ) : (
+              /* 카드가 2개 이상인 경우 (하나카드 등): 남은 2개의 열 공간 안에서 세로로 깔끔하게 분할 */
+              <div className="col-span-2 grid grid-cols-2 w-full min-w-0">
+                {item.cards.map((card, idx) => (
+                  <React.Fragment key={idx}>
+                    <div className={`border-r border-stone-300 font-bold text-blue-600 flex items-center justify-center p-4 px-1 min-w-0 ${idx !== rowSpan - 1 ? 'border-b border-stone-300' : ''}`}>
+                      {card}
+                    </div>
+                    <div className={`flex items-center justify-center font-bold text-stone-600 p-4 px-1 min-w-0 ${idx !== rowSpan - 1 ? 'border-b border-stone-300' : ''}`}>
+                      {item.benefit[idx]}
+                    </div>
+                  </React.Fragment>
+                ))}
+              </div>
+            )}
 
           </div>
         );
