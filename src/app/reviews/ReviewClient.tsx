@@ -28,8 +28,9 @@ const hasImage = (url: any) => {
   return trimmed !== '' && trimmed !== 'null' && trimmed !== 'undefined' && trimmed !== 'none';
 };
 
+// Mock function to get a placeholder star rating
 const getStarRating = (id: number) => {
-  return 5;
+  return 5; // All reviews get 5 stars as per example design
 };
 
 export default function ReviewClient({ initialReviews }: { initialReviews: any[] }) {
@@ -81,30 +82,32 @@ export default function ReviewClient({ initialReviews }: { initialReviews: any[]
 
   return (
     <main className="min-h-screen bg-slate-50 mb-10">
-      {/* 헤더 섹션 (양옆 사이즈 통일, 기울기 제거) */}
+      {/* 1. 헤더 섹션: 배경 흰색, 양옆 패딩 적용 */}
       <div className="border-b border-slate-100 mb-8 md:mb-10 relative overflow-hidden bg-white">
+        {/* 2. 핵심 수정: 모든 섹션이 동일한 너비 범위에 오도록 내부 컨테이너 클래스 통일 */}
         <div className="mx-auto w-full max-w-[1100px] py-12 md:py-16 px-4">
-          <h1 className="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight">고객 후기</h1>
+          <h1 className="text-3xl md:text-4xl font-extrabold text-slate-950 tracking-tight">고객 후기</h1>
           <p className="text-slate-600 mt-3 md:mt-4 text-xs md:text-sm font-medium leading-relaxed">
             이음통신을 이용하신 고객님들의 실제 목소리입니다. <br />
             소중한 경험을 나누어 주셔서 감사합니다.
           </p>
         </div>
-        {/* 모바일에서는 숨기고 PC에서만 보이도록 hidden md:block 적용, rotate 제거 */}
         <span className="hidden md:block absolute -right-10 -bottom-10 text-[180px] font-black text-slate-100/70 pointer-events-none select-none">
           REVIEW
         </span>
       </div>
 
+      {/* 3. 핵심 수정: 헤더와 아래 그리드를 감싸는 공통 컨테이너 설정 */}
       <div className="mx-auto w-full max-w-[1100px] px-4">
-        {/* 상단 필터 및 검색바 영역 (양옆 사이즈 통일) */}
+        
+        {/* 상단 필터 및 검색바 영역: 이전과 동일하게 흰색 박스 처리 */}
         <div className="flex flex-col md:flex-row justify-between items-center gap-6 mb-10 p-5 bg-white rounded-2xl shadow-sm border border-slate-100">
-          <div className="flex gap-2 overflow-x-auto pb-1 md:pb-0 scrollbar-none w-full md:w-auto justify-center md:justify-start">
+          <div className="flex gap-2 overflow-x-auto pb-1 md:pb-0 scrollbar-none w-full md:w-auto justify-start">
             {['전체', '인터넷', 'TV', '휴대폰', '렌탈'].map((cat) => (
               <button 
                 key={cat} 
                 onClick={() => setCategory(cat)}
-                className={`cursor-pointer text-xs md:text-sm font-bold px-4 py-2 rounded-full transition-all flex-shrink-0 ${category === cat ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'}`}
+                className={`cursor-pointer text-xs md:text-sm font-bold px-4 py-2 rounded-full transition-all flex-shrink-0 ${category === cat ? 'bg-slate-950 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}
               >
                 {cat}
               </button>
@@ -118,25 +121,25 @@ export default function ReviewClient({ initialReviews }: { initialReviews: any[]
                 placeholder="제목으로 검색하세요" 
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full pl-4 pr-10 py-2.5 bg-slate-100 border border-slate-200 rounded-full text-sm focus:bg-white focus:ring-2 focus:ring-slate-900 focus:border-slate-900 outline-none transition-all" 
+                className="w-full pl-4 pr-10 py-2.5 bg-slate-100 border border-slate-200 rounded-full text-sm focus:bg-white focus:ring-2 focus:ring-slate-950 focus:border-slate-950 outline-none transition-all" 
               />
               <Search className="absolute right-3.5 top-2.5 text-slate-400" size={18} />
             </div>
-            <Link href="/reviews/write" className="bg-slate-900 text-white px-6 py-2.5 text-sm font-bold hover:bg-slate-700 transition text-center rounded-full flex-shrink-0">
+            <Link href="/reviews/write" className="bg-slate-950 text-white px-6 py-2.5 text-sm font-bold hover:bg-slate-800 transition text-center rounded-full flex-shrink-0">
               글쓰기
             </Link>
           </div>
         </div>
 
         {isAdmin && selectedIds.length > 0 && (
-          <div className="mx-auto mb-4 flex justify-end">
+          <div className="mb-4 flex justify-end">
             <button onClick={handleDeleteSelected} className="flex items-center gap-2 bg-red-600 text-white px-4 py-2 rounded-lg font-bold hover:bg-red-700 text-sm">
               <Trash2 size={16} /> 선택 삭제 ({selectedIds.length})
             </button>
           </div>
         )}
 
-        {/* 앨범형 그리드 뷰 (양옆 사이즈 통일) */}
+        {/* 앨범형 그리드 뷰: 이전과 동일 */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {currentReviews.map((review) => (
             <div key={review.id} className="bg-white border border-slate-100 rounded-2xl p-4 flex flex-col gap-4 shadow-sm hover:shadow-lg transition-shadow duration-300 relative group">
@@ -146,7 +149,7 @@ export default function ReviewClient({ initialReviews }: { initialReviews: any[]
                     type="checkbox" 
                     checked={selectedIds.includes(review.id)} 
                     onChange={() => toggleSelect(review.id)}
-                    className="w-5 h-5 accent-slate-900 rounded cursor-pointer"
+                    className="w-5 h-5 accent-slate-950 rounded cursor-pointer"
                   />
                 </div>
               )}
@@ -201,7 +204,7 @@ export default function ReviewClient({ initialReviews }: { initialReviews: any[]
           ))}
         </div>
 
-        {/* 페이지네이션 영역 (양옆 사이즈 통일) */}
+        {/* 페이지네이션 영역: 이전과 동일 */}
         {totalPages > 1 && (
           <div className="flex justify-center items-center gap-2 mt-12 mb-6">
             <button
@@ -221,7 +224,7 @@ export default function ReviewClient({ initialReviews }: { initialReviews: any[]
                   onClick={() => setCurrentPage(page)}
                   className={`w-10 h-10 rounded-full text-sm font-bold transition-all duration-200 ${
                     isActive
-                      ? 'bg-slate-900 text-white shadow-lg scale-105'
+                      ? 'bg-slate-950 text-white shadow-lg scale-105'
                       : 'text-slate-600 hover:bg-slate-200 hover:text-slate-950 bg-slate-100'
                   }`}
                 >
