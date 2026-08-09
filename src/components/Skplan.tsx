@@ -212,15 +212,14 @@ export default function SkPlan() {
       </div>
 
       {/* 두 번째, 제휴카드 할인 */}
-      <div className="flex items-center justify-center gap-2 text-center pt-10 pb-6 px-4">
+      <div className="flex items-center justify-center gap-2 text-center pt-10 pb-6">
         <span className="text-3xl lg:text-5xl">💳</span>
         <div className="text-primary text-3xl lg:text-5xl font-extrabold tracking-tight">두 번째, 제휴카드 할인!</div>
       </div>
 
-      {/* 핵심 수정 부분: 외부 컨테이너에 스크롤 설정, 내부 컨테이너에 최소 너비 설정 */}
-      <div className="w-full max-w-[1100px] mx-auto px-4 mb-10">
+      {/* 위쪽 컨텐츠들과 width 및 패딩을 완벽히 맞춘 컨테이너 */}
+      <div className="w-full max-w-[1100px] mx-auto mb-10">
         <div className="overflow-x-auto shadow-[0_4px_24px_0_rgba(0,0,0,0.08)] rounded-[10px] border border-stone-300">
-          {/* 표 내용이 최소 너비보다 작아지지 않도록 설정 */}
           <div className="min-w-[767px]">
             <div className="bg-blue-600 grid grid-cols-3 py-4 text-white font-bold text-center text-sm lg:text-lg rounded-t-[10px]">
               <span>카드사</span><span>카드명</span><span>할인 혜택</span>
@@ -236,10 +235,6 @@ export default function SkPlan() {
               </div>
             ))}
           </div>
-        </div>
-        {/* 모바일에서 스크롤 가능함을 시각적으로 표시하는 힌트 (선택 사항) */}
-        <div className="text-center text-xs text-slate-400 mt-2 md:hidden">
-          ← 좌우로 스크롤 하여 확인하세요 →
         </div>
       </div>
 
