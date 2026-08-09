@@ -12,7 +12,6 @@ export default function Header() {
   const [isBannerVisible, setIsBannerVisible] = useState(true);
   const [logo, setLogo] = useState<{ logo_path: string; logo_name: string } | null>(null);
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
-  // 기본 활성 메뉴를 첫 번째 메뉴 또는 '홈'으로 설정
   const [activeMenu, setActiveMenu] = useState<string>('');
 
   useEffect(() => {
@@ -22,16 +21,27 @@ export default function Header() {
       .then((data) => setLogo(data))
       .catch((err) => console.error("로고 로드 실패:", err));
 
-    // 2. 메뉴 데이터 로드 (DB 연동 API 호출)
+    // 2. 메뉴 데이터 로드 및 현재 URL 기반 활성 메뉴 설정
     fetch('/api/menu')
       .then((res) => res.json())
       .then((data) => {
         setMenuItems(data);
         if (data.length > 0) {
-          // 현재 URL 경로와 일치하는 메뉴가 있다면 활성화, 없으면 첫 번째 메뉴 기본 선택
           const currentPath = window.location.pathname;
-          const matched = data.find((item: MenuItem) => item.link === currentPath);
-          setActiveMenu(matched ? matched.name : data[0].name);
+          // 현재 URL과 일치하는 메뉴 찾기 (정확히 일치하거나 해당 경로로 시작하는 경우)
+          const matched = data.find((item: MenuItem) => 
+            currentPath === item.link || (item.link !== '/' && currentPath.startsWith(item.link))
+          );
+          
+          if (matched) {
+            setActiveMenu(matched.name);
+          } else if (currentPath === '/') {
+            // 메인 홈피인 경우 '홈' 또는 첫 번째 메뉴 찾기
+            const homeMenu = data.find((item: MenuItem) => item.link === '/' || item.name === '홈');
+            setActiveMenu(homeMenu ? homeMenu.name : data[0].name);
+          } else {
+            setActiveMenu(data[0].name);
+          }
         }
       })
       .catch((err) => console.error("메뉴 로드 실패:", err));
@@ -93,7 +103,7 @@ export default function Header() {
           </div>
         </div>
 
-        {/* 모바일 전용 로고 밑 가로 메뉴 영역 (클릭 시 하단 가로선 이동) */}
+        {/* 모바일 전용 로고 밑 가로 메뉴 영역 (현재 URL에 맞는 메뉴에 하단바 표시) */}
         <div className="md:hidden py-3 px-2 border-t border-slate-100 overflow-x-auto whitespace-nowrap scrollbar-none">
           <nav className="flex items-center justify-around w-full text-[15px] font-semibold text-[#334155]">
             {menuItems.map((item, index) => {
@@ -106,7 +116,6 @@ export default function Header() {
                   className={`transition px-3 py-1 relative pb-3 ${isActive ? 'text-[#2d433f] font-bold' : 'hover:text-[#2d433f]'}`}
                 >
                   {item.name}
-                  {/* 클릭된 메뉴 하단에 가로선 표시 */}
                   {isActive && (
                     <span className="absolute bottom-0 left-0 w-full h-[3px] bg-[#2d433f] rounded-full transition-all duration-300"></span>
                   )}
