@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 
-// DB에서 받아올 메뉴 데이터의 타입 정의
 interface MenuItem {
   name: string;
   link: string;
@@ -13,7 +12,8 @@ export default function Header() {
   const [isBannerVisible, setIsBannerVisible] = useState(true);
   const [logo, setLogo] = useState<{ logo_path: string; logo_name: string } | null>(null);
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
-  const [activeMenu, setActiveMenu] = useState('홈'); // 현재 선택된 메뉴 상태 예시
+  // 기본 활성 메뉴를 첫 번째 메뉴 또는 '홈'으로 설정
+  const [activeMenu, setActiveMenu] = useState<string>('');
 
   useEffect(() => {
     // 1. 로고 데이터 로드
@@ -25,13 +25,21 @@ export default function Header() {
     // 2. 메뉴 데이터 로드 (DB 연동 API 호출)
     fetch('/api/menu')
       .then((res) => res.json())
-      .then((data) => setMenuItems(data))
+      .then((data) => {
+        setMenuItems(data);
+        if (data.length > 0) {
+          // 현재 URL 경로와 일치하는 메뉴가 있다면 활성화, 없으면 첫 번째 메뉴 기본 선택
+          const currentPath = window.location.pathname;
+          const matched = data.find((item: MenuItem) => item.link === currentPath);
+          setActiveMenu(matched ? matched.name : data[0].name);
+        }
+      })
       .catch((err) => console.error("메뉴 로드 실패:", err));
   }, []);
 
   return (
     <header className="sticky top-0 z-50 w-full bg-white border-b border-slate-100 shadow-[0_1px_3px_0_rgba(0,0,0,0.05)]">
-      {/* 상단 광고 배너 (이미지의 짙은 청록/초록빛 계열 색상 적용) */}
+      {/* 상단 광고 배너 */}
       {isBannerVisible && (
         <div className="bg-[#2d433f] text-white py-2.5 px-4 text-center text-[13px] md:text-[14px] flex justify-center items-center relative">
           <p>🎉 지금 가입하면 최대 250만원 지원! 이음통신 특별 혜택을 확인하세요.</p>
@@ -63,6 +71,7 @@ export default function Header() {
                 <a 
                   key={index} 
                   href={item.link} 
+                  onClick={() => setActiveMenu(item.name)}
                   className={`text-[17px] font-semibold transition ${activeMenu === item.name ? 'text-[#2d433f] font-bold' : 'text-[#334155] hover:text-[#2d433f]'}`}
                 >
                   {item.name}
@@ -84,7 +93,7 @@ export default function Header() {
           </div>
         </div>
 
-        {/* 모바일 전용 로고 밑 가로 메뉴 영역 (이미지 하단바 스타일 반영) */}
+        {/* 모바일 전용 로고 밑 가로 메뉴 영역 (클릭 시 하단 가로선 이동) */}
         <div className="md:hidden py-3 px-2 border-t border-slate-100 overflow-x-auto whitespace-nowrap scrollbar-none">
           <nav className="flex items-center justify-around w-full text-[15px] font-semibold text-[#334155]">
             {menuItems.map((item, index) => {
@@ -93,12 +102,13 @@ export default function Header() {
                 <a 
                   key={index} 
                   href={item.link} 
-                  className={`transition px-3 py-1 relative ${isActive ? 'text-[#2d433f] font-bold' : 'hover:text-[#2d433f]'}`}
+                  onClick={() => setActiveMenu(item.name)}
+                  className={`transition px-3 py-1 relative pb-3 ${isActive ? 'text-[#2d433f] font-bold' : 'hover:text-[#2d433f]'}`}
                 >
                   {item.name}
-                  {/* 선택된 메뉴 하단 바 표시 */}
+                  {/* 클릭된 메뉴 하단에 가로선 표시 */}
                   {isActive && (
-                    <span className="absolute bottom-[-12px] left-0 w-full h-[3px] bg-[#2d433f] rounded-full"></span>
+                    <span className="absolute bottom-0 left-0 w-full h-[3px] bg-[#2d433f] rounded-full transition-all duration-300"></span>
                   )}
                 </a>
               );
@@ -114,8 +124,11 @@ export default function Header() {
             <a 
               key={index} 
               href={item.link} 
-              className="block px-4 py-4 text-[16px] font-medium text-[#334155] hover:bg-slate-50 rounded-lg" 
-              onClick={() => setIsOpen(false)}
+              onClick={() => {
+                setActiveMenu(item.name);
+                setIsOpen(false);
+              }}
+              className={`block px-4 py-4 text-[16px] font-medium rounded-lg ${activeMenu === item.name ? 'text-[#2d433f] font-bold bg-slate-50' : 'text-[#334155] hover:bg-slate-50'}`} 
             >
               {item.name}
             </a>
