@@ -75,7 +75,7 @@ export default function ConsultationForm() {
       <div className="fixed bottom-6 left-0 right-0 flex justify-center z-50 pointer-events-none px-4">
         <button
           onClick={() => setIsModalOpen(true)}
-          className="pointer-events-auto bg-[#2563eb] text-white px-8 py-4 rounded-full shadow-lg font-bold text-[17px] hover:bg-blue-700 transition transform hover:scale-105"
+          className="pointer-events-auto bg-[#E7710F] text-white px-8 py-4 rounded-full shadow-lg font-bold text-[17px] hover:bg-[#d0640d] transition transform hover:scale-105"
         >
           비밀지원금 안내받기
         </button>
