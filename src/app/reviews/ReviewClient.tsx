@@ -80,8 +80,8 @@ export default function ReviewClient({ initialReviews }: { initialReviews: any[]
   };
 
   return (
-    <main className="min-h-screen bg-slate-50 mb-10 px-4">
-      {/* 헤더 섹션 */}
+    <main className="min-h-screen bg-slate-50 mb-10">
+      {/* 헤더 섹션 (양옆 사이즈 통일, 기울기 제거) */}
       <div className="border-b border-slate-100 mb-8 md:mb-10 relative overflow-hidden bg-white">
         <div className="mx-auto w-full max-w-[1100px] py-12 md:py-16 px-4">
           <h1 className="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight">고객 후기</h1>
@@ -90,14 +90,14 @@ export default function ReviewClient({ initialReviews }: { initialReviews: any[]
             소중한 경험을 나누어 주셔서 감사합니다.
           </p>
         </div>
-        {/* 모바일에서는 숨기고 PC에서만 보이도록 hidden md:block 적용 */}
-        <span className="hidden md:block absolute -right-10 -bottom-10 text-[180px] font-black text-slate-100/70 rotate-[-5deg] pointer-events-none select-none">
+        {/* 모바일에서는 숨기고 PC에서만 보이도록 hidden md:block 적용, rotate 제거 */}
+        <span className="hidden md:block absolute -right-10 -bottom-10 text-[180px] font-black text-slate-100/70 pointer-events-none select-none">
           REVIEW
         </span>
       </div>
 
-      <div className="mx-auto w-full max-w-[1100px]">
-        {/* 상단 필터 및 검색바 영역 */}
+      <div className="mx-auto w-full max-w-[1100px] px-4">
+        {/* 상단 필터 및 검색바 영역 (양옆 사이즈 통일) */}
         <div className="flex flex-col md:flex-row justify-between items-center gap-6 mb-10 p-5 bg-white rounded-2xl shadow-sm border border-slate-100">
           <div className="flex gap-2 overflow-x-auto pb-1 md:pb-0 scrollbar-none w-full md:w-auto justify-center md:justify-start">
             {['전체', '인터넷', 'TV', '휴대폰', '렌탈'].map((cat) => (
@@ -136,7 +136,7 @@ export default function ReviewClient({ initialReviews }: { initialReviews: any[]
           </div>
         )}
 
-        {/* 앨범형 그리드 뷰 */}
+        {/* 앨범형 그리드 뷰 (양옆 사이즈 통일) */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {currentReviews.map((review) => (
             <div key={review.id} className="bg-white border border-slate-100 rounded-2xl p-4 flex flex-col gap-4 shadow-sm hover:shadow-lg transition-shadow duration-300 relative group">
@@ -201,7 +201,7 @@ export default function ReviewClient({ initialReviews }: { initialReviews: any[]
           ))}
         </div>
 
-        {/* 페이지네이션 영역 */}
+        {/* 페이지네이션 영역 (양옆 사이즈 통일) */}
         {totalPages > 1 && (
           <div className="flex justify-center items-center gap-2 mt-12 mb-6">
             <button
