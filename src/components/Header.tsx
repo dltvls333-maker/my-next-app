@@ -13,6 +13,7 @@ export default function Header() {
   const [isBannerVisible, setIsBannerVisible] = useState(true);
   const [logo, setLogo] = useState<{ logo_path: string; logo_name: string } | null>(null);
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
+  const [activeMenu, setActiveMenu] = useState('홈'); // 현재 선택된 메뉴 상태 예시
 
   useEffect(() => {
     // 1. 로고 데이터 로드
@@ -30,9 +31,9 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-50 w-full bg-white border-b border-slate-100 shadow-[0_1px_3px_0_rgba(0,0,0,0.05)]">
-      {/* 상단 광고 배너 */}
+      {/* 상단 광고 배너 (이미지의 짙은 청록/초록빛 계열 색상 적용) */}
       {isBannerVisible && (
-        <div className="bg-[#1e293b] text-white py-2.5 px-4 text-center text-[13px] md:text-[14px] flex justify-center items-center relative">
+        <div className="bg-[#2d433f] text-white py-2.5 px-4 text-center text-[13px] md:text-[14px] flex justify-center items-center relative">
           <p>🎉 지금 가입하면 최대 250만원 지원! 이음통신 특별 혜택을 확인하세요.</p>
           <button onClick={() => setIsBannerVisible(false)} className="absolute right-4 hover:text-slate-300 transition">✕</button>
         </div>
@@ -52,14 +53,18 @@ export default function Header() {
             </a>
           </div>
 
-          {/* PC용 메뉴 + 전화번호 통합 영역 (전화번호를 메뉴보다 왼쪽에 배치) */}
+          {/* PC용 메뉴 + 전화번호 통합 영역 */}
           <div className="hidden md:flex items-center gap-10">
-            <a href="tel:1661-0588" className="flex items-center gap-2 px-5 py-2.5 bg-blue-50 border border-blue-100 rounded-full text-blue-600 font-bold hover:bg-blue-100 transition text-[16px]">
-              <span>📞</span> 1661-0588
+            <a href="tel:1661-0588" className="flex items-center gap-2 px-5 py-2.5 bg-white border border-[#2d433f] rounded-full text-[#ff6600] font-bold hover:bg-slate-50 transition text-[16px]">
+              <span className="text-[#ff6600]">📞</span> 1661-0588
             </a>
             <nav className="flex space-x-10">
               {menuItems.map((item, index) => (
-                <a key={index} href={item.link} className="text-[17px] font-semibold text-[#334155] hover:text-[#2563eb] transition">
+                <a 
+                  key={index} 
+                  href={item.link} 
+                  className={`text-[17px] font-semibold transition ${activeMenu === item.name ? 'text-[#2d433f] font-bold' : 'text-[#334155] hover:text-[#2d433f]'}`}
+                >
                   {item.name}
                 </a>
               ))}
@@ -68,8 +73,8 @@ export default function Header() {
 
           {/* 모바일 햄버거 메뉴 + 전화번호 */}
           <div className="flex md:hidden items-center gap-3">
-            <a href="tel:1661-0588" className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 border border-blue-100 rounded-full text-blue-600 font-bold text-[14px]">
-              <span>📞</span> 1661-0588
+            <a href="tel:1661-0588" className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-[#2d433f] rounded-full text-[#ff6600] font-bold text-[14px]">
+              <span className="text-[#ff6600]">📞</span> 1661-0588
             </a>
             <button onClick={() => setIsOpen(!isOpen)} className="p-2 text-[#475569]">
               <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -79,18 +84,25 @@ export default function Header() {
           </div>
         </div>
 
-        {/* 모바일 전용 로고 밑 가로 메뉴 영역 */}
+        {/* 모바일 전용 로고 밑 가로 메뉴 영역 (이미지 하단바 스타일 반영) */}
         <div className="md:hidden py-3 px-2 border-t border-slate-100 overflow-x-auto whitespace-nowrap scrollbar-none">
-          <nav className="flex items-center justify-between w-full text-[15px] font-semibold text-[#334155]">
-            {menuItems.map((item, index) => (
-              <a 
-                key={index} 
-                href={item.link} 
-                className="hover:text-blue-600 transition px-2"
-              >
-                {item.name}
-              </a>
-            ))}
+          <nav className="flex items-center justify-around w-full text-[15px] font-semibold text-[#334155]">
+            {menuItems.map((item, index) => {
+              const isActive = activeMenu === item.name;
+              return (
+                <a 
+                  key={index} 
+                  href={item.link} 
+                  className={`transition px-3 py-1 relative ${isActive ? 'text-[#2d433f] font-bold' : 'hover:text-[#2d433f]'}`}
+                >
+                  {item.name}
+                  {/* 선택된 메뉴 하단 바 표시 */}
+                  {isActive && (
+                    <span className="absolute bottom-[-12px] left-0 w-full h-[3px] bg-[#2d433f] rounded-full"></span>
+                  )}
+                </a>
+              );
+            })}
           </nav>
         </div>
       </div>
