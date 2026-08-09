@@ -359,6 +359,7 @@ export default function LgPlan() {
     </div>
   </div>
 </div>
+</div>
 
   <p className="text-stone-500 lg:text-3xl text-xl text-center !leading-[1.3] lg:pt-10 pt-6">
 
