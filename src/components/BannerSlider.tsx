@@ -173,7 +173,7 @@ export default function BannerSliderWithForm({ banners }: { banners: any[] }) {
           </div>
 
           {/* ========================================================= */}
-          {/* 2. Swiper 배너 슬라이드 영역                                */}
+          {/* 2. Swiper 배너 슬라이드 영역 (PC / 모바일 이미지 분기)       */}
           {/* ========================================================= */}
           <div className="w-full lg:flex-1 overflow-hidden rounded-2xl md:rounded-3xl shadow-xl bg-transparent">
             <Swiper 
@@ -189,11 +189,14 @@ export default function BannerSliderWithForm({ banners }: { banners: any[] }) {
               {banners.map((banner, index) => (
                 <SwiperSlide key={banner.id || index}>
                   <div className="w-full h-full relative">
+                    {/* 모바일 버전 이미지 (앞에 M_ 이 붙은 필드 우선 참조, 없을 경우 PC 이미지 Fallback) */}
                     <img 
-                      src={banner.mobile_image_url || banner.image_url} 
+                      src={banner.M_image_url || banner.mobile_image_url || banner.image_url} 
                       alt={banner.title || '배너 이미지'} 
                       className="w-full h-full object-cover object-center md:hidden" 
                     />
+                    
+                    {/* PC 버전 이미지 */}
                     <img 
                       src={banner.image_url} 
                       alt={banner.title || '배너 이미지'} 
