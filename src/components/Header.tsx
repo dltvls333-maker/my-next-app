@@ -69,21 +69,26 @@ export default function Header() {
             </a>
           </div>
 
-          {/* PC용 네비게이터 + 전화번호 통합 영역 (순서 변경 완료) */}
+          {/* PC용 네비게이터 + 전화번호 통합 영역 (최소 너비/높이를 잡아 깜빡임/밀림 방지) */}
           <div className="hidden md:flex items-center gap-10">
-            <nav className="flex space-x-10">
-              {menuItems.map((item, index) => (
-                <a 
-                  key={index} 
-                  href={item.link} 
-                  onClick={() => setActiveMenu(item.name)}
-                  className={`text-[17px] font-semibold transition ${activeMenu === item.name ? 'text-[#2d433f] font-bold' : 'text-[#334155] hover:text-[#2d433f]'}`}
-                >
-                  {item.name}
-                </a>
-              ))}
+            <nav className="flex space-x-10 min-h-[28px] items-center">
+              {menuItems.length > 0 ? (
+                menuItems.map((item, index) => (
+                  <a 
+                    key={index} 
+                    href={item.link} 
+                    onClick={() => setActiveMenu(item.name)}
+                    className={`text-[17px] font-semibold transition ${activeMenu === item.name ? 'text-[#2d433f] font-bold' : 'text-[#334155] hover:text-[#2d433f]'}`}
+                  >
+                    {item.name}
+                  </a>
+                ))
+              ) : (
+                /* 로딩 중 공간 유지용 스켈레톤 라인 */
+                <div className="w-[400px] h-5 bg-slate-100 animate-pulse rounded"></div>
+              )}
             </nav>
-            <a href="tel:1661-0588" className="flex items-center gap-2 px-5 py-2.5 bg-white border border-[#2d433f] rounded-full text-[#ff6600] font-bold hover:bg-slate-50 transition text-[16px]">
+            <a href="tel:1661-0588" className="flex items-center gap-2 px-5 py-2.5 bg-white border border-[#2d433f] rounded-full text-[#ff6600] font-bold hover:bg-slate-50 transition text-[16px] shrink-0">
               <span className="text-[#ff6600]">📞</span> 1661-0588
             </a>
           </div>
@@ -102,24 +107,28 @@ export default function Header() {
         </div>
 
         {/* 모바일 전용 로고 밑 가로 메뉴 영역 */}
-        <div className="md:hidden py-3 px-2 border-t border-slate-100 overflow-x-auto whitespace-nowrap scrollbar-none">
+        <div className="md:hidden py-3 px-2 border-t border-slate-100 overflow-x-auto whitespace-nowrap scrollbar-none min-h-[46px]">
           <nav className="flex items-center justify-around w-full text-[15px] font-semibold text-[#334155]">
-            {menuItems.map((item, index) => {
-              const isActive = activeMenu === item.name;
-              return (
-                <a 
-                  key={index} 
-                  href={item.link} 
-                  onClick={() => setActiveMenu(item.name)}
-                  className={`transition px-3 py-1 relative pb-3 ${isActive ? 'text-[#2d433f] font-bold' : 'hover:text-[#2d433f]'}`}
-                >
-                  {item.name}
-                  {isActive && (
-                    <span className="absolute bottom-0 left-0 w-full h-[3px] bg-[#2d433f] rounded-full transition-all duration-300"></span>
-                  )}
-                </a>
-              );
-            })}
+            {menuItems.length > 0 ? (
+              menuItems.map((item, index) => {
+                const isActive = activeMenu === item.name;
+                return (
+                  <a 
+                    key={index} 
+                    href={item.link} 
+                    onClick={() => setActiveMenu(item.name)}
+                    className={`transition px-3 py-1 relative pb-3 ${isActive ? 'text-[#2d433f] font-bold' : 'hover:text-[#2d433f]'}`}
+                  >
+                    {item.name}
+                    {isActive && (
+                      <span className="absolute bottom-0 left-0 w-full h-[3px] bg-[#2d433f] rounded-full transition-all duration-300"></span>
+                    )}
+                  </a>
+                );
+              })
+            ) : (
+              <div className="w-full h-4 bg-slate-100 animate-pulse rounded my-1"></div>
+            )}
           </nav>
         </div>
       </div>
