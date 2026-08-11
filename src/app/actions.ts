@@ -34,6 +34,7 @@ export async function createEmptyBanner() {
       title: "",
       subtitle: "",
       image_url: "/images/placeholder.png",
+      link_url: "", // 모바일 이미지 경로용 필드 추가
       sort_order: 99,
       is_active: true
     },
