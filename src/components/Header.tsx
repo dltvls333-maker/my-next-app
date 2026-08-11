@@ -28,7 +28,6 @@ export default function Header() {
         setMenuItems(data);
         if (data.length > 0) {
           const currentPath = window.location.pathname;
-          // 현재 URL과 일치하는 메뉴 찾기 (정확히 일치하거나 해당 경로로 시작하는 경우)
           const matched = data.find((item: MenuItem) => 
             currentPath === item.link || (item.link !== '/' && currentPath.startsWith(item.link))
           );
@@ -36,7 +35,6 @@ export default function Header() {
           if (matched) {
             setActiveMenu(matched.name);
           } else if (currentPath === '/') {
-            // 메인 홈피인 경우 '홈' 또는 첫 번째 메뉴 찾기
             const homeMenu = data.find((item: MenuItem) => item.link === '/' || item.name === '홈');
             setActiveMenu(homeMenu ? homeMenu.name : data[0].name);
           } else {
@@ -71,11 +69,8 @@ export default function Header() {
             </a>
           </div>
 
-          {/* PC용 메뉴 + 전화번호 통합 영역 */}
+          {/* PC용 네비게이터 + 전화번호 통합 영역 (순서 변경 완료) */}
           <div className="hidden md:flex items-center gap-10">
-            <a href="tel:1661-0588" className="flex items-center gap-2 px-5 py-2.5 bg-white border border-[#2d433f] rounded-full text-[#ff6600] font-bold hover:bg-slate-50 transition text-[16px]">
-              <span className="text-[#ff6600]">📞</span> 1661-0588
-            </a>
             <nav className="flex space-x-10">
               {menuItems.map((item, index) => (
                 <a 
@@ -88,6 +83,9 @@ export default function Header() {
                 </a>
               ))}
             </nav>
+            <a href="tel:1661-0588" className="flex items-center gap-2 px-5 py-2.5 bg-white border border-[#2d433f] rounded-full text-[#ff6600] font-bold hover:bg-slate-50 transition text-[16px]">
+              <span className="text-[#ff6600]">📞</span> 1661-0588
+            </a>
           </div>
 
           {/* 모바일 햄버거 메뉴 + 전화번호 */}
@@ -103,7 +101,7 @@ export default function Header() {
           </div>
         </div>
 
-        {/* 모바일 전용 로고 밑 가로 메뉴 영역 (현재 URL에 맞는 메뉴에 하단바 표시) */}
+        {/* 모바일 전용 로고 밑 가로 메뉴 영역 */}
         <div className="md:hidden py-3 px-2 border-t border-slate-100 overflow-x-auto whitespace-nowrap scrollbar-none">
           <nav className="flex items-center justify-around w-full text-[15px] font-semibold text-[#334155]">
             {menuItems.map((item, index) => {
