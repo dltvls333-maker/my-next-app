@@ -12,7 +12,6 @@ export default function BannerSliderWithForm({ banners }: { banners: any[] }) {
   const [agreed, setAgreed] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // 연락처 자동 하이픈 추가 및 유효성 검사 로직
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let value = e.target.value;
     if (/[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/.test(value)) {
@@ -29,7 +28,6 @@ export default function BannerSliderWithForm({ banners }: { banners: any[] }) {
     setPhone(formattedValue);
   };
 
-  // 실제 DB 전송을 위한 폼 제출 핸들러
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
@@ -78,12 +76,9 @@ export default function BannerSliderWithForm({ banners }: { banners: any[] }) {
     <div className="w-full bg-transparent py-6 md:py-10">
       <div className="w-full px-4 md:px-8">
         
-        {/* 컨테이너: 모바일에서는 슬라이드가 위, 폼이 아래 / 데스크탑은 좌우 나란히 */}
-        <div className="flex flex-col-reverse lg:flex-row items-stretch gap-6">
+        <div className="flex flex-col-reverse lg:flex-row items-center gap-6">
           
-          {/* ========================================================= */}
-          {/* 1. 비밀지원금 신청 폼 (DB 연동 및 유효성 검사 적용 완료)            */}
-          {/* ========================================================= */}
+          {/* 1. 비밀지원금 신청 폼 */}
           <div className="w-full lg:w-[420px] bg-white rounded-2xl md:rounded-3xl shadow-2xl p-6 md:p-8 flex flex-col justify-between shrink-0 border border-slate-100">
             <div>
               <div className="mb-6 pb-4 border-b border-slate-100">
@@ -172,10 +167,8 @@ export default function BannerSliderWithForm({ banners }: { banners: any[] }) {
             </div>
           </div>
 
-          {/* ========================================================= */}
-          {/* 2. Swiper 배너 슬라이드 영역 (PC / 모바일 이미지 분기)       */}
-          {/* ========================================================= */}
-          <div className="w-full lg:flex-1 overflow-hidden rounded-2xl md:rounded-3xl shadow-xl bg-transparent">
+          {/* 2. Swiper 배너 슬라이드 영역 */}
+          <div className="w-full lg:flex-1 overflow-hidden rounded-2xl md:rounded-3xl shadow-xl bg-slate-900">
             <Swiper 
               modules={[Autoplay, Pagination]} 
               loop={true} 
@@ -184,23 +177,24 @@ export default function BannerSliderWithForm({ banners }: { banners: any[] }) {
                 disableOnInteraction: false 
               }} 
               pagination={{ clickable: true }} 
-              className="w-full aspect-[16/10] md:aspect-[21/9] lg:h-full" 
+              // 비율을 유지하면서 프레임 안에 완전히 들어오도록 설정
+              className="w-full aspect-[16/10] md:aspect-[16/9]" 
             >
               {banners.map((banner, index) => (
                 <SwiperSlide key={banner.id || index}>
-                  <div className="w-full h-full relative">
-                    {/* 모바일 버전 이미지 (앞에 M_ 이 붙은 필드 우선 참조, 없을 경우 PC 이미지 Fallback) */}
+                  <div className="w-full h-full relative flex items-center justify-center">
+                    {/* 모바일 버전 이미지 */}
                     <img 
                       src={banner.M_image_url || banner.mobile_image_url || banner.image_url} 
                       alt={banner.title || '배너 이미지'} 
-                      className="w-full h-full object-cover object-center md:hidden" 
+                      className="w-full h-full object-contain md:hidden" 
                     />
                     
                     {/* PC 버전 이미지 */}
                     <img 
                       src={banner.image_url} 
                       alt={banner.title || '배너 이미지'} 
-                      className="w-full h-full object-cover object-center hidden md:block" 
+                      className="w-full h-full object-contain hidden md:block" 
                     />
                     
                     <div className="absolute bottom-[15%] left-[6%] right-[6%] text-white z-10 pointer-events-none">
