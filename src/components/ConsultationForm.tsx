@@ -154,7 +154,7 @@ export default function ConsultationForm() {
               <button 
                 type="submit" 
                 disabled={isSubmitting}
-                className="w-full bg-[#E7710F] text-white py-4 rounded-xl font-bold hover:bg-blue-700 transition active:scale-95 disabled:bg-slate-400"
+                className="w-full bg-[#E7710F] text-white py-4 rounded-xl font-bold  transition active:scale-95 disabled:bg-slate-400"
               >
                 {isSubmitting ? '처리 중...' : '비밀지원금 안내 받기'}
               </button>
