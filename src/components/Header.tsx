@@ -7,35 +7,40 @@ interface MenuItem {
   link: string;
 }
 
+// 기본 하드코딩 메뉴 (로딩 지연 방지 및 즉시 렌더링용)
+const DEFAULT_MENU_ITEMS: MenuItem[] = [
+  { name: '홈', link: '/' },
+  { name: '인터넷', link: '/internet' },
+  { name: '휴대폰', link: '/phone' },
+  { name: '가전렌탈', link: '/rental' },
+  { name: '고객후기', link: '/review' },
+];
+
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
   const [isBannerVisible, setIsBannerVisible] = useState(true);
   const [logo, setLogo] = useState<{ logo_path: string; logo_name: string } | null>(null);
-  const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
-  const [activeMenu, setActiveMenu] = useState<string>('');
-  const Navigation = () => {
-  // 1. 초기값을 이미지에 있는 하드코딩 데이터로 설정하여 로딩 시 바로 뜨게 합니다.
-  const defaultMenuItems = [
-    { name: '홈', link: '/' },
-    { name: '인터넷', link: '/internet' },
-    { name: '휴대폰', link: '/phone' },
-    { name: '가전렌탈', link: '/rental' },
-    { name: '고객후기', link: '/review' },
-  ];
-  const displayMenus = menuItems.length > 0 ? menuItems : defaultMenuItems;
+  
+  // 핵심: 초기 상태를 빈 배열([]) 대신 하드코딩된 기본 메뉴로 채워둡니다.
+  const [menuItems, setMenuItems] = useState<MenuItem[]>(DEFAULT_MENU_ITEMS);
+  const [activeMenu, setActiveMenu] = useState<string>('홈');
+
   useEffect(() => {
     // 1. 로고 데이터 로드
     fetch('/api/logo')
       .then((res) => res.json())
-      .then((data) => setLogo(data))
+      .then((data) => {
+        if (data) setLogo(data);
+      })
       .catch((err) => console.error("로고 로드 실패:", err));
 
-    // 2. 메뉴 데이터 로드 및 현재 URL 기반 활성 메뉴 설정
+    // 2. 메뉴 데이터 로드 및 활성 메뉴 설정
     fetch('/api/menu')
       .then((res) => res.json())
       .then((data) => {
-        setMenuItems(data);
-        if (data.length > 0) {
+        if (data && data.length > 0) {
+          setMenuItems(data); // DB 데이터로 교체
+          
           const currentPath = window.location.pathname;
           const matched = data.find((item: MenuItem) => 
             currentPath === item.link || (item.link !== '/' && currentPath.startsWith(item.link))
@@ -78,10 +83,10 @@ export default function Header() {
             </a>
           </div>
 
-          {/* PC용 네비게이터 + 전화번호 통합 영역 (최소 너비/높이를 잡아 깜빡임/밀림 방지) */}
+          {/* PC용 네비게이터 + 전화번호 통합 영역 */}
           <div className="hidden md:flex items-center gap-10">
             <nav className="flex space-x-10 min-h-[28px] items-center">
-              {displayMenus.map((item, index) => (
+              {menuItems.map((item, index) => (
                 <a 
                   key={index} 
                   href={item.link} 
@@ -110,29 +115,25 @@ export default function Header() {
           </div>
         </div>
 
-        {/* 모바일 전용 로고 밑 가로 메뉴 영역 */}
+        {/* 모바일 전용 로고 밑 가로 메뉴 영역 (스켈레톤 제거 및 즉시 렌더링) */}
         <div className="md:hidden py-3 px-2 border-t border-slate-100 overflow-x-auto whitespace-nowrap scrollbar-none min-h-[46px]">
           <nav className="flex items-center justify-around w-full text-[15px] font-semibold text-[#334155]">
-            {menuItems.length > 0 ? (
-              menuItems.map((item, index) => {
-                const isActive = activeMenu === item.name;
-                return (
-                  <a 
-                    key={index} 
-                    href={item.link} 
-                    onClick={() => setActiveMenu(item.name)}
-                    className={`transition px-3 py-1 relative pb-3 ${isActive ? 'text-[#2d433f] font-bold' : 'hover:text-[#2d433f]'}`}
-                  >
-                    {item.name}
-                    {isActive && (
-                      <span className="absolute bottom-0 left-0 w-full h-[3px] bg-[#2d433f] rounded-full transition-all duration-300"></span>
-                    )}
-                  </a>
-                );
-              })
-            ) : (
-              <div className="w-full h-4 bg-slate-100 animate-pulse rounded my-1"></div>
-            )}
+            {menuItems.map((item, index) => {
+              const isActive = activeMenu === item.name;
+              return (
+                <a 
+                  key={index} 
+                  href={item.link} 
+                  onClick={() => setActiveMenu(item.name)}
+                  className={`transition px-3 py-1 relative pb-3 ${isActive ? 'text-[#2d433f] font-bold' : 'hover:text-[#2d433f]'}`}
+                >
+                  {item.name}
+                  {isActive && (
+                    <span className="absolute bottom-0 left-0 w-full h-[3px] bg-[#2d433f] rounded-full transition-all duration-300"></span>
+                  )}
+                </a>
+              );
+            })}
           </nav>
         </div>
       </div>
