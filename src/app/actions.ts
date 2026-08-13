@@ -50,10 +50,7 @@ export async function deleteBanner(id: number) {
   revalidatePath('/admin');
 }
 
-import { prisma } from '@/lib/prisma';
-import { revalidatePath } from 'next/cache';
-import fs from 'fs/promises';
-import path from 'path';
+
 
 export async function updateBannerWithFile(id: number, formData: FormData) {
   const title = formData.get('title') as string;
