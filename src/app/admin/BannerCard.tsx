@@ -1,10 +1,12 @@
 "use client";
 
 import { useState } from 'react';
-import { updateBannerWithFile, deleteBanner } from '../actions'; 
+import { updateBannerInfo, deleteBanner } from '../actions'; 
+import { supabase } from '@/lib/supabase';
 
 export default function BannerCard({ banner }: { banner: any }) {
   const [isEditing, setIsEditing] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   
   // PC 및 모바일 미리보기 상태 관리
   const [previewUrl, setPreviewUrl] = useState(banner.image_url);
@@ -18,11 +20,63 @@ export default function BannerCard({ banner }: { banner: any }) {
     }
   };
 
-  // 모바일 파일 변경 핸들러 (link_url 필드용)
+  // 모바일 파일 변경 핸들러
   const handleMFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       setMPreviewUrl(URL.createObjectURL(file));
+    }
+  };
+
+  // 폼 제출 핸들러 (브라우저에서 직접 Supabase 업로드 후 URL만 서버로 전송)
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsSaving(true);
+
+    try {
+      const formData = new FormData(e.currentTarget);
+      const title = formData.get('title') as string;
+      const pcFile = formData.get('image') as File | null;
+      const mobileFile = formData.get('link_url') as File | null;
+
+      let imageUrl = banner.image_url;
+      let linkUrl = banner.link_url;
+
+      // 1. PC 이미지가 새로 선택된 경우 Supabase Storage에 직접 업로드
+      if (pcFile && pcFile instanceof File && pcFile.size > 0) {
+        const fileName = `pc_${banner.id}.png`;
+        const { error } = await supabase.storage
+          .from('banners')
+          .upload(fileName, pcFile, { upsert: true });
+
+        if (error) throw new Error("PC 이미지 업로드 실패: " + error.message);
+
+        const { data } = supabase.storage.from('banners').getPublicUrl(fileName);
+        imageUrl = `${data.publicUrl}?t=${Date.now()}`;
+      }
+
+      // 2. 모바일 이미지가 새로 선택된 경우 Supabase Storage에 직접 업로드
+      if (mobileFile && mobileFile instanceof File && mobileFile.size > 0) {
+        const fileName = `mobile_${banner.id}.png`;
+        const { error } = await supabase.storage
+          .from('banners')
+          .upload(fileName, mobileFile, { upsert: true });
+
+        if (error) throw new Error("모바일 이미지 업로드 실패: " + error.message);
+
+        const { data } = supabase.storage.from('banners').getPublicUrl(fileName);
+        linkUrl = `${data.publicUrl}?t=${Date.now()}`;
+      }
+
+      // 3. 업로드가 완료된 최종 URL과 텍스트 정보를 서버 액션으로 전달하여 DB 갱신
+      await updateBannerInfo(banner.id, title, imageUrl, linkUrl);
+      
+      setIsEditing(false);
+      alert('성공적으로 저장되었습니다!');
+    } catch (error: any) {
+      alert(error.message || '저장 중 오류가 발생했습니다.');
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -43,18 +97,10 @@ export default function BannerCard({ banner }: { banner: any }) {
       <div className="flex-1 flex flex-col justify-center">
         {isEditing ? (
           <form 
-            encType="multipart/form-data" 
-            action={async (formData) => {
-              await updateBannerWithFile(banner.id, formData);
-              setIsEditing(false);
-            }}
+            onSubmit={handleSubmit}
             className="flex flex-col gap-2"
           >
-            <input name="title" defaultValue={banner.title} className="p-1 border rounded text-sm w-full" placeholder="제목" />
-            
-            {/* 기존 이미지 경로 유지용 Hidden fields */}
-            <input type="hidden" name="current_image" defaultValue={banner.image_url} />
-            <input type="hidden" name="current_link_url" defaultValue={banner.link_url} />
+            <input name="title" defaultValue={banner.title} className="p-1 border rounded text-sm w-full" placeholder="제목" required />
             
             {/* PC 이미지 업로드 */}
             <div className="flex flex-col gap-0.5">
@@ -68,9 +114,9 @@ export default function BannerCard({ banner }: { banner: any }) {
               />
             </div>
 
-            {/* 모바일 이미지 업로드 (link_url 컬럼에 M_ 접두사 포함 저장) */}
+            {/* 모바일 이미지 업로드 */}
             <div className="flex flex-col gap-0.5">
-              <label className="text-[10px] font-semibold text-slate-500">모바일 이미지 파일 (M_)</label>
+              <label className="text-[10px] font-semibold text-slate-500">모바일 이미지 파일</label>
               <input 
                 type="file" 
                 name="link_url" 
@@ -81,7 +127,13 @@ export default function BannerCard({ banner }: { banner: any }) {
             </div>
             
             <div className="flex gap-2 mt-1">
-              <button type="submit" className="text-xs bg-indigo-600 text-white px-3 py-1 rounded-lg hover:bg-indigo-700 transition">저장</button>
+              <button 
+                type="submit" 
+                disabled={isSaving}
+                className="text-xs bg-indigo-600 text-white px-3 py-1 rounded-lg hover:bg-indigo-700 transition disabled:bg-slate-400"
+              >
+                {isSaving ? '저장 중...' : '저장'}
+              </button>
               <button 
                 type="button" 
                 onClick={() => { 
