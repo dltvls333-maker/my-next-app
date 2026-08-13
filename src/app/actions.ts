@@ -62,23 +62,35 @@ export async function updateBannerWithFile(id: number, formData: FormData) {
 
   // PC 이미지 업로드
   if (pcFile && pcFile.size > 0) {
+    // 💡 슬래시(/)를 쓰지 않고 순수 파일명만 만듭니다.
     const fileName = `pc_${id}_${Date.now()}.png`;
-    const { error } = await supabase.storage.from('banners').upload(fileName, pcFile);
-    if (error) throw error;
     
-    // 공개 URL 추출
-    const { data } = supabase.storage.from('banners').getPublicUrl(fileName);
-    imageUrl = data.publicUrl;
+    const { error } = await supabase.storage
+      .from('banners')
+      .upload(fileName, pcFile, { upsert: true });
+      
+    if (error) {
+      console.error("PC 업로드 에러:", error);
+      throw new Error("PC 이미지 업로드 실패: " + error.message);
+    }
+    
+    imageUrl = supabase.storage.from('banners').getPublicUrl(fileName).data.publicUrl;
   }
 
   // 모바일 이미지 업로드
   if (mobileFile && mobileFile.size > 0) {
     const fileName = `mobile_${id}_${Date.now()}.png`;
-    const { error } = await supabase.storage.from('banners').upload(fileName, mobileFile);
-    if (error) throw error;
-
-    const { data } = supabase.storage.from('banners').getPublicUrl(fileName);
-    linkUrl = data.publicUrl;
+    
+    const { error } = await supabase.storage
+      .from('banners')
+      .upload(fileName, mobileFile, { upsert: true });
+      
+    if (error) {
+      console.error("모바일 업로드 에러:", error);
+      throw new Error("모바일 이미지 업로드 실패: " + error.message);
+    }
+    
+    linkUrl = supabase.storage.from('banners').getPublicUrl(fileName).data.publicUrl;
   }
 
   await prisma.banners.update({
@@ -88,7 +100,6 @@ export async function updateBannerWithFile(id: number, formData: FormData) {
 
   revalidatePath('/admin');
 }
-
 // 3. 회사 정보 수정 함수 (필요 시 유지)
 export async function updateCompanyInfo(formData: FormData) {
   await prisma.companyinfo.update({
