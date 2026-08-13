@@ -11,7 +11,6 @@ export async function updateLogo(formData: FormData) {
   if (file && file.size > 0) {
     const fileName = `logo.png`;
     
-    // Supabase 스토리지를 활용하도록 변경하는 것이 Vercel 배포 시 안전합니다.
     const { error } = await supabase.storage
       .from('banners')
       .upload(fileName, file, { upsert: true });

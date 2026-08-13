@@ -21,7 +21,7 @@ const nextConfig: NextConfig = {
     // 💡 추가된 서버 액션 용량 제한 설정
     experimental: {
       serverActions: {
-        bodySizeLimit: '5mb',
+        bodySizeLimit: '20mb',
       },
     },
     typescript: {
