@@ -102,7 +102,13 @@ export async function updateBannerWithFile(id: number, formData: FormData) {
     const { data: urlData } = supabase.storage.from('banners').getPublicUrl(fileName);
     linkUrl = `${urlData.publicUrl}?t=${Date.now()}`;
   }
+  console.log('===== 업로드 시작 =====');
 
+  console.log('PC 파일:', {
+    name: pcFile?.name,
+    size: pcFile?.size,
+    type: pcFile?.type,
+  });
   // 3. DB 업데이트
   await prisma.banners.update({
     where: { id: bannerId },
