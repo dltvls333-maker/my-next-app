@@ -54,11 +54,10 @@ export async function deleteBanner(id: number) {
   revalidatePath('/admin');
   revalidatePath('/');
 }
+// 반드시 이 인자 4개를 받는 형태로 맞춰야 합니다.
 export async function updateBannerWithFile(id: number, title: string, imageUrl: string, linkUrl: string) {
-  // 이제 여기서는 파일 업로드를 안 하므로 413 에러가 날 수 없습니다.
   const bannerId = Number(id);
-  if (!bannerId) throw new Error("유효하지 않은 배너 ID입니다.");
-
+  
   await prisma.banners.update({
     where: { id: bannerId },
     data: { 
