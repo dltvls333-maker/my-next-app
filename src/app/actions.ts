@@ -50,6 +50,9 @@ export async function deleteBanner(id: number) {
   revalidatePath('/admin');
 }
 
+import { prisma } from '@/lib/prisma';
+import { revalidatePath } from 'next/cache';
+import { supabase } from '@/lib/supabase';
 
 export async function updateBannerWithFile(id: number, formData: FormData) {
   const title = formData.get('title') as string;
@@ -59,32 +62,42 @@ export async function updateBannerWithFile(id: number, formData: FormData) {
   let imageUrl = formData.get('current_image') as string;
   let linkUrl = formData.get('current_link_url') as string;
 
-  // 1. PC 이미지 처리 (파일명 고정: pc_[배너ID].png -> 수정 시 덮어쓰기 됨)
+  // id 값이 숫자로 잘 들어오는지 확실하게 변환
+  const bannerId = Number(id);
+  if (!bannerId) {
+    throw new Error("유효하지 않은 배너 ID입니다: " + id);
+  }
+
+  // 1. PC 이미지 처리
   if (pcFile && pcFile instanceof File && pcFile.size > 0) {
-    const fileName = `pc_${id}.png`; // 👈 Date.now() 제거
+    // 순수 파일명만 생성 (슬래시 절대 포함 금지)
+    const fileName = `pc_${bannerId}.png`;
     
+    console.log("업로드 시도 파일명:", fileName); // 로그 확인용
+
     const { error } = await supabase.storage
       .from('banners')
-      .upload(fileName, pcFile, { upsert: true }); // 👈 upsert: true로 덮어쓰기 활성화
+      .upload(fileName, pcFile, { upsert: true });
       
     if (error) {
+      console.error("PC 업로드 상세 에러:", error);
       throw new Error("PC 이미지 업로드 실패: " + error.message);
     }
     
-    // 💡 캐시 문제(브라우저가 이전 이미지를 기억하는 현상)를 방지하기 위해 뒤에 타임스탬프를 살짝 붙여줍니다.
     const { data: urlData } = supabase.storage.from('banners').getPublicUrl(fileName);
     imageUrl = `${urlData.publicUrl}?t=${Date.now()}`;
   }
 
-  // 2. 모바일 이미지 처리 (파일명 고정: mobile_[배너ID].png -> 수정 시 덮어쓰기 됨)
+  // 2. 모바일 이미지 처리
   if (mobileFile && mobileFile instanceof File && mobileFile.size > 0) {
-    const fileName = `mobile_${id}.png`; // 👈 Date.now() 제거
+    const fileName = `mobile_${bannerId}.png`;
     
     const { error } = await supabase.storage
       .from('banners')
-      .upload(fileName, mobileFile, { upsert: true }); // 👈 upsert: true로 덮어쓰기 활성화
+      .upload(fileName, mobileFile, { upsert: true });
       
     if (error) {
+      console.error("모바일 업로드 상세 에러:", error);
       throw new Error("모바일 이미지 업로드 실패: " + error.message);
     }
     
@@ -94,7 +107,7 @@ export async function updateBannerWithFile(id: number, formData: FormData) {
 
   // 3. DB 업데이트
   await prisma.banners.update({
-    where: { id },
+    where: { id: bannerId },
     data: { 
       title: title, 
       image_url: imageUrl, 
@@ -103,6 +116,7 @@ export async function updateBannerWithFile(id: number, formData: FormData) {
   });
 
   revalidatePath('/admin');
+  revalidatePath('/');
 }
 // 3. 회사 정보 수정 함수 (필요 시 유지)
 export async function updateCompanyInfo(formData: FormData) {
