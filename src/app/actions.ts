@@ -49,26 +49,28 @@ export async function deleteBanner(id: number) {
   revalidatePath('/admin');
 }
 
-// 2. 배너 수정 및 파일 업로드 함수
+import { prisma } from '@/lib/prisma'; // 프로젝트 구조에 맞는 prisma 경로 확인
+import { revalidatePath } from 'next/cache';
+
+// 2. 배너 수정 및 파일 업로드 함수 (Railway DB 직접 저장용)
 export async function updateBannerWithFile(id: number, formData: FormData) {
   const title = formData.get('title') as string;
   const file = formData.get('image') as File | null;
 
   let imageUrl = formData.get('current_image') as string;
 
-  // 파일이 선택되었을 때만 처리
+  // 파일이 선택되었을 때만 처리 (Base64로 변환하여 DB에 문자열로 저장)
   if (file && file.size > 0) {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
     
-    // public/images 폴더에 저장 (파일 이름은 예시로 id를 사용)
-    const fileName = `${id}.png`;
-    const filePath = path.join(process.cwd(), 'public/images', fileName);
-    
-    await fs.writeFile(filePath, buffer);
-    imageUrl = `/images/${fileName}`; // DB에 저장될 경로
+    // 이미지를 Base64 Data URL 형식으로 변환 (예: data:image/png;base64,iVBORw0KGgo...)
+    const base64Image = buffer.toString('base64');
+    const mimeType = file.type || 'image/png';
+    imageUrl = `data:${mimeType};base64,${base64Image}`;
   }
 
+  // 데이터베이스 업데이트 (파일 시스템을 거치지 않고 DB에 직접 저장)
   await prisma.banners.update({
     where: { id },
     data: { 
