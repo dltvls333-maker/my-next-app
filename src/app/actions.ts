@@ -51,21 +51,50 @@ export async function deleteBanner(id: number) {
 
 import { prisma } from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
+import fs from 'fs/promises';
+import path from 'path';
 
-// 2. 배너 수정 함수 (파일 시스템에 저장하지 않고 경로/텍스트만 업데이트)
+// 2. 배너 수정 및 파일 업로드 함수 (PC, 모바일 모두 반영)
 export async function updateBannerWithFile(id: number, formData: FormData) {
   const title = formData.get('title') as string;
-  
-  // 만약 폼에서 파일이 아니라 이미지 경로 문자열이나 파일명을 직접 받도록 바꾼다면:
-  // (예: <input name="image_url" /> 형태로 input을 바꿨을 때)
-  const imageUrl = formData.get('image_url') as string; 
+  const pcFile = formData.get('image') as File | null;
+  const mobileFile = formData.get('link_url') as File | null; // 👈 모바일 파일명(link_url) 추가 캐치
 
+  let imageUrl = formData.get('current_image') as string;
+  let linkUrl = formData.get('current_link_url') as string;
+
+  // 1. PC 이미지 처리 (만약 로컬 파일 시스템 대신 깃허브 푸시 방식을 쓰신다면 이 부분도 파일 저장이 아닌 텍스트/경로 방식으로 맞춰야 합니다)
+  if (pcFile && pcFile.size > 0) {
+    const bytes = await pcFile.arrayBuffer();
+    const buffer = Buffer.from(bytes);
+    
+    // 주의: 클라우드 환경에서 fs.writeFile은 에러를 유발할 수 있으니 환경에 맞춰 확인하세요!
+    const fileName = `banner_${id}_pc.png`;
+    const filePath = path.join(process.cwd(), 'public/images', fileName);
+    
+    await fs.writeFile(filePath, buffer);
+    imageUrl = `/images/${fileName}`;
+  }
+
+  // 2. 모바일 이미지 처리 (link_url 필드로 들어온 파일 처리)
+  if (mobileFile && mobileFile.size > 0) {
+    const bytes = await mobileFile.arrayBuffer();
+    const buffer = Buffer.from(bytes);
+    
+    const fileName = `banner_${id}_mobile.png`;
+    const filePath = path.join(process.cwd(), 'public/images', fileName);
+    
+    await fs.writeFile(filePath, buffer);
+    linkUrl = `/images/${fileName}`; // DB의 link_url 컬럼에 저장될 경로
+  }
+
+  // 데이터베이스 업데이트 (title, image_url, link_url 모두 반영)
   await prisma.banners.update({
     where: { id },
     data: { 
       title: title, 
-      // 기존 이미지 유지 혹은 새로 입력받은 경로로 업데이트
-      image_url: imageUrl || formData.get('current_image') as string, 
+      image_url: imageUrl,
+      link_url: linkUrl // 👈 모바일 이미지 경로 데이터베이스에 반영
     }
   });
 
