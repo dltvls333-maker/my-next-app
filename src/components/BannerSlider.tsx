@@ -166,7 +166,7 @@ export default function BannerSliderWithForm({ banners }: { banners: any[] }) {
                   disabled={isSubmitting}
                   className="w-full mt-3 bg-[#E7710F] active:scale-[0.98] text-white font-bold py-4 px-4 rounded-xl shadow-lg shadow-blue-600/30 transition-all text-base disabled:bg-slate-400"
                 >
-                  {isSubmitting ? '처리 중...' : '비밀지원금 문자 받기'}
+                  {isSubmitting ? '처리 중...' : '비밀지원금 안내 받기'}
                 </button>
               </form>
             </div>

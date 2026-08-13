@@ -73,11 +73,12 @@ export default function ConsultationForm() {
   return (
     <>
       <div className="fixed bottom-6 left-0 right-0 flex justify-center z-50 pointer-events-none px-4">
+        
         <button
           onClick={() => setIsModalOpen(true)}
           className="pointer-events-auto bg-[#E7710F] text-white px-8 py-4 rounded-full shadow-lg font-bold text-[17px] hover:bg-[#d0640d] transition transform hover:scale-105"
         >
-          비밀지원금 안내받기
+          비밀지원금 안내 받기
         </button>
       </div>
 
@@ -153,9 +154,9 @@ export default function ConsultationForm() {
               <button 
                 type="submit" 
                 disabled={isSubmitting}
-                className="w-full bg-[#2563eb] text-white py-4 rounded-xl font-bold hover:bg-blue-700 transition active:scale-95 disabled:bg-slate-400"
+                className="w-full bg-[#E7710F] text-white py-4 rounded-xl font-bold hover:bg-blue-700 transition active:scale-95 disabled:bg-slate-400"
               >
-                {isSubmitting ? '처리 중...' : '상담 신청하기'}
+                {isSubmitting ? '처리 중...' : '비밀지원금 안내 받기'}
               </button>
             </form>
           </div>
