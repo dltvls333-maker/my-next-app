@@ -30,7 +30,7 @@ export default function ReviewWritePage() {
     e.preventDefault();
     
     try {
-      // 1. Supabase Storage로 이미지 직접 업로드 (크롭 없이 원본 그대로)
+      // 1. Supabase Storage로 이미지 직접 업로드
       const imageUrls: string[] = [];
       for (const file of files) {
         const fileExt = file.name.split('.').pop();
@@ -46,12 +46,12 @@ export default function ReviewWritePage() {
         imageUrls.push(data.publicUrl);
       }
 
-      // 2. FormData에 텍스트 데이터와 이미지 URL 배열 담기
+      // 2. FormData 생성 및 데이터 담기
       const data = new FormData(e.currentTarget as HTMLFormElement);
       data.append('category', selectedCategory);
       data.append('image_urls', JSON.stringify(imageUrls));
 
-      // 3. 서버 API로 전송 (파일 업로드 없이 텍스트만 전송되므로 413 에러 없음)
+      // 3. 서버 API로 전송
       const res = await fetch('/api/reviews', {
         method: 'POST',
         body: data,
@@ -61,7 +61,8 @@ export default function ReviewWritePage() {
         alert('후기가 등록되었습니다!');
         router.push('/reviews');
       } else {
-        alert('등록 실패, 다시 시도해주세요.');
+        const errData = await res.json();
+        alert(errData.error || '등록 실패, 다시 시도해주세요.');
       }
     } catch (err) {
       console.error(err);
@@ -81,25 +82,113 @@ export default function ReviewWritePage() {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-8">
-          {/* 카테고리/제목/내용 등 기존 UI 유지 */}
-          {/* ... */}
-          
+          {/* 카테고리 */}
+          <div className="flex items-center gap-8 border-b border-slate-200 pb-8">
+            <label className={labelClass}>카테고리</label>
+            <div className="flex gap-3">
+              {categories.map((item) => (
+                <button
+                  key={item}
+                  type="button"
+                  onClick={() => setSelectedCategory(item)}
+                  className={`px-6 py-2 rounded-full border transition-all duration-200 font-medium ${
+                    selectedCategory === item 
+                      ? 'bg-slate-900 text-white border-slate-900 shadow-md' 
+                      : 'bg-white text-slate-600 border-slate-200 hover:border-slate-400 hover:bg-slate-50'
+                  }`}
+                >
+                  {item}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* 제목 */}
+          <div className="flex items-center gap-8 border-b border-slate-200 pb-8">
+            <label className={labelClass}>제목</label>
+            <input 
+              name="title" 
+              type="text" 
+              placeholder="제목을 입력하세요." 
+              className={inputClass}
+              value={formData.title}
+              onChange={(e) => setFormData({ ...formData, title: e.target.value })} 
+              required 
+            />
+          </div>
+
+          {/* 내용 */}
+          <div className="flex gap-8 border-b border-slate-200 pb-8">
+            <label className={`${labelClass} pt-4`}>후기 내용</label>
+            <textarea 
+              name="content" 
+              placeholder="서비스를 이용하면서 좋았던 점을 작성해주세요."
+              className="flex-1 h-64 p-4 border border-slate-300 rounded-lg text-slate-900 font-medium outline-none focus:border-indigo-600 resize-none transition"
+              value={formData.content}
+              onChange={(e) => setFormData({ ...formData, content: e.target.value })} 
+              required 
+            />
+          </div>
+
+          {/* 사진 첨부 */}
           <div className="flex gap-8 border-b border-slate-200 pb-8">
             <label className={`${labelClass} pt-4`}>사진 첨부</label>
             <div className="flex-1">
-              <input type="file" multiple accept="image/*" onChange={handleFiles} className="mb-4" />
+              <input type="file" multiple accept="image/*" onChange={handleFiles} className="mb-4 text-sm" />
               <div className="flex gap-2 flex-wrap">
                 {previews.map((src, i) => (
-                  <img key={i} src={src} className="w-20 h-20 object-cover rounded border" />
+                  <img key={i} src={src} className="w-20 h-20 object-cover rounded border" alt="미리보기" />
                 ))}
               </div>
             </div>
           </div>
-          
-          {/* 기타 입력 필드들... */}
-          <button type="submit" className="px-12 h-14 bg-slate-900 text-white font-bold hover:bg-slate-700 transition rounded-lg">
-            후기 등록하기
-          </button>
+
+          {/* 작성자 & 전화번호 & 비밀번호 */}
+          <div className="grid md:grid-cols-3 gap-8">
+            <div className="flex items-center gap-8 border-b border-slate-200 pb-8">
+               <label className={labelClass}>작성자</label>
+               <input 
+                 name="user_name" 
+                 type="text" 
+                 placeholder="이름" 
+                 className={inputClass} 
+                 value={formData.user_name}
+                 onChange={(e) => setFormData({...formData, user_name: e.target.value})} 
+                 required 
+               />
+            </div>
+            <div className="flex items-center gap-8 border-b border-slate-200 pb-8">
+               <label className={labelClass}>전화번호 뒷자리</label>
+               <input 
+                 name="phone_last" 
+                 type="text" 
+                 placeholder="예: 1234" 
+                 maxLength={4} 
+                 className={inputClass} 
+                 value={formData.phone_last}
+                 onChange={(e) => setFormData({...formData, phone_last: e.target.value})} 
+                 required 
+               />
+            </div>
+            <div className="flex items-center gap-8 border-b border-slate-200 pb-8">
+               <label className={labelClass}>비밀번호</label>
+               <input 
+                 name="password" 
+                 type="password" 
+                 placeholder="수정/삭제용" 
+                 className={inputClass} 
+                 value={formData.password}
+                 onChange={(e) => setFormData({...formData, password: e.target.value})} 
+                 required 
+               />
+            </div>
+          </div>
+
+          <div className="flex justify-end pt-4">
+            <button type="submit" className="px-12 h-14 bg-slate-900 text-white font-bold hover:bg-slate-700 transition rounded-lg cursor-pointer">
+              후기 등록하기
+            </button>
+          </div>
         </form>
       </div>
     </main>
