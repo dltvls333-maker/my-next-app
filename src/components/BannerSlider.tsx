@@ -1,6 +1,10 @@
 'use client';
 
 import React, { useState } from 'react';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Autoplay, Pagination } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/pagination';
 
 export default function BannerSliderWithForm({ banners }: { banners: any[] }) {
   const [name, setName] = useState('');
@@ -70,18 +74,15 @@ export default function BannerSliderWithForm({ banners }: { banners: any[] }) {
     }
   };
 
-  // 단일 배너 데이터 추출 (배너가 배열 형태로 올 경우 첫 번째 항목 사용, 없으면 빈 객체)
-  const banner = banners && banners.length > 0 ? banners[0] : {};
-
   return (
     <div className="w-full bg-transparent py-6 md:py-10">
       <div className="w-full px-4 md:px-8">
         
-        {/* 컨테이너: 모바일에서는 이미지가 위, 폼이 아래 / 데스크탑은 좌우 나란히 */}
+        {/* 컨테이너: 모바일에서는 슬라이드가 위, 폼이 아래 / 데스크탑은 좌우 나란히 */}
         <div className="flex flex-col-reverse lg:flex-row items-stretch gap-6">
           
           {/* ========================================================= */}
-          {/* 1. 비밀지원금 신청 폼                                       */}
+          {/* 1. 비밀지원금 신청 폼 (DB 연동 및 유효성 검사 적용 완료)            */}
           {/* ========================================================= */}
           <div className="w-full lg:w-[420px] bg-white rounded-2xl md:rounded-3xl shadow-2xl p-6 md:p-8 flex flex-col justify-between shrink-0 border border-slate-100">
             <div>
@@ -172,39 +173,50 @@ export default function BannerSliderWithForm({ banners }: { banners: any[] }) {
           </div>
 
           {/* ========================================================= */}
-          {/* 2. 단일 배너 이미지 영역 (잘림 방지 및 원본 비율 유지)     */}
+          {/* 2. Swiper 배너 슬라이드 영역 (PC / 모바일 이미지 분기)       */}
           {/* ========================================================= */}
-          <div className="w-full lg:flex-1 overflow-hidden rounded-2xl md:rounded-3xl shadow-xl bg-slate-50 flex items-center justify-center relative">
-            <div className="w-full h-full relative flex items-center justify-center">
-              
-              {/* 모바일 버전 이미지 */}
-              <img 
-                src={banner.M_image_url || banner.mobile_image_url || banner.image_url} 
-                alt={banner.title || '배너 이미지'} 
-                className="w-full h-auto object-contain max-h-[500px] md:hidden block" 
-              />
-              
-              {/* PC 버전 이미지 */}
-              <img 
-                src={banner.image_url} 
-                alt={banner.title || '배너 이미지'} 
-                className="w-full h-auto object-contain max-h-[600px] hidden md:block" 
-              />
-              
-              {/* 텍스트 정보가 DB에 있을 경우에만 하단 오버레이 출력 */}
-              {banner.title && (
-                <div className="absolute bottom-[15%] left-[6%] right-[6%] text-white z-10 pointer-events-none">
-                  <h2 className="text-xl md:text-4xl lg:text-5xl font-extrabold drop-shadow-md tracking-tight">
-                    {banner.title}
-                  </h2>
-                  {banner.subtitle && (
-                    <p className="text-xs md:text-lg lg:text-xl mt-2 text-slate-200 drop-shadow">
-                      {banner.subtitle}
-                    </p>
-                  )}
-                </div>
-              )}
-            </div>
+          <div className="w-full lg:flex-1 overflow-hidden rounded-2xl md:rounded-3xl shadow-xl bg-transparent">
+            <Swiper 
+              modules={[Autoplay, Pagination]} 
+              loop={true} 
+              autoplay={{ 
+                delay: 3500, 
+                disableOnInteraction: false 
+              }} 
+              pagination={{ clickable: true }} 
+              className="w-full aspect-[16/10] md:aspect-[21/9] lg:h-full" 
+            >
+              {banners.map((banner, index) => (
+                <SwiperSlide key={banner.id || index}>
+                  <div className="w-full h-full relative">
+                    {/* 모바일 버전 이미지 (앞에 M_ 이 붙은 필드 우선 참조, 없을 경우 PC 이미지 Fallback) */}
+                    <img 
+                      src={banner.M_image_url || banner.mobile_image_url || banner.image_url} 
+                      alt={banner.title || '배너 이미지'} 
+                      className="w-full h-full object-cover object-center md:hidden" 
+                    />
+                    
+                    {/* PC 버전 이미지 */}
+                    <img 
+                      src={banner.image_url} 
+                      alt={banner.title || '배너 이미지'} 
+                      className="w-full h-full object-cover object-center hidden md:block" 
+                    />
+                    
+                    <div className="absolute bottom-[15%] left-[6%] right-[6%] text-white z-10 pointer-events-none">
+                      <h2 className="text-xl md:text-4xl lg:text-5xl font-extrabold drop-shadow-md tracking-tight">
+                        {banner.title}
+                      </h2>
+                      <p className="text-xs md:text-lg lg:text-xl mt-2 text-slate-200 drop-shadow">
+                        {banner.subtitle}
+                      </p>
+                    </div>
+
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none"></div>
+                  </div>
+                </SwiperSlide>
+              ))}
+            </Swiper>
           </div>
 
         </div>
