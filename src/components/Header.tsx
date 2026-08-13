@@ -13,7 +13,16 @@ export default function Header() {
   const [logo, setLogo] = useState<{ logo_path: string; logo_name: string } | null>(null);
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [activeMenu, setActiveMenu] = useState<string>('');
-
+  const Navigation = () => {
+  // 1. 초기값을 이미지에 있는 하드코딩 데이터로 설정하여 로딩 시 바로 뜨게 합니다.
+  const defaultMenuItems = [
+    { name: '홈', link: '/' },
+    { name: '인터넷', link: '/internet' },
+    { name: '휴대폰', link: '/phone' },
+    { name: '가전렌탈', link: '/rental' },
+    { name: '고객후기', link: '/review' },
+  ];
+  const displayMenus = menuItems.length > 0 ? menuItems : defaultMenuItems;
   useEffect(() => {
     // 1. 로고 데이터 로드
     fetch('/api/logo')
@@ -72,21 +81,16 @@ export default function Header() {
           {/* PC용 네비게이터 + 전화번호 통합 영역 (최소 너비/높이를 잡아 깜빡임/밀림 방지) */}
           <div className="hidden md:flex items-center gap-10">
             <nav className="flex space-x-10 min-h-[28px] items-center">
-              {menuItems.length > 0 ? (
-                menuItems.map((item, index) => (
-                  <a 
-                    key={index} 
-                    href={item.link} 
-                    onClick={() => setActiveMenu(item.name)}
-                    className={`text-[17px] font-semibold transition ${activeMenu === item.name ? 'text-[#2d433f] font-bold' : 'text-[#334155] hover:text-[#2d433f]'}`}
-                  >
-                    {item.name}
-                  </a>
-                ))
-              ) : (
-                /* 로딩 중 공간 유지용 스켈레톤 라인 */
-                <div className="w-[400px] h-5 bg-slate-100 animate-pulse rounded"></div>
-              )}
+              {displayMenus.map((item, index) => (
+                <a 
+                  key={index} 
+                  href={item.link} 
+                  onClick={() => setActiveMenu(item.name)}
+                  className={`text-[17px] font-semibold transition ${activeMenu === item.name ? 'text-[#2d433f] font-bold' : 'text-[#334155] hover:text-[#2d433f]'}`}
+                >
+                  {item.name}
+                </a>
+              ))}
             </nav>
             <a href="tel:1661-0588" className="flex items-center gap-2 px-5 py-2.5 bg-white border border-[#2d433f] rounded-full text-[#ff6600] font-bold hover:bg-slate-50 transition text-[16px] shrink-0">
               <span className="text-[#ff6600]">📞</span> 1661-0588
