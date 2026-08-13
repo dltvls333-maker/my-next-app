@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from 'react';
-import { updateBannerInfo, deleteBanner } from '../actions'; 
+import { updateBannerWithFile, deleteBanner } from '../actions'; 
 import { supabase } from '@/lib/supabase';
 
 export default function BannerCard({ banner }: { banner: any }) {
@@ -68,8 +68,9 @@ export default function BannerCard({ banner }: { banner: any }) {
         linkUrl = `${data.publicUrl}?t=${Date.now()}`;
       }
 
-      // 3. 업로드가 완료된 최종 URL과 텍스트 정보를 서버 액션으로 전달하여 DB 갱신
-      await updateBannerInfo(banner.id, title, imageUrl, linkUrl);
+      // 3. 파일은 다 업로드되었으니, URL 주소와 제목만 서버 액션으로 전송하여 DB 갱신
+      // 함수명은 기존 유지
+      await updateBannerWithFile(banner.id, title, imageUrl, linkUrl);
       
       setIsEditing(false);
       alert('성공적으로 저장되었습니다!');
@@ -82,7 +83,6 @@ export default function BannerCard({ banner }: { banner: any }) {
 
   return (
     <div className="bg-slate-50 p-5 rounded-2xl border border-slate-100 flex gap-4 transition hover:border-indigo-200">
-      {/* 1. PC 및 모바일 이미지 미리보기 영역 */}
       <div className="flex flex-col gap-2 shrink-0">
         <div className="flex flex-col items-center">
           <span className="text-[10px] font-bold text-slate-400 mb-0.5">PC</span>
@@ -96,55 +96,24 @@ export default function BannerCard({ banner }: { banner: any }) {
       
       <div className="flex-1 flex flex-col justify-center">
         {isEditing ? (
-          <form 
-            onSubmit={handleSubmit}
-            className="flex flex-col gap-2"
-          >
+          <form onSubmit={handleSubmit} className="flex flex-col gap-2">
             <input name="title" defaultValue={banner.title} className="p-1 border rounded text-sm w-full" placeholder="제목" required />
             
-            {/* PC 이미지 업로드 */}
             <div className="flex flex-col gap-0.5">
               <label className="text-[10px] font-semibold text-slate-500">PC 이미지 파일</label>
-              <input 
-                type="file" 
-                name="image" 
-                accept="image/*" 
-                onChange={handleFileChange}
-                className="text-xs p-1 border rounded w-full bg-white" 
-              />
+              <input type="file" name="image" accept="image/*" onChange={handleFileChange} className="text-xs p-1 border rounded w-full bg-white" />
             </div>
 
-            {/* 모바일 이미지 업로드 */}
             <div className="flex flex-col gap-0.5">
               <label className="text-[10px] font-semibold text-slate-500">모바일 이미지 파일</label>
-              <input 
-                type="file" 
-                name="link_url" 
-                accept="image/*" 
-                onChange={handleMFileChange}
-                className="text-xs p-1 border rounded w-full bg-white" 
-              />
+              <input type="file" name="link_url" accept="image/*" onChange={handleMFileChange} className="text-xs p-1 border rounded w-full bg-white" />
             </div>
             
             <div className="flex gap-2 mt-1">
-              <button 
-                type="submit" 
-                disabled={isSaving}
-                className="text-xs bg-indigo-600 text-white px-3 py-1 rounded-lg hover:bg-indigo-700 transition disabled:bg-slate-400"
-              >
+              <button type="submit" disabled={isSaving} className="text-xs bg-indigo-600 text-white px-3 py-1 rounded-lg hover:bg-indigo-700 transition disabled:bg-slate-400">
                 {isSaving ? '저장 중...' : '저장'}
               </button>
-              <button 
-                type="button" 
-                onClick={() => { 
-                  setIsEditing(false); 
-                  setPreviewUrl(banner.image_url); 
-                  setMPreviewUrl(banner.link_url || ''); 
-                }} 
-                className="text-xs bg-gray-200 px-3 py-1 rounded-lg hover:bg-gray-300 transition"
-              >
-                취소
-              </button>
+              <button type="button" onClick={() => { setIsEditing(false); setPreviewUrl(banner.image_url); setMPreviewUrl(banner.link_url || ''); }} className="text-xs bg-gray-200 px-3 py-1 rounded-lg hover:bg-gray-300 transition">취소</button>
             </div>
           </form>
         ) : (
