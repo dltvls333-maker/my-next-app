@@ -173,7 +173,7 @@ export default function BannerSliderWithForm({ banners }: { banners: any[] }) {
           </div>
 
           {/* ========================================================= */}
-          {/* 2. Swiper 배너 슬라이드 영역 (PC / 모바일 이미지 분기)       */}
+          {/* 2. Swiper 배너 슬라이드 영역 (Supabase URL 이미지 연동 완료)      */}
           {/* ========================================================= */}
           <div className="w-full lg:flex-1 overflow-hidden rounded-2xl md:rounded-3xl shadow-xl bg-transparent">
             <Swiper 
@@ -189,20 +189,27 @@ export default function BannerSliderWithForm({ banners }: { banners: any[] }) {
               {banners.map((banner, index) => (
                 <SwiperSlide key={banner.id || index}>
                   <div className="w-full h-full relative">
-                    {/* 모바일 버전 이미지 (앞에 M_ 이 붙은 필드 우선 참조, 없을 경우 PC 이미지 Fallback) */}
+                    
+                    {/* [모바일 버전 이미지 출력 영역] */}
+                    {/* Supabase에 저장된 모바일 링크 주소(banner.link_url)를 우선 호출하며, 
+                        혹시 값이 없을 경우 PC 이미지(banner.image_url)를 대신 보여줍니다. 
+                        md:hidden 클래스를 통해 모바일 화면에서만 노출됩니다. */}
                     <img 
-                      src={banner.M_image_url || banner.mobile_image_url || banner.image_url} 
-                      alt={banner.title || '배너 이미지'} 
+                      src={banner.link_url || banner.image_url} 
+                      alt={banner.title || '모바일 배너 이미지'} 
                       className="w-full h-full object-cover object-center md:hidden" 
                     />
                     
-                    {/* PC 버전 이미지 */}
+                    {/* [PC 버전 이미지 출력 영역] */}
+                    {/* Supabase에 저장된 PC 이미지 주소(banner.image_url)를 호출합니다. 
+                        hidden md:block 클래스를 통해 태블릿 및 PC 화면에서만 노출됩니다. */}
                     <img 
                       src={banner.image_url} 
-                      alt={banner.title || '배너 이미지'} 
-                      className="w-full h-full  object-center hidden md:block" 
+                      alt={banner.title || 'PC 배너 이미지'} 
+                      className="w-full h-full object-cover object-center hidden md:block" 
                     />
                     
+                    {/* 배너 타이틀 및 서브타이틀 텍스트 오버레이 */}
                     <div className="absolute bottom-[15%] left-[6%] right-[6%] text-white z-10 pointer-events-none">
                       <h2 className="text-xl md:text-4xl lg:text-5xl font-extrabold drop-shadow-md tracking-tight">
                         {banner.title}
@@ -212,6 +219,7 @@ export default function BannerSliderWithForm({ banners }: { banners: any[] }) {
                       </p>
                     </div>
 
+                    {/* 이미지 가독성을 높이기 위한 하단 그라데이션 효과 */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none"></div>
                   </div>
                 </SwiperSlide>
