@@ -178,7 +178,7 @@ export default function BannerSliderWithForm({ banners }: { banners: any[] }) {
               }} 
               pagination={{ clickable: true }} 
               // 비율을 유지하면서 프레임 안에 완전히 들어오도록 설정
-              className="w-full aspect-[16/10] md:aspect-[16/9]" 
+              className="w-full aspect-[16/10] md:aspect-[21/8]" 
             >
               {banners.map((banner, index) => (
                 <SwiperSlide key={banner.id || index}>
