@@ -51,7 +51,6 @@ export async function deleteBanner(id: number) {
 }
 
 
-
 export async function updateBannerWithFile(id: number, formData: FormData) {
   const title = formData.get('title') as string;
   const pcFile = formData.get('image') as File | null;
@@ -60,42 +59,47 @@ export async function updateBannerWithFile(id: number, formData: FormData) {
   let imageUrl = formData.get('current_image') as string;
   let linkUrl = formData.get('current_link_url') as string;
 
-  // PC 이미지 업로드
-  if (pcFile && pcFile.size > 0) {
-    // 💡 슬래시(/)를 쓰지 않고 순수 파일명만 만듭니다.
-    const fileName = `pc_${id}_${Date.now()}.png`;
+  // 1. PC 이미지 처리 (파일명 고정: pc_[배너ID].png -> 수정 시 덮어쓰기 됨)
+  if (pcFile && pcFile instanceof File && pcFile.size > 0) {
+    const fileName = `pc_${id}.png`; // 👈 Date.now() 제거
     
     const { error } = await supabase.storage
       .from('banners')
-      .upload(fileName, pcFile, { upsert: true });
+      .upload(fileName, pcFile, { upsert: true }); // 👈 upsert: true로 덮어쓰기 활성화
       
     if (error) {
-      console.error("PC 업로드 에러:", error);
       throw new Error("PC 이미지 업로드 실패: " + error.message);
     }
     
-    imageUrl = supabase.storage.from('banners').getPublicUrl(fileName).data.publicUrl;
+    // 💡 캐시 문제(브라우저가 이전 이미지를 기억하는 현상)를 방지하기 위해 뒤에 타임스탬프를 살짝 붙여줍니다.
+    const { data: urlData } = supabase.storage.from('banners').getPublicUrl(fileName);
+    imageUrl = `${urlData.publicUrl}?t=${Date.now()}`;
   }
 
-  // 모바일 이미지 업로드
-  if (mobileFile && mobileFile.size > 0) {
-    const fileName = `mobile_${id}_${Date.now()}.png`;
+  // 2. 모바일 이미지 처리 (파일명 고정: mobile_[배너ID].png -> 수정 시 덮어쓰기 됨)
+  if (mobileFile && mobileFile instanceof File && mobileFile.size > 0) {
+    const fileName = `mobile_${id}.png`; // 👈 Date.now() 제거
     
     const { error } = await supabase.storage
       .from('banners')
-      .upload(fileName, mobileFile, { upsert: true });
+      .upload(fileName, mobileFile, { upsert: true }); // 👈 upsert: true로 덮어쓰기 활성화
       
     if (error) {
-      console.error("모바일 업로드 에러:", error);
       throw new Error("모바일 이미지 업로드 실패: " + error.message);
     }
     
-    linkUrl = supabase.storage.from('banners').getPublicUrl(fileName).data.publicUrl;
+    const { data: urlData } = supabase.storage.from('banners').getPublicUrl(fileName);
+    linkUrl = `${urlData.publicUrl}?t=${Date.now()}`;
   }
 
+  // 3. DB 업데이트
   await prisma.banners.update({
     where: { id },
-    data: { title, image_url: imageUrl, link_url: linkUrl }
+    data: { 
+      title: title, 
+      image_url: imageUrl, 
+      link_url: linkUrl 
+    }
   });
 
   revalidatePath('/admin');
