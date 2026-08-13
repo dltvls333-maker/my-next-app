@@ -187,7 +187,7 @@ export default function BannerSliderWithForm({ banners }: { banners: any[] }) {
                     <img 
                       src={banner.M_image_url || banner.mobile_image_url || banner.image_url} 
                       alt={banner.title || '배너 이미지'} 
-                      className="w-full h-full object-cover object-center md:hidden" 
+                      className="w-full h-full  object-center md:hidden" 
                     />
                     
                     {/* PC 버전 이미지 */}
