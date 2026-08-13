@@ -13,6 +13,19 @@ export async function POST(req: Request) {
     const title = formData.get('title') as string;
     const content = formData.get('content') as string;
     
+    // 프론트에서 보낸 Supabase 이미지 URL들 수신 (JSON 문자열 파싱)
+    const imageUrlsJson = formData.get('image_urls') as string;
+    let imageUrl = null;
+    
+    if (imageUrlsJson) {
+      try {
+        const imageUrls = JSON.parse(imageUrlsJson);
+        imageUrl = imageUrls.length > 0 ? imageUrls[0] : null; // 첫 번째 이미지 URL 저장
+      } catch (e) {
+        imageUrl = null;
+      }
+    }
+    
     // IP 주소 추출
     const forwarded = req.headers.get('x-forwarded-for');
     const ip_address = forwarded ? forwarded.split(',')[0] : '127.0.0.1';
@@ -42,22 +55,10 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: '필수 데이터가 누락되었습니다.' }, { status: 400 });
     }
 
-    // 파일 처리 (서버 디스크 저장 대신 Base64로 변환하여 DB에 저장)
-    const files = formData.getAll('images[]') as File[];
-    let imageUrl = null;
-
-    if (files.length > 0 && files[0].size > 0) {
-      const file = files[0];
-      const buffer = Buffer.from(await file.arrayBuffer());
-      // 이미지를 Base64 데이터 URL 형식으로 변환 (예: data:image/jpeg;base64,...)
-      const base64Data = buffer.toString('base64');
-      imageUrl = `data:${file.type};base64,${base64Data}`;
-    }
-
-    // 💡 한국 시간(KST) 기준 Date 객체 생성
+    // 한국 시간(KST) 기준 Date 객체 생성
     const kstDate = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Seoul' }));
 
-    // Prisma 저장
+    // Prisma 저장 (Railway DB)
     const newReview = await prisma.review.create({
       data: {
         category,
@@ -66,9 +67,9 @@ export async function POST(req: Request) {
         password: hashedPassword,
         title,
         content,
-        image_url: imageUrl, // Base64 문자열이 DB에 저장됨
+        image_url: imageUrl, // Supabase 이미지 URL 저장
         ip_address,
-        created_at: kstDate, // 한국 시간이 반영된 날짜 저장
+        created_at: kstDate,
       },
     });
 
