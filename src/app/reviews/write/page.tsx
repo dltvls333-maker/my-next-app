@@ -2,7 +2,7 @@
 
 import React, { useState, DragEvent, ChangeEvent } from 'react';
 import { useRouter } from 'next/navigation';
-import { supabase } from '@/lib/supabase'; // 👈 Supabase 클라이언트 연결
+import { supabase } from '@/lib/supabase';
 
 export default function ReviewWritePage() {
   const router = useRouter();
@@ -15,14 +15,11 @@ export default function ReviewWritePage() {
     content: '',
   });
 
-  // 💡 File 객체 자체를 관리하도록 변경 (크롭/Base64 버림)
   const [fileList, setFileList] = useState<File[]>([]);
 
-  // 파일 선택 또는 드래그 앤 드롭 시 실행
   const handleFiles = (files: FileList | null) => {
     if (!files) return;
     const fileArray = Array.from(files);
-    // 이미지 파일만 필터링하여 상태에 저장
     const imageFiles = fileArray.filter(file => file.type.startsWith('image/'));
     setFileList((prev) => [...prev, ...imageFiles]);
   };
@@ -31,26 +28,25 @@ export default function ReviewWritePage() {
     e.preventDefault();
     
     try {
-      // 1. 🚀 Vercel을 거치지 않고 브라우저에서 Supabase Storage로 직접 이미지 업로드
       const imageUrls: string[] = [];
       for (const file of fileList) {
         const fileExt = file.name.split('.').pop();
-        const fileName = `${Date.now()}_${Math.random().toString(36.substring(2, 9))}.${fileExt}`;
+        // 💡 문법 오류 수정 완료
+        const randomStr = Math.random().toString(36).substring(2, 9);
+        const fileName = `${Date.now()}_${randomStr}.${fileExt}`;
         
         const { error } = await supabase.storage
-          .from('reviews') // Supabase에 생성된 'reviews' 버킷 이름
+          .from('reviews')
           .upload(fileName, file);
 
         if (error) {
           throw new Error("이미지 업로드 실패: " + error.message);
         }
 
-        // 업로드된 파일의 공개 URL 가져오기
         const { data: urlData } = supabase.storage.from('reviews').getPublicUrl(fileName);
         imageUrls.push(urlData.publicUrl);
       }
 
-      // 2. 텍스트 정보와 Supabase 이미지 URL들을 FormData에 담기
       const data = new FormData();
       data.append('category', selectedCategory);
       data.append('user_name', formData.user_name);
@@ -58,11 +54,8 @@ export default function ReviewWritePage() {
       data.append('password', formData.password);
       data.append('title', formData.title);
       data.append('content', formData.content);
-      
-      // 💡 파일 대신 Supabase 이미지 URL 배열을 JSON 문자열로 변환하여 전송 (Railway DB 저장용)
       data.append('image_urls', JSON.stringify(imageUrls));
 
-      // 3. Railway DB에 저장하는 기존 API 호출 (텍스트만 가볍게 전송하므로 413 에러 없음)
       const res = await fetch('/api/reviews', {
         method: 'POST',
         body: data,
@@ -73,7 +66,6 @@ export default function ReviewWritePage() {
         router.push('/reviews');
       } else {
         const errorResult = await res.json();
-        console.error('서버 등록 실패:', errorResult);
         alert(errorResult.error || '등록 실패, 다시 시도해주세요.');
       }
     } catch (error: any) {
@@ -94,7 +86,6 @@ export default function ReviewWritePage() {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-8">
-          {/* 카테고리 */}
           <div className="flex items-center gap-8 border-b border-slate-200 pb-8">
             <label className={labelClass}>카테고리</label>
             <div className="flex gap-3">
@@ -115,7 +106,6 @@ export default function ReviewWritePage() {
             </div>
           </div>
 
-          {/* 제목 */}
           <div className="flex items-center gap-8 border-b border-slate-200 pb-8">
             <label className={labelClass}>제목</label>
             <input name="title" type="text" placeholder="제목을 입력하세요." className={inputClass}
@@ -123,7 +113,6 @@ export default function ReviewWritePage() {
               onChange={(e) => setFormData({ ...formData, title: e.target.value })} required />
           </div>
 
-          {/* 내용 */}
           <div className="flex gap-8 border-b border-slate-200 pb-8">
             <label className={`${labelClass} pt-4`}>후기 내용</label>
             <textarea name="content" placeholder="서비스를 이용하면서 좋았던 점을 작성해주세요."
@@ -132,7 +121,6 @@ export default function ReviewWritePage() {
               onChange={(e) => setFormData({ ...formData, content: e.target.value })} required />
           </div>
 
-          {/* 사진 첨부 (Supabase 다이렉트 업로드용 원본 미리보기) */}
           <div className="flex gap-8 border-b border-slate-200 pb-8">
             <label className={`${labelClass} pt-4`}>사진 첨부</label>
             <div className="flex-1">
@@ -173,7 +161,6 @@ export default function ReviewWritePage() {
             </div>
           </div>
 
-          {/* 작성자 & 전화번호 & 비밀번호 */}
           <div className="grid md:grid-cols-3 gap-8">
             <div className="flex items-center gap-8 border-b border-slate-200 pb-8">
                <label className={labelClass}>작성자</label>
