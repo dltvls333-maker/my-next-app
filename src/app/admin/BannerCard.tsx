@@ -43,7 +43,7 @@ export default function BannerCard({ banner }: { banner: any }) {
       <div className="flex-1 flex flex-col justify-center">
         {isEditing ? (
           <form 
-            encType="multipart/form-data" // 👈 필수!
+            encType="multipart/form-data" 
             action={async (formData) => {
               await updateBannerWithFile(banner.id, formData);
               setIsEditing(false);
