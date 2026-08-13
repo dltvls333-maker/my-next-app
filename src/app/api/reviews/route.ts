@@ -34,21 +34,21 @@ export async function POST(req: Request) {
     const password = formData.get('password') as string || 'admin_default_pass';
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // 도배 방지 (10초)
-    const lastReview = await prisma.review.findFirst({
-      where: { ip_address: ip_address },
-      orderBy: { created_at: 'desc' },
-    });
+    // // 도배 방지 (10초)
+    // const lastReview = await prisma.review.findFirst({
+    //   where: { ip_address: ip_address },
+    //   orderBy: { created_at: 'desc' },
+    // });
 
-    if (lastReview) {
-      const timeDiff = (new Date().getTime() - new Date(lastReview.created_at).getTime()) / 1000;
-      if (timeDiff < 10) {
-        return NextResponse.json(
-          { error: '도배 방지를 위해 10초 후에 다시 작성해주세요.' },
-          { status: 429 }
-        );
-      }
-    }
+    // if (lastReview) {
+    //   const timeDiff = (new Date().getTime() - new Date(lastReview.created_at).getTime()) / 1000;
+    //   if (timeDiff < 10) {
+    //     return NextResponse.json(
+    //       { error: '도배 방지를 위해 10초 후에 다시 작성해주세요.' },
+    //       { status: 429 }
+    //     );
+    //   }
+    // }
 
     // 필수 필드 검증
     if (!category || !user_name || !title || !content) {
