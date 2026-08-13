@@ -54,10 +54,57 @@ export async function deleteBanner(id: number) {
   revalidatePath('/admin');
   revalidatePath('/');
 }
-// 반드시 이 인자 4개를 받는 형태로 맞춰야 합니다.
-export async function updateBannerWithFile(id: number, title: string, imageUrl: string, linkUrl: string) {
+
+// 배너 파일(PC/모바일) 업로드 및 수정 함수 (요청하신 함수명 그대로 유지)
+export async function updateBannerWithFile(id: number, formData: FormData) {
+  const title = formData.get('title') as string;
+  const pcFile = formData.get('image') as File | null;
+  const mobileFile = formData.get('link_url') as File | null;
+
+  let imageUrl = formData.get('current_image') as string;
+  let linkUrl = formData.get('current_link_url') as string;
+
+  // id 값이 숫자로 잘 들어오는지 확실하게 변환
   const bannerId = Number(id);
-  
+  if (!bannerId) {
+    throw new Error("유효하지 않은 배너 ID입니다: " + id);
+  }
+
+  // 1. PC 이미지 처리
+  if (pcFile && pcFile instanceof File && pcFile.size > 0) {
+    const fileName = `pc_${bannerId}.png`;
+    
+    const { error } = await supabase.storage
+      .from('banners')
+      .upload(fileName, pcFile, { upsert: true });
+      
+    if (error) {
+      console.error("PC 업로드 상세 에러:", error);
+      throw new Error("PC 이미지 업로드 실패: " + error.message);
+    }
+    
+    const { data: urlData } = supabase.storage.from('banners').getPublicUrl(fileName);
+    imageUrl = `${urlData.publicUrl}?t=${Date.now()}`;
+  }
+
+  // 2. 모바일 이미지 처리
+  if (mobileFile && mobileFile instanceof File && mobileFile.size > 0) {
+    const fileName = `mobile_${bannerId}.png`;
+    
+    const { error } = await supabase.storage
+      .from('banners')
+      .upload(fileName, mobileFile, { upsert: true });
+      
+    if (error) {
+      console.error("모바일 업로드 상세 에러:", error);
+      throw new Error("모바일 이미지 업로드 실패: " + error.message);
+    }
+    
+    const { data: urlData } = supabase.storage.from('banners').getPublicUrl(fileName);
+    linkUrl = `${urlData.publicUrl}?t=${Date.now()}`;
+  }
+
+  // 3. DB 업데이트
   await prisma.banners.update({
     where: { id: bannerId },
     data: { 
