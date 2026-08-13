@@ -2,6 +2,7 @@
 
 import { prisma } from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
+import { supabase } from '@/lib/supabase'; // 위에서 만든 파일 경로
 import fs from 'fs/promises';
 import path from 'path';
 
@@ -54,48 +55,38 @@ import { revalidatePath } from 'next/cache';
 import fs from 'fs/promises';
 import path from 'path';
 
-// 2. 배너 수정 및 파일 업로드 함수 (PC, 모바일 모두 반영)
 export async function updateBannerWithFile(id: number, formData: FormData) {
   const title = formData.get('title') as string;
   const pcFile = formData.get('image') as File | null;
-  const mobileFile = formData.get('link_url') as File | null; // 👈 모바일 파일명(link_url) 추가 캐치
+  const mobileFile = formData.get('link_url') as File | null;
 
   let imageUrl = formData.get('current_image') as string;
   let linkUrl = formData.get('current_link_url') as string;
 
-  // 1. PC 이미지 처리 (만약 로컬 파일 시스템 대신 깃허브 푸시 방식을 쓰신다면 이 부분도 파일 저장이 아닌 텍스트/경로 방식으로 맞춰야 합니다)
+  // PC 이미지 업로드
   if (pcFile && pcFile.size > 0) {
-    const bytes = await pcFile.arrayBuffer();
-    const buffer = Buffer.from(bytes);
+    const fileName = `pc_${id}_${Date.now()}.png`;
+    const { error } = await supabase.storage.from('banners').upload(fileName, pcFile);
+    if (error) throw error;
     
-    // 주의: 클라우드 환경에서 fs.writeFile은 에러를 유발할 수 있으니 환경에 맞춰 확인하세요!
-    const fileName = `banner_${id}_pc.png`;
-    const filePath = path.join(process.cwd(), 'public/images', fileName);
-    
-    await fs.writeFile(filePath, buffer);
-    imageUrl = `/images/${fileName}`;
+    // 공개 URL 추출
+    const { data } = supabase.storage.from('banners').getPublicUrl(fileName);
+    imageUrl = data.publicUrl;
   }
 
-  // 2. 모바일 이미지 처리 (link_url 필드로 들어온 파일 처리)
+  // 모바일 이미지 업로드
   if (mobileFile && mobileFile.size > 0) {
-    const bytes = await mobileFile.arrayBuffer();
-    const buffer = Buffer.from(bytes);
-    
-    const fileName = `banner_${id}_mobile.png`;
-    const filePath = path.join(process.cwd(), 'public/images', fileName);
-    
-    await fs.writeFile(filePath, buffer);
-    linkUrl = `/images/${fileName}`; // DB의 link_url 컬럼에 저장될 경로
+    const fileName = `mobile_${id}_${Date.now()}.png`;
+    const { error } = await supabase.storage.from('banners').upload(fileName, mobileFile);
+    if (error) throw error;
+
+    const { data } = supabase.storage.from('banners').getPublicUrl(fileName);
+    linkUrl = data.publicUrl;
   }
 
-  // 데이터베이스 업데이트 (title, image_url, link_url 모두 반영)
   await prisma.banners.update({
     where: { id },
-    data: { 
-      title: title, 
-      image_url: imageUrl,
-      link_url: linkUrl // 👈 모바일 이미지 경로 데이터베이스에 반영
-    }
+    data: { title, image_url: imageUrl, link_url: linkUrl }
   });
 
   revalidatePath('/admin');

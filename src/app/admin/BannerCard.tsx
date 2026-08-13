@@ -43,10 +43,11 @@ export default function BannerCard({ banner }: { banner: any }) {
       <div className="flex-1 flex flex-col justify-center">
         {isEditing ? (
           <form 
+            encType="multipart/form-data" // 👈 필수!
             action={async (formData) => {
               await updateBannerWithFile(banner.id, formData);
               setIsEditing(false);
-            }} 
+            }}
             className="flex flex-col gap-2"
           >
             <input name="title" defaultValue={banner.title} className="p-1 border rounded text-sm w-full" placeholder="제목" />
