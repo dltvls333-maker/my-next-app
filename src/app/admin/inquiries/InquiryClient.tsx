@@ -5,11 +5,6 @@ import Link from 'next/link';
 import { Search, ChevronLeft, ChevronRight, Trash2 } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 
-const maskName = (name: string) => {
-  if (!name || name.length <= 1) return name;
-  return name.charAt(0) + '*'.repeat(name.length - 1);
-};
-
 const isNewPost = (dateString: string) => {
   if (!dateString) return false;
   const normalizedDate = dateString.replace(/\./g, '-').replace(/\s+/g, '').replace(/-$/, '');
@@ -57,18 +52,16 @@ export default function InquiryClient({ initialInquiries }: { initialInquiries: 
     setSelectedIds(prev => prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]);
   };
 
-  // ★ 선택 삭제 기능 구현
+  // 선택 삭제 기능 구현
   const handleDeleteSelected = async () => {
     if (selectedIds.length === 0) return;
     if (!confirm(`${selectedIds.length}개의 문의 내역을 삭제하시겠습니까?`)) return;
 
     try {
-      // 선택된 ID들을 순회하며 DELETE 요청 전송
       const results = await Promise.all(
         selectedIds.map(id => fetch(`/api/consultation/${id}`, { method: 'DELETE' }))
       );
 
-      // 응답 상태 체크
       const failed = results.find(res => !res.ok);
       if (failed) {
         throw new Error('일부 항목 삭제 실패');
@@ -156,7 +149,8 @@ export default function InquiryClient({ initialInquiries }: { initialInquiries: 
                 <tr key={item.id} className="hover:bg-slate-50 text-center">
                   {isAdmin && <td className="py-5"><input type="checkbox" checked={selectedIds.includes(item.id)} onChange={() => toggleSelect(item.id)} /></td>}
                   <td className="py-5">{filteredInquiries.length - ((currentPage - 1) * ITEMS_PER_PAGE + index)}</td>
-                  <td className="py-5 text-sm font-bold text-slate-800">{maskName(item.name)}</td>
+                  {/* 마스킹 제거: item.name 그대로 출력 */}
+                  <td className="py-5 text-sm font-bold text-slate-800">{item.name}</td>
                   
                   <td className="py-5 text-center px-4 font-medium text-indigo-700">
                     <div className="flex items-center justify-center gap-2">
