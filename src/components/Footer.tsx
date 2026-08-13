@@ -117,8 +117,8 @@ export default function Footer() {
           {/* 👉 우측 정보 단 (바닥 라인 수평 일치 완료) */}
           <div className="flex flex-col justify-between items-start lg:items-end text-[12px] whitespace-nowrap lg:text-right min-h-full">
             <div className="flex gap-x-4 font-medium text-zinc-400 mb-4 lg:mb-0">
-              <a href="/terms" className="hover:text-white transition-colors">이용약관</a>
-              <a href="/privacy" className="text-zinc-300 font-semibold hover:text-white transition-colors">개인정보처리방침</a>
+              <a href="#" className="hover:text-white transition-colors">이용약관</a>
+              <a href="#" className="text-zinc-300 font-semibold hover:text-white transition-colors">개인정보처리방침</a>
             </div>
             <p className="text-zinc-600 tracking-tight lg:pt-1">
               © 2026 EUM TELECOM. All rights reserved.
