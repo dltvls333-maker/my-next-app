@@ -63,8 +63,8 @@ const CompanyIntro = () => {
       </div>
 
       {/* 하단 디자인 요소 */}
-      <div className="apple-gift-decoration_apple_card">
-        <div className="gift-box-icon_apple_card">🎁</div>
+      <div className="apple-gift-decoration_apple_card z-99">
+        <div className="gift-box-icon_apple_card z-99">🎁</div>
       </div>
     </div>
     // <section className="w-full py-16 md:py-24 bg-white">

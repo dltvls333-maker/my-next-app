@@ -127,7 +127,7 @@
     position: absolute;
     right: 40px;
     bottom: 20px;
-    z-index: 1;
+    z-index: 3;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -168,10 +168,13 @@
     .apple-gift-decoration_apple_card {
         right: 20px;
         bottom: 10px;
-        opacity: 0.6;
+        opacity: 1;
     }
     
     .gift-box-icon_apple_card {
         font-size: 50px;
+    }
+    .z-99 {
+        z-index:99;
     }
 }
