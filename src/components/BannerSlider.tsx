@@ -187,36 +187,36 @@ export default function BannerSliderWithForm({ banners }: { banners: any[] }) {
               className="w-full aspect-[16/10] md:aspect-[21/9] lg:h-full" 
             >
             {banners.map((banner, index) => (
-              <SwiperSlide key={banner.id || index}>
-                <div className="w-full h-[280px] md:h-[600px] relative">
-                  
-                  {/* 💡 모바일 전용 이미지: Supabase의 모바일 이미지 주소나 모바일용 경로를 명시 */}
-                  <img 
-                    src={banner.m_image_url || banner.mobile_image_url || "원하시는_모바일_이미지_주소"} 
-                    alt={banner.title || '배너 이미지'} 
-                    className="w-full h-full object-cover md:hidden" 
-                  />
-                  
-                  {/* PC 버전 이미지 */}
-                  <img 
-                    src={banner.image_url} 
-                    alt={banner.title || '배너 이미지'} 
-                    className="w-full hidden md:block" 
-                  />
-                  
-                  <div className="absolute bottom-[15%] left-[6%] right-[6%] text-white z-10 pointer-events-none">
-                    <h2 className="text-xl md:text-4xl lg:text-5xl font-extrabold drop-shadow-md tracking-tight">
-                      {banner.title}
-                    </h2>
-                    <p className="text-xs md:text-lg lg:text-xl mt-2 text-slate-200 drop-shadow">
-                      {banner.subtitle}
-                    </p>
-                  </div>
+  <SwiperSlide key={banner.id || index}>
+    <div className="w-full h-[280px] md:h-[600px] relative">
+      
+      {/* 💡 모바일 버전 이미지: Supabase 스토리지의 mobile_1.png 주소를 직접 연결하거나 경로 지정 */}
+      <img 
+        src="https://wgpylcuigawjllhsbnqi.supabase.co/storage/v1/object/public/배너버킷이름/mobile_1.png" 
+        alt={banner.title || '모바일 배너 이미지'} 
+        className="w-full h-full object-cover md:hidden" 
+      />
+      
+      {/* PC 버전 이미지 */}
+      <img 
+        src={banner.image_url} 
+        alt={banner.title || 'PC 배너 이미지'} 
+        className="w-full h-full object-cover hidden md:block" 
+      />
+      
+      <div className="absolute bottom-[15%] left-[6%] right-[6%] text-white z-10 pointer-events-none">
+        <h2 className="text-xl md:text-4xl lg:text-5xl font-extrabold drop-shadow-md tracking-tight">
+          {banner.title}
+        </h2>
+        <p className="text-xs md:text-lg lg:text-xl mt-2 text-slate-200 drop-shadow">
+          {banner.subtitle}
+        </p>
+      </div>
 
-                  {/* <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none"></div> */}
-                </div>
-              </SwiperSlide>
-            ))}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none"></div>
+    </div>
+  </SwiperSlide>
+))}
             </Swiper>
           </div>
 
