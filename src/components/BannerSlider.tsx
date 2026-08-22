@@ -186,36 +186,37 @@ export default function BannerSliderWithForm({ banners }: { banners: any[] }) {
               pagination={{ clickable: true }} 
               className="w-full aspect-[16/10] md:aspect-[21/9] lg:h-full" 
             >
-             {banners.map((banner, index) => (
-              <SwiperSlide key={banner.id || index}>
-                <div className="w-full h-full relative">
-                  {/* 모바일 버전 이미지: public 폴더에 있는 mobile_1.png (또는 동적 파일명)을 직접 연결 */}
-                  <img 
-                    src="/mobile_1.png" 
-                    alt={banner.title || '배너 이미지'} 
-                    className="w-full h-full object-center md:hidden" 
-                  />
-                  
-                  {/* PC 버전 이미지 */}
-                  <img 
-                    src={banner.image_url} 
-                    alt={banner.title || '배너 이미지'} 
-                    className="w-full h-full object-center hidden md:block" 
-                  />
-                  
-                  <div className="absolute bottom-[15%] left-[6%] right-[6%] text-white z-10 pointer-events-none">
-                    <h2 className="text-xl md:text-4xl lg:text-5xl font-extrabold drop-shadow-md tracking-tight">
-                      {banner.title}
-                    </h2>
-                    <p className="text-xs md:text-lg lg:text-xl mt-2 text-slate-200 drop-shadow">
-                      {banner.subtitle}
-                    </p>
-                  </div>
-
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none"></div>
+            {banners.map((banner, index) => (
+            <SwiperSlide key={banner.id || index}>
+              <div className="w-full h-[280px] md:h-[450px] relative">
+                
+                {/* 💡 모바일 전용 이미지: Supabase의 모바일 이미지 주소나 모바일용 경로를 명시 */}
+                <img 
+                  src={banner.m_image_url || banner.mobile_image_url || "원하시는_모바일_이미지_주소"} 
+                  alt={banner.title || '배너 이미지'} 
+                  className="w-full h-full object-cover md:hidden" 
+                />
+                
+                {/* PC 버전 이미지 */}
+                <img 
+                  src={banner.image_url} 
+                  alt={banner.title || '배너 이미지'} 
+                  className="w-full h-full object-cover hidden md:block" 
+                />
+                
+                <div className="absolute bottom-[15%] left-[6%] right-[6%] text-white z-10 pointer-events-none">
+                  <h2 className="text-xl md:text-4xl lg:text-5xl font-extrabold drop-shadow-md tracking-tight">
+                    {banner.title}
+                  </h2>
+                  <p className="text-xs md:text-lg lg:text-xl mt-2 text-slate-200 drop-shadow">
+                    {banner.subtitle}
+                  </p>
                 </div>
-              </SwiperSlide>
-            ))}
+
+                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none"></div>
+              </div>
+            </SwiperSlide>
+          ))}
             </Swiper>
           </div>
 
