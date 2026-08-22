@@ -201,7 +201,7 @@ export default function BannerSliderWithForm({ banners }: { banners: any[] }) {
                 <img 
                   src={banner.image_url} 
                   alt={banner.title || '배너 이미지'} 
-                  className="w-full h-full object-cover hidden md:block" 
+                  className="w-full hidden md:block" 
                 />
                 
                 <div className="absolute bottom-[15%] left-[6%] right-[6%] text-white z-10 pointer-events-none">
@@ -213,7 +213,7 @@ export default function BannerSliderWithForm({ banners }: { banners: any[] }) {
                   </p>
                 </div>
 
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none"></div>
+                {/* <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none"></div> */}
               </div>
             </SwiperSlide>
           ))}
