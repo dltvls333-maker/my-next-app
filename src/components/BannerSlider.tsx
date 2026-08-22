@@ -194,7 +194,7 @@ export default function BannerSliderWithForm({ banners }: { banners: any[] }) {
       <img 
         src={banner.link_url} 
         alt={banner.title || '모바일 배너 이미지'} 
-        className="w-full h-full object-cover md:hidden" 
+        className="w-full h-full md:hidden" 
       />
       
       {/* PC 버전 이미지 */}
