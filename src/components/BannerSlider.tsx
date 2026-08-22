@@ -192,7 +192,7 @@ export default function BannerSliderWithForm({ banners }: { banners: any[] }) {
       
       {/* 💡 모바일 버전 이미지: Supabase 스토리지의 mobile_1.png 주소를 직접 연결하거나 경로 지정 */}
       <img 
-        src="https://wgpylcuigawjllhsbnqi.supabase.co/storage/v1/object/public/배너버킷이름/mobile_1.png" 
+        src={banner.link_url} 
         alt={banner.title || '모바일 배너 이미지'} 
         className="w-full h-full object-cover md:hidden" 
       />
