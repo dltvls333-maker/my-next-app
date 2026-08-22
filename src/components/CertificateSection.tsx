@@ -27,7 +27,7 @@ const CertificateSection = () => {
         {/* 오른쪽: 신뢰 텍스트 */}
         <div className="w-full md:w-1/2 space-y-6">
           <h2 className="text-3xl md:text-4xl font-bold text-slate-900 leading-tight">
-            이음통신은 <span className="t-green"> 믿고 가입</span> 하셔도 좋습니다.
+            디코비즈는 <span className="t-green"> 믿고 가입</span> 하셔도 좋습니다.
           </h2>
           <p className="text-lg text-slate-600">
             정식으로 등록된 통신판매 사업자이며, 모든 필수 영업 신고를 완료한 <br /> 안전한 파트너입니다. <br />
