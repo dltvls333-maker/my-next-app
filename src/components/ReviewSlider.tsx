@@ -30,7 +30,7 @@ export default function ReviewSlider({ reviews }: { reviews: any[] }) {
   return (
     <div className="w-full py-12 md:py-16 bg-slate-50">
       <h2 className="text-2xl text-center py-8 md:text-4xl font-extrabold text-slate-900 tracking-tight">
-        일일넷 인터넷 가입 후기
+        디코비즈 인터넷 가입 후기
       </h2>
       
       {/* PC 레이아웃 기준(1240px) 및 overflow-hidden 적용 영역 */}
