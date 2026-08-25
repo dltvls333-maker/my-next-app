@@ -175,7 +175,7 @@ export default function BannerSliderWithForm({ banners }: { banners: any[] }) {
           {/* ========================================================= */}
           {/* 2. Swiper 배너 슬라이드 영역 (PC / 모바일 이미지 분기)       */}
           {/* ========================================================= */}
-         <div className="w-full lg:flex-1 lg:self-start overflow-hidden rounded-2xl md:rounded-3xl shadow-xl bg-transparent">
+     <div className="w-full lg:flex-1 lg:self-start overflow-hidden rounded-2xl md:rounded-3xl shadow-xl bg-transparent">
   <Swiper
     modules={[Autoplay, Pagination]}
     loop={true}
@@ -188,20 +188,21 @@ export default function BannerSliderWithForm({ banners }: { banners: any[] }) {
   >
     {banners.map((banner, index) => (
       <SwiperSlide key={banner.id || index}>
-        <div className="relative w-full overflow-hidden">
+        {/* 💡 핵심 1: 프레임 자체에 모바일(1/1 정사각형)과 PC(2329/1300 비율)의 실제 해상도 비율을 고정하여 빈 공간 차단 */}
+        <div className="relative w-full overflow-hidden aspect-[1/1] md:aspect-[2329/1300]">
 
           {/* 모바일 배너 - 2048 × 2048 */}
           <img
             src={banner.link_url}
             alt={banner.title || '모바일 배너 이미지'}
-            className="block w-full h-auto md:hidden"
+            className="absolute inset-0 w-full h-full object-cover md:hidden"
           />
 
           {/* PC 배너 - 2329 × 1300 */}
           <img
             src={banner.image_url}
             alt={banner.title || 'PC 배너 이미지'}
-            className="hidden md:block w-full h-auto"
+            className="absolute inset-0 w-full h-full object-cover hidden md:block"
           />
 
           {/* 텍스트 */}
