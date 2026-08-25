@@ -188,7 +188,7 @@ export default function BannerSliderWithForm({ banners }: { banners: any[] }) {
             >
             {banners.map((banner, index) => (
   <SwiperSlide key={banner.id || index}>
-    <div className="w-full aspect-[16/9] md:aspect-[21/9] relative overflow-hidden">
+    <div className="w-full h-full aspect-[16/9] md:aspect-[21/9] relative overflow-hidden">
       
      <img 
       src={banner.link_url} 
