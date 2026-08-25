@@ -188,21 +188,19 @@ export default function BannerSliderWithForm({ banners }: { banners: any[] }) {
             >
             {banners.map((banner, index) => (
   <SwiperSlide key={banner.id || index}>
-    <div className="w-full h-[280px] md:h-[600px] relative">
+    <div className="w-full aspect-[16/9] md:aspect-[21/9] relative overflow-hidden">
       
-      {/* 💡 모바일 버전 이미지: Supabase 스토리지의 mobile_1.png 주소를 직접 연결하거나 경로 지정 */}
-      <img 
-        src={banner.link_url} 
-        alt={banner.title || '모바일 배너 이미지'} 
-        className="w-full h-full md:hidden" 
-      />
-      
-      {/* PC 버전 이미지 */}
-      <img 
-        src={banner.image_url} 
-        alt={banner.title || 'PC 배너 이미지'} 
-        className="w-full h-full hidden md:block" 
-      />
+     <img 
+      src={banner.link_url} 
+      alt={banner.title || '모바일 배너 이미지'} 
+      className="w-full h-full object-cover md:hidden" 
+    />
+    
+    <img 
+      src={banner.image_url} 
+      alt={banner.title || 'PC 배너 이미지'} 
+      className="w-full h-full object-cover hidden md:block" 
+    />
       
       <div className="absolute bottom-[15%] left-[6%] right-[6%] text-white z-10 pointer-events-none">
         <h2 className="text-xl md:text-4xl lg:text-5xl font-extrabold drop-shadow-md tracking-tight">
