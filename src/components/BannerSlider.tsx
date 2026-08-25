@@ -76,18 +76,15 @@ export default function BannerSliderWithForm({ banners }: { banners: any[] }) {
 
   return (
     <div className="w-full bg-transparent py-6 md:py-10">
-      {/* 
-        💡 [핵심 구현] 
-        - max-w-[1280px] mx-auto를 통해 모니터 해상도가 아무리 커져도 전체 컨테이너가 1280px 이상 늘어나지 않고 중앙에 고정됩니다.
-        - 화면이 커지면 좌우 여백(빈 공간)만 자연스럽게 늘어납니다.
-        - 화면이 작아지면 w-full과 px-4를 통해 디바이스에 꽉 차게 반응합니다.
-      */}
       <div className="w-full max-w-[1280px] mx-auto px-4 md:px-8">
         
-        {/* 컨테이너: 모바일/태블릿에서는 상하 배치(flex-col), PC(lg 이상)에서는 좌우 나란히 배치 */}
+        {/* 
+          - lg 이상 화면에서는 좌우 나란히 배치하되 높이를 맞춤(items-stretch)
+          - 화면이 좁아지면(lg 미만) 폼이 아래로 뚝 떨어짐(flex-col)
+        */}
         <div className="flex flex-col lg:flex-row items-stretch gap-6">
           
-          {/* 1. 비밀지원금 신청 폼 영역 (강제 사이즈 고정 및 최소 크기 방어) */}
+          {/* 1. 비밀지원금 신청 폼 영역 */}
           <div className="w-full lg:w-[420px] bg-white rounded-2xl md:rounded-3xl shadow-2xl p-6 md:p-8 shrink-0 border border-slate-100 flex flex-col justify-between">
             <div>
               <div className="mb-6 pb-4 border-b border-slate-100">
@@ -176,8 +173,8 @@ export default function BannerSliderWithForm({ banners }: { banners: any[] }) {
             </div>
           </div>
 
-          {/* 2. Swiper 배너 슬라이드 영역 */}
-          <div className="w-full lg:flex-1 overflow-hidden rounded-2xl md:rounded-3xl shadow-xl bg-transparent">
+          {/* 2. Swiper 배너 슬라이드 영역 (min-h를 주어 폼 높이와 균형을 맞춤) */}
+          <div className="w-full lg:flex-1 overflow-hidden rounded-2xl md:rounded-3xl shadow-xl bg-white flex flex-col">
             <Swiper
               modules={[Autoplay, Pagination]}
               loop={true}
@@ -186,11 +183,12 @@ export default function BannerSliderWithForm({ banners }: { banners: any[] }) {
                 disableOnInteraction: false,
               }}
               pagination={{ clickable: true }}
-              className="w-full h-full"
+              className="w-full h-full flex-1"
             >
               {banners.map((banner, index) => (
                 <SwiperSlide key={banner.id || index} className="h-full">
-                  <div className="relative w-full h-full min-h-[340px] md:min-h-[480px] overflow-hidden flex items-center">
+                  {/* 💡 핵심: min-h-[520px]를 주어 브라우저를 줄여도 배너 세로 크기가 폼 아래로 꺼지지 않게 방어 */}
+                  <div className="relative w-full h-full min-h-[420px] md:min-h-[520px] overflow-hidden">
 
                     {/* 모바일 배너 */}
                     <img
