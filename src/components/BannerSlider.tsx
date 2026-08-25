@@ -78,98 +78,100 @@ export default function BannerSliderWithForm({ banners }: { banners: any[] }) {
     <div className="w-full bg-transparent py-6 md:py-10">
   <div className="w-full px-4 md:px-8">
     
-    {/* 컨테이너: items-start로 상단 정렬하여 여백 원천 차단 */}
-    <div className="flex flex-col-reverse lg:flex-row items-start gap-6">
+    {/* 컨테이너: items-stretch를 통해 좌우 높이를 무조건 일치시킴 */}
+    <div className="flex flex-col md:flex-row items-stretch gap-6">
       
       {/* 1. 비밀지원금 신청 폼 영역 */}
-      <div className="w-full lg:w-[420px] bg-white rounded-2xl md:rounded-3xl shadow-2xl p-6 md:p-8 shrink-0 border border-slate-100">
-        <div className="mb-6 pb-4 border-b border-slate-100">
-          <span className="inline-block bg-blue-50 text-blue-600 text-xs font-bold px-2.5 py-1 rounded-full mb-2">
-            SPECIAL EVENT
-          </span>
-          <h3 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight">
-            비밀지원금 즉시 확인하기
-          </h3>
-          <p className="text-xs md:text-sm text-slate-500 mt-1">
-            남겨주신 번호로 파격적인 지원금 혜택을 안내해 드립니다.
-          </p>
-        </div>
-
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-xs md:text-sm font-semibold text-slate-700 mb-1.5">
-              성함
-            </label>
-            <input
-              type="text"
-              name="name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="홍길동"
-              className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-sm focus:outline-none focus:border-blue-600 focus:bg-white transition-all placeholder:text-slate-400"
-              required
-            />
+      <div className="w-full md:w-[420px] bg-white rounded-2xl md:rounded-3xl shadow-2xl p-6 md:p-8 shrink-0 border border-slate-100 flex flex-col justify-between">
+        <div>
+          <div className="mb-6 pb-4 border-b border-slate-100">
+            <span className="inline-block bg-blue-50 text-blue-600 text-xs font-bold px-2.5 py-1 rounded-full mb-2">
+              SPECIAL EVENT
+            </span>
+            <h3 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight">
+              비밀지원금 즉시 확인하기
+            </h3>
+            <p className="text-xs md:text-sm text-slate-500 mt-1">
+              남겨주신 번호로 파격적인 지원금 혜택을 안내해 드립니다.
+            </p>
           </div>
 
-          <div>
-            <label className="block text-xs md:text-sm font-semibold text-slate-700 mb-1.5">
-              연락처
-            </label>
-            <input
-              type="tel"
-              name="phone"
-              value={phone}
-              onChange={handlePhoneChange}
-              maxLength={13}
-              placeholder="010-1234-5678"
-              className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-sm focus:outline-none focus:border-blue-600 focus:bg-white transition-all placeholder:text-slate-400"
-              required
-            />
-          </div>
-
-          <div className="space-y-4">
-            <div className="bg-slate-50 border border-slate-200/60 rounded-xl p-3.5 space-y-1.5 text-xs text-slate-600">
-              <div className="flex gap-1">
-                <span className="font-semibold text-slate-700">① 수집 목적:</span>
-                <span>가입 상담 및 지원금 안내</span>
-              </div>
-              <div className="flex gap-1">
-                <span className="font-semibold text-slate-700">② 수집 항목:</span>
-                <span>이름, 연락처</span>
-              </div>
-              <div className="pt-1 border-t border-slate-200/60 mt-1">
-                <span className="font-semibold text-slate-700 block mb-0.5">③ 보유 및 이용기간:</span>
-                <p className="text-[11px] text-slate-500">· 개통 완료 시 : D+1095일</p>
-                <p className="text-[11px] text-slate-500">· 단순 상담 시 : D+14일 후 파기</p>
-              </div>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label className="block text-xs md:text-sm font-semibold text-slate-700 mb-1.5">
+                성함
+              </label>
+              <input
+                type="text"
+                name="name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="홍길동"
+                className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-sm focus:outline-none focus:border-blue-600 focus:bg-white transition-all placeholder:text-slate-400"
+                required
+              />
             </div>
 
-            <label className="flex items-center gap-2.5 cursor-pointer pt-1">
+            <div>
+              <label className="block text-xs md:text-sm font-semibold text-slate-700 mb-1.5">
+                연락처
+              </label>
               <input
-                type="checkbox"
-                id="agree"
-                checked={agreed}
-                onChange={(e) => setAgreed(e.target.checked)}
-                className="w-4 h-4 text-blue-600 border-slate-300 rounded focus:ring-blue-500"
+                type="tel"
+                name="phone"
+                value={phone}
+                onChange={handlePhoneChange}
+                maxLength={13}
+                placeholder="010-1234-5678"
+                className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-sm focus:outline-none focus:border-blue-600 focus:bg-white transition-all placeholder:text-slate-400"
+                required
               />
-              <span className="text-xs md:text-sm font-semibold text-slate-800">
-                개인정보 수집 및 이용에 동의합니다 <span className="text-blue-600">(필수)</span>
-              </span>
-            </label>
-          </div>
-          
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="w-full mt-3 bg-[#E7710F] active:scale-[0.98] text-white font-bold py-4 px-4 rounded-xl shadow-lg shadow-blue-600/30 transition-all text-base disabled:bg-slate-400"
-          >
-            {isSubmitting ? '처리 중...' : '비밀지원금 안내 받기'}
-          </button>
-        </form>
+            </div>
+
+            <div className="space-y-4">
+              <div className="bg-slate-50 border border-slate-200/60 rounded-xl p-3.5 space-y-1.5 text-xs text-slate-600">
+                <div className="flex gap-1">
+                  <span className="font-semibold text-slate-700">① 수집 목적:</span>
+                  <span>가입 상담 및 지원금 안내</span>
+                </div>
+                <div className="flex gap-1">
+                  <span className="font-semibold text-slate-700">② 수집 항목:</span>
+                  <span>이름, 연락처</span>
+                </div>
+                <div className="pt-1 border-t border-slate-200/60 mt-1">
+                  <span className="font-semibold text-slate-700 block mb-0.5">③ 보유 및 이용기간:</span>
+                  <p className="text-[11px] text-slate-500">· 개통 완료 시 : D+1095일</p>
+                  <p className="text-[11px] text-slate-500">· 단순 상담 시 : D+14일 후 파기</p>
+                </div>
+              </div>
+
+              <label className="flex items-center gap-2.5 cursor-pointer pt-1">
+                <input
+                  type="checkbox"
+                  id="agree"
+                  checked={agreed}
+                  onChange={(e) => setAgreed(e.target.checked)}
+                  className="w-4 h-4 text-blue-600 border-slate-300 rounded focus:ring-blue-500"
+                />
+                <span className="text-xs md:text-sm font-semibold text-slate-800">
+                  개인정보 수집 및 이용에 동의합니다 <span className="text-blue-600">(필수)</span>
+                </span>
+              </label>
+            </div>
+            
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="w-full mt-3 bg-[#E7710F] active:scale-[0.98] text-white font-bold py-4 px-4 rounded-xl shadow-lg shadow-blue-600/30 transition-all text-base disabled:bg-slate-400"
+            >
+              {isSubmitting ? '처리 중...' : '비밀지원금 안내 받기'}
+            </button>
+          </form>
+        </div>
       </div>
 
-      {/* 2. Swiper 배너 슬라이드 영역 (aspect와 강제 높이를 완전히 빼고 w-full h-auto로 고유 비율 유지) */}
-      <div className="w-full lg:flex-1 overflow-hidden rounded-2xl md:rounded-3xl shadow-xl bg-transparent">
+      {/* 2. Swiper 배너 슬라이드 영역 (높이가 쪼그라들지 않고 좌측 폼과 세로 크기를 100% 공유) */}
+      <div className="w-full md:flex-1 md:self-stretch overflow-hidden rounded-2xl md:rounded-3xl shadow-xl bg-transparent flex flex-col">
         <Swiper
           modules={[Autoplay, Pagination]}
           loop={true}
@@ -178,24 +180,25 @@ export default function BannerSliderWithForm({ banners }: { banners: any[] }) {
             disableOnInteraction: false,
           }}
           pagination={{ clickable: true }}
-          className="w-full"
+          className="w-full h-full flex-1"
         >
           {banners.map((banner, index) => (
-            <SwiperSlide key={banner.id || index}>
-              <div className="relative w-full overflow-hidden">
+            <SwiperSlide key={banner.id || index} className="h-full">
+              {/* 💡 핵심: aspect 비율을 버리고 h-full을 주어 높이가 쪼그라드는 것을 원천 차단하고 꽉 채움 */}
+              <div className="relative w-full h-full overflow-hidden">
 
                 {/* 모바일 배너 */}
                 <img
                   src={banner.link_url}
                   alt={banner.title || '모바일 배너 이미지'}
-                  className="w-full h-auto block md:hidden object-cover"
+                  className="absolute inset-0 w-full h-full block md:hidden object-cover"
                 />
 
-                {/* PC 배너 (h-auto를 주어 이미지 해상도 비율대로 프레임이 딱 떨어지게 만듦) */}
+                {/* PC 배너 */}
                 <img
                   src={banner.image_url}
                   alt={banner.title || 'PC 배너 이미지'}
-                  className="w-full h-auto hidden md:block object-cover"
+                  className="absolute inset-0 w-full h-full hidden md:block object-cover"
                 />
 
                 {/* 텍스트 */}
