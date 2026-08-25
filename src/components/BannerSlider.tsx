@@ -201,7 +201,7 @@ export default function BannerSliderWithForm({ banners }: { banners: any[] }) {
       <img 
         src={banner.image_url} 
         alt={banner.title || 'PC 배너 이미지'} 
-        className="w-full  hidden md:block" 
+        className="w-full h-full hidden md:block" 
       />
       
       <div className="absolute bottom-[15%] left-[6%] right-[6%] text-white z-10 pointer-events-none">
