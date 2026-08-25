@@ -175,8 +175,7 @@ export default function BannerSliderWithForm({ banners }: { banners: any[] }) {
           {/* ========================================================= */}
           {/* 2. Swiper 배너 슬라이드 영역 (PC / 모바일 이미지 분기)       */}
           {/* ========================================================= */}
-          <div className="w-full lg:flex-1 overflow-hidden rounded-2xl md:rounded-3xl shadow-xl bg-transparent">
-  {/* 💡 1. 바깥쪽 부모 div에 h-full을 주어 좌측 폼 박스 높이와 똑같이 맞춤 */}
+          {/* 💡 1. 바깥쪽 부모 div에 h-full을 주어 좌측 폼 박스 높이와 똑같이 맞춤 */}
 <div className="w-full lg:flex-1 h-full overflow-hidden rounded-2xl md:rounded-3xl shadow-xl bg-transparent flex flex-col">
   <Swiper 
     modules={[Autoplay, Pagination]} 
