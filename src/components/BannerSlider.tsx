@@ -12,7 +12,7 @@ export default function BannerSliderWithForm({ banners }: { banners: any[] }) {
   const [agreed, setAgreed] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // 연락처 자동 하이픈 추가 및 유효성 검사 로직 (서버 연동 100% 유지)
+  // 연락처 자동 하이픈 추가 및 유효성 검사 로직
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let value = e.target.value;
     if (/[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/.test(value)) {
@@ -29,7 +29,7 @@ export default function BannerSliderWithForm({ banners }: { banners: any[] }) {
     setPhone(formattedValue);
   };
 
-  // 실제 DB 전송을 위한 폼 제출 핸들러 (서버 연동 100% 유지)
+  // 실제 DB 전송을 위한 폼 제출 핸들러
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
@@ -76,159 +76,149 @@ export default function BannerSliderWithForm({ banners }: { banners: any[] }) {
 
   return (
     <div className="w-full bg-transparent py-6 md:py-10">
-      <div className="w-full px-4 md:px-8 max-w-7xl mx-auto">
-        
-        {/* 
-          [핵심 반응형 레이아웃]
-          - 모바일/태블릿 (화면이 좁을 때): 세로 상하 배치 (flex-col) -> 폼이 배너 아래로 툭 떨어짐
-          - PC (lg: 1024px 이상 넓은 화면): 배너와 폼이 한 공간에 겹쳐서(Relative/Absolute) 배치됨
-        */}
-        <div className="flex flex-col lg:block relative w-full gap-6 lg:gap-0">
-          
-          {/* 1. Swiper 배너 슬라이드 영역 (PC에서는 배경처럼 깔리고, 모바일에서는 위쪽에 위치) */}
-          <div className="w-full overflow-hidden rounded-2xl md:rounded-3xl shadow-xl bg-transparent">
-            <Swiper
-              modules={[Autoplay, Pagination]}
-              loop={true}
-              autoplay={{
-                delay: 3500,
-                disableOnInteraction: false,
-              }}
-              pagination={{ clickable: true }}
-              className="w-full"
-            >
-              {banners.map((banner, index) => (
-                <SwiperSlide key={banner.id || index}>
-                  {/* PC에서는 고유 비율과 min-h를 주어 이미지가 너무 찌그러지지 않게 방어 */}
-                  <div className="relative w-full overflow-hidden min-h-[320px] md:min-h-[500px] lg:min-h-[560px] flex items-center">
+  <div className="w-full px-4 md:px-8">
+    
+    {/* 컨테이너: items-start로 상단 정렬하여 여백 원천 차단 */}
+    <div className="flex flex-col-reverse lg:flex-row items-start gap-6">
+      
+      {/* 1. 비밀지원금 신청 폼 영역 */}
+      <div className="w-full lg:w-[420px] bg-white rounded-2xl md:rounded-3xl shadow-2xl p-6 md:p-8 shrink-0 border border-slate-100">
+        <div className="mb-6 pb-4 border-b border-slate-100">
+          <span className="inline-block bg-blue-50 text-blue-600 text-xs font-bold px-2.5 py-1 rounded-full mb-2">
+            SPECIAL EVENT
+          </span>
+          <h3 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight">
+            비밀지원금 즉시 확인하기
+          </h3>
+          <p className="text-xs md:text-sm text-slate-500 mt-1">
+            남겨주신 번호로 파격적인 지원금 혜택을 안내해 드립니다.
+          </p>
+        </div>
 
-                    {/* 모바일 배너 */}
-                    <img
-                      src={banner.link_url}
-                      alt={banner.title || '모바일 배너 이미지'}
-                      className="absolute inset-0 w-full h-full block md:hidden object-cover"
-                    />
-
-                    {/* PC 배너 */}
-                    <img
-                      src={banner.image_url}
-                      alt={banner.title || 'PC 배너 이미지'}
-                      className="absolute inset-0 w-full h-full hidden md:block object-cover"
-                    />
-
-                    {/* 배경 어둡게 처리 (선택사항이나 텍스트/폼 가독성을 위해 은은한 다크 오버레이 추가 가능, 원치 않으면 삭제 가능) */}
-                    <div className="absolute inset-0 bg-black/20 pointer-events-none" />
-
-                    {/* 텍스트 영역 (PC에서는 왼쪽에 폼이 들어갈 자리를 비워두기 위해 오른쪽으로 밀어줌) */}
-                    <div className="relative z-10 w-full px-6 md:px-12 lg:pl-[460px] text-white pointer-events-none">
-                      <h2 className="text-xl md:text-3xl lg:text-4xl font-extrabold drop-shadow-md tracking-tight leading-snug">
-                        {banner.title}
-                      </h2>
-
-                      <p className="text-xs md:text-base lg:text-lg mt-3 text-slate-200 drop-shadow whitespace-pre-line leading-relaxed">
-                        {banner.subtitle}
-                      </p>
-                    </div>
-
-                  </div>
-                </SwiperSlide>
-              ))}
-            </Swiper>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-xs md:text-sm font-semibold text-slate-700 mb-1.5">
+              성함
+            </label>
+            <input
+              type="text"
+              name="name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="홍길동"
+              className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-sm focus:outline-none focus:border-blue-600 focus:bg-white transition-all placeholder:text-slate-400"
+              required
+            />
           </div>
 
-          {/* 
-            2. 비밀지원금 신청 폼 영역 
-            - 모바일/태블릿: 자연스럽게 배너 아래에 흐름 배치 (relative)
-            - PC (lg 이상): 배너 이미지 위 왼쪽편에 둥둥 떠서 겹쳐짐 (absolute top-1/2 -translate-y-1/2 left-6)
-          */}
-          <div className="w-full lg:absolute lg:top-1/2 lg:-translate-y-1/2 lg:left-6 lg:w-[420px] lg:z-20 bg-white rounded-2xl md:rounded-3xl shadow-2xl p-6 md:p-8 border border-slate-100">
-            <div className="mb-6 pb-4 border-b border-slate-100">
-              <span className="inline-block bg-blue-50 text-blue-600 text-xs font-bold px-2.5 py-1 rounded-full mb-2">
-                SPECIAL EVENT
-              </span>
-              <h3 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight">
-                비밀지원금 즉시 확인하기
-              </h3>
-              <p className="text-xs md:text-sm text-slate-500 mt-1">
-                남겨주신 번호로 파격적인 지원금 혜택을 안내해 드립니다.
-              </p>
+          <div>
+            <label className="block text-xs md:text-sm font-semibold text-slate-700 mb-1.5">
+              연락처
+            </label>
+            <input
+              type="tel"
+              name="phone"
+              value={phone}
+              onChange={handlePhoneChange}
+              maxLength={13}
+              placeholder="010-1234-5678"
+              className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-sm focus:outline-none focus:border-blue-600 focus:bg-white transition-all placeholder:text-slate-400"
+              required
+            />
+          </div>
+
+          <div className="space-y-4">
+            <div className="bg-slate-50 border border-slate-200/60 rounded-xl p-3.5 space-y-1.5 text-xs text-slate-600">
+              <div className="flex gap-1">
+                <span className="font-semibold text-slate-700">① 수집 목적:</span>
+                <span>가입 상담 및 지원금 안내</span>
+              </div>
+              <div className="flex gap-1">
+                <span className="font-semibold text-slate-700">② 수집 항목:</span>
+                <span>이름, 연락처</span>
+              </div>
+              <div className="pt-1 border-t border-slate-200/60 mt-1">
+                <span className="font-semibold text-slate-700 block mb-0.5">③ 보유 및 이용기간:</span>
+                <p className="text-[11px] text-slate-500">· 개통 완료 시 : D+1095일</p>
+                <p className="text-[11px] text-slate-500">· 단순 상담 시 : D+14일 후 파기</p>
+              </div>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <label className="block text-xs md:text-sm font-semibold text-slate-700 mb-1.5">
-                  성함
-                </label>
-                <input
-                  type="text"
-                  name="name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder="홍길동"
-                  className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-sm focus:outline-none focus:border-blue-600 focus:bg-white transition-all placeholder:text-slate-400"
-                  required
-                />
-              </div>
+            <label className="flex items-center gap-2.5 cursor-pointer pt-1">
+              <input
+                type="checkbox"
+                id="agree"
+                checked={agreed}
+                onChange={(e) => setAgreed(e.target.checked)}
+                className="w-4 h-4 text-blue-600 border-slate-300 rounded focus:ring-blue-500"
+              />
+              <span className="text-xs md:text-sm font-semibold text-slate-800">
+                개인정보 수집 및 이용에 동의합니다 <span className="text-blue-600">(필수)</span>
+              </span>
+            </label>
+          </div>
+          
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="w-full mt-3 bg-[#E7710F] active:scale-[0.98] text-white font-bold py-4 px-4 rounded-xl shadow-lg shadow-blue-600/30 transition-all text-base disabled:bg-slate-400"
+          >
+            {isSubmitting ? '처리 중...' : '비밀지원금 안내 받기'}
+          </button>
+        </form>
+      </div>
 
-              <div>
-                <label className="block text-xs md:text-sm font-semibold text-slate-700 mb-1.5">
-                  연락처
-                </label>
-                <input
-                  type="tel"
-                  name="phone"
-                  value={phone}
-                  onChange={handlePhoneChange}
-                  maxLength={13}
-                  placeholder="010-1234-5678"
-                  className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-sm focus:outline-none focus:border-blue-600 focus:bg-white transition-all placeholder:text-slate-400"
-                  required
-                />
-              </div>
+      {/* 2. Swiper 배너 슬라이드 영역 (aspect와 강제 높이를 완전히 빼고 w-full h-auto로 고유 비율 유지) */}
+      <div className="w-full lg:flex-1 overflow-hidden rounded-2xl md:rounded-3xl shadow-xl bg-transparent">
+        <Swiper
+          modules={[Autoplay, Pagination]}
+          loop={true}
+          autoplay={{
+            delay: 3500,
+            disableOnInteraction: false,
+          }}
+          pagination={{ clickable: true }}
+          className="w-full"
+        >
+          {banners.map((banner, index) => (
+            <SwiperSlide key={banner.id || index}>
+              <div className="relative w-full overflow-hidden">
 
-              <div className="space-y-4">
-                <div className="bg-slate-50 border border-slate-200/60 rounded-xl p-3.5 space-y-1.5 text-xs text-slate-600">
-                  <div className="flex gap-1">
-                    <span className="font-semibold text-slate-700">① 수집 목적:</span>
-                    <span>가입 상담 및 지원금 안내</span>
-                  </div>
-                  <div className="flex gap-1">
-                    <span className="font-semibold text-slate-700">② 수집 항목:</span>
-                    <span>이름, 연락처</span>
-                  </div>
-                  <div className="pt-1 border-t border-slate-200/60 mt-1">
-                    <span className="font-semibold text-slate-700 block mb-0.5">③ 보유 및 이용기간:</span>
-                    <p className="text-[11px] text-slate-500">· 개통 완료 시 : D+1095일</p>
-                    <p className="text-[11px] text-slate-500">· 단순 상담 시 : D+14일 후 파기</p>
-                  </div>
+                {/* 모바일 배너 */}
+                <img
+                  src={banner.link_url}
+                  alt={banner.title || '모바일 배너 이미지'}
+                  className="w-full h-auto block md:hidden object-cover"
+                />
+
+                {/* PC 배너 (h-auto를 주어 이미지 해상도 비율대로 프레임이 딱 떨어지게 만듦) */}
+                <img
+                  src={banner.image_url}
+                  alt={banner.title || 'PC 배너 이미지'}
+                  className="w-full h-auto hidden md:block object-cover"
+                />
+
+                {/* 텍스트 */}
+                <div className="absolute bottom-[15%] left-[6%] right-[6%] text-white z-10 pointer-events-none">
+                  <h2 className="text-xl md:text-4xl lg:text-5xl font-extrabold drop-shadow-md tracking-tight">
+                    {banner.title}
+                  </h2>
+
+                  <p className="text-xs md:text-lg lg:text-xl mt-2 text-slate-200 drop-shadow">
+                    {banner.subtitle}
+                  </p>
                 </div>
 
-                <label className="flex items-center gap-2.5 cursor-pointer pt-1">
-                  <input
-                    type="checkbox"
-                    id="agree"
-                    checked={agreed}
-                    onChange={(e) => setAgreed(e.target.checked)}
-                    className="w-4 h-4 text-blue-600 border-slate-300 rounded focus:ring-blue-500"
-                  />
-                  <span className="text-xs md:text-sm font-semibold text-slate-800">
-                    개인정보 수집 및 이용에 동의합니다 <span className="text-blue-600">(필수)</span>
-                  </span>
-                </label>
               </div>
-              
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className="w-full mt-3 bg-[#E7710F] active:scale-[0.98] text-white font-bold py-4 px-4 rounded-xl shadow-lg shadow-blue-600/30 transition-all text-base disabled:bg-slate-400 cursor-pointer"
-              >
-                {isSubmitting ? '처리 중...' : '비밀지원금 안내 받기'}
-              </button>
-            </form>
-          </div>
-
-        </div>
+            </SwiperSlide>
+          ))}
+        </Swiper>
       </div>
+
     </div>
+  </div>
+</div>
   );
+
+  
 }
