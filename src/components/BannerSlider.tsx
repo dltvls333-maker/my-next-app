@@ -176,6 +176,7 @@ export default function BannerSliderWithForm({ banners }: { banners: any[] }) {
           {/* 2. Swiper 배너 슬라이드 영역 (PC / 모바일 이미지 분기)       */}
           {/* ========================================================= */}
           <div className="w-full lg:flex-1 overflow-hidden rounded-2xl md:rounded-3xl shadow-xl bg-transparent">
+ <div className="w-full lg:flex-1 overflow-hidden rounded-2xl md:rounded-3xl shadow-xl bg-transparent">
   <Swiper 
     modules={[Autoplay, Pagination]} 
     loop={true} 
@@ -188,24 +189,24 @@ export default function BannerSliderWithForm({ banners }: { banners: any[] }) {
   >
     {banners.map((banner, index) => (
       <SwiperSlide key={banner.id || index}>
-        {/* 모바일과 PC 비율을 자연스럽게 잡아주는 프레임 */}
-        <div className="w-full relative overflow-hidden aspect-[16/10] md:aspect-[21/9]">
+        {/* 모바일은 정사각형(1/1), PC는 2329x1300 비율(aspect-[2329/1300])로 프레임 비율 고정 */}
+        <div className="w-full relative overflow-hidden aspect-[1/1] md:aspect-[2329/1300]">
           
-          {/* 모바일 버전 이미지 (가로 1200, 세로 750 등의 비율 예시) */}
+          {/* 모바일 버전 이미지 (실제 보유하신 2048x2048 비율 반영) */}
           <img 
             src={banner.link_url} 
             alt={banner.title || '모바일 배너 이미지'} 
-            width="1200"
-            height="750"
+            width="2048"
+            height="2048"
             className="absolute inset-0 w-full h-full object-cover md:hidden" 
           />
           
-          {/* PC 버전 이미지 (다른 사이트처럼 width, height를 줘서 브라우저가 비율을 칼같이 지키게 함) */}
+          {/* PC 버전 이미지 (실제 보유하신 2329x1300 비율 반영) */}
           <img 
             src={banner.image_url} 
             alt={banner.title || 'PC 배너 이미지'} 
-            width="2456"
-            height="880"
+            width="2329"
+            height="1300"
             className="absolute inset-0 w-full h-full object-cover hidden md:block" 
           />
             
