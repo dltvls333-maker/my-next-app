@@ -176,50 +176,52 @@ export default function BannerSliderWithForm({ banners }: { banners: any[] }) {
           {/* 2. Swiper 배너 슬라이드 영역 (PC / 모바일 이미지 분기)       */}
           {/* ========================================================= */}
           <div className="w-full lg:flex-1 overflow-hidden rounded-2xl md:rounded-3xl shadow-xl bg-transparent">
-          <Swiper 
-            modules={[Autoplay, Pagination]} 
-            loop={true} 
-            autoplay={{ 
-              delay: 3500, 
-              disableOnInteraction: false 
-            }} 
-            pagination={{ clickable: true }} 
-            className="w-full"
-          >
-            {banners.map((banner, index) => (
-              <SwiperSlide key={banner.id || index}>
-                {/* 💡 핵심: SwiperSlide 내부를 가로세로 비율(aspect-ratio)을 가진 단일 상대좌표 프레임으로 통일 */}
-                <div className="w-full relative overflow-hidden aspect-[4/3] sm:aspect-[16/10] md:aspect-[21/9]">
-                  
-                  {/* 모바일 버전 이미지 (오직 모바일에서만 노출, 프레임에 꽉 차게 됨) */}
-                  <img 
-                    src={banner.link_url} 
-                    alt={banner.title || '모바일 배너 이미지'} 
-                    className="absolute inset-0 w-full h-full object-cover md:hidden" 
-                  />
-                  
-                  {/* PC 버전 이미지 (오직 PC에서만 노출, 프레임에 꽉 차게 됨) */}
-                  <img 
-                    src={banner.image_url} 
-                    alt={banner.title || 'PC 배너 이미지'} 
-                    className="absolute inset-0 w-full h-full object-cover hidden md:block" 
-                  />
-                    
-                  {/* 텍스트 영역 */}
-                  <div className="absolute bottom-[15%] left-[6%] right-[6%] text-white z-10 pointer-events-none">
-                    <h2 className="text-xl md:text-4xl lg:text-5xl font-extrabold drop-shadow-md tracking-tight">
-                      {banner.title}
-                    </h2>
-                    <p className="text-xs md:text-lg lg:text-xl mt-2 text-slate-200 drop-shadow">
-                      {banner.subtitle}
-                    </p>
-                  </div>
+  {/* 💡 1. 바깥쪽 부모 div에 h-full을 주어 좌측 폼 박스 높이와 똑같이 맞춤 */}
+<div className="w-full lg:flex-1 h-full overflow-hidden rounded-2xl md:rounded-3xl shadow-xl bg-transparent flex flex-col">
+  <Swiper 
+    modules={[Autoplay, Pagination]} 
+    loop={true} 
+    autoplay={{ 
+      delay: 3500, 
+      disableOnInteraction: false 
+    }} 
+    pagination={{ clickable: true }} 
+    className="w-full h-full flex-1" // 💡 2. Swiper도 높이를 100% 채우도록 수정
+  >
+    {banners.map((banner, index) => (
+      <SwiperSlide key={banner.id || index} className="h-full">
+        {/* 💡 3. aspect-ratio를 지우고 h-full을 주어 좌측 높이에 완벽 밀착 */}
+        <div className="w-full h-full relative overflow-hidden">
+          
+          {/* 모바일 버전 이미지 */}
+          <img 
+            src={banner.link_url} 
+            alt={banner.title || '모바일 배너 이미지'} 
+            className="absolute inset-0 w-full h-full object-cover md:hidden" 
+          />
+          
+          {/* PC 버전 이미지 */}
+          <img 
+            src={banner.image_url} 
+            alt={banner.title || 'PC 배너 이미지'} 
+            className="absolute inset-0 w-full h-full object-cover hidden md:block" 
+          />
+            
+          {/* 텍스트 영역 */}
+          <div className="absolute bottom-[15%] left-[6%] right-[6%] text-white z-10 pointer-events-none">
+            <h2 className="text-xl md:text-4xl lg:text-5xl font-extrabold drop-shadow-md tracking-tight">
+              {banner.title}
+            </h2>
+            <p className="text-xs md:text-lg lg:text-xl mt-2 text-slate-200 drop-shadow">
+              {banner.subtitle}
+            </p>
+          </div>
 
-                </div>
-              </SwiperSlide>
-            ))}
-          </Swiper>
         </div>
+      </SwiperSlide>
+    ))}
+  </Swiper>
+</div>
 
         </div>
       </div>
