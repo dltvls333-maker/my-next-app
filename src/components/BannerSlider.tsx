@@ -78,27 +78,27 @@ export default function BannerSliderWithForm({ banners }: { banners: any[] }) {
     <div className="w-full bg-transparent py-6 md:py-10">
   <div className="w-full px-4 md:px-8">
     
-    {/* 컨테이너: 좌우 높이를 똑같이 맞춤 */}
+    {/* 컨테이너: 좌우 높이를 똑같이 맞추기 위해 items-stretch 유지 */}
     <div className="flex flex-col-reverse lg:flex-row items-stretch gap-6">
       
-      {/* 1. 비밀지원금 신청 폼 영역 (크기를 살짝 슬림하게 줄여서 배너와 높이 일치) */}
-      <div className="w-full lg:w-[420px] bg-white rounded-2xl md:rounded-3xl shadow-2xl p-5 md:p-6 flex flex-col justify-between shrink-0 border border-slate-100">
-        <div className="flex flex-col h-full justify-between">
-          <div className="mb-3 pb-3 border-b border-slate-100">
-            <span className="inline-block bg-blue-50 text-blue-600 text-xs font-bold px-2 py-0.5 rounded-full mb-1">
+      {/* 1. 비밀지원금 신청 폼 영역 */}
+      <div className="w-full lg:w-[420px] bg-white rounded-2xl md:rounded-3xl shadow-2xl p-6 md:p-8 flex flex-col justify-between shrink-0 border border-slate-100">
+        <div className="flex flex-col h-full">
+          <div className="mb-6 pb-4 border-b border-slate-100">
+            <span className="inline-block bg-blue-50 text-blue-600 text-xs font-bold px-2.5 py-1 rounded-full mb-2">
               SPECIAL EVENT
             </span>
-            <h3 className="text-lg md:text-xl font-black text-slate-900 tracking-tight">
+            <h3 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight">
               비밀지원금 즉시 확인하기
             </h3>
-            <p className="text-xs text-slate-500 mt-0.5">
+            <p className="text-xs md:text-sm text-slate-500 mt-1">
               남겨주신 번호로 파격적인 지원금 혜택을 안내해 드립니다.
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="flex flex-col gap-2.5">
+          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
+              <label className="block text-xs md:text-sm font-semibold text-slate-700 mb-1.5">
                 성함
               </label>
               <input
@@ -107,13 +107,13 @@ export default function BannerSliderWithForm({ banners }: { banners: any[] }) {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="홍길동"
-                className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-sm focus:outline-none focus:border-blue-600 focus:bg-white transition-all placeholder:text-slate-400"
+                className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-sm focus:outline-none focus:border-blue-600 focus:bg-white transition-all placeholder:text-slate-400"
                 required
               />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
+              <label className="block text-xs md:text-sm font-semibold text-slate-700 mb-1.5">
                 연락처
               </label>
               <input
@@ -123,13 +123,13 @@ export default function BannerSliderWithForm({ banners }: { banners: any[] }) {
                 onChange={handlePhoneChange}
                 maxLength={13}
                 placeholder="010-1234-5678"
-                className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-sm focus:outline-none focus:border-blue-600 focus:bg-white transition-all placeholder:text-slate-400"
+                className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-sm focus:outline-none focus:border-blue-600 focus:bg-white transition-all placeholder:text-slate-400"
                 required
               />
             </div>
 
-            <div className="space-y-2">
-              <div className="bg-slate-50 border border-slate-200/60 rounded-xl p-2.5 space-y-1 text-[11px] text-slate-600">
+            <div className="space-y-3">
+              <div className="bg-slate-50 border border-slate-200/60 rounded-xl p-3.5 space-y-1.5 text-xs text-slate-600">
                 <div className="flex gap-1">
                   <span className="font-semibold text-slate-700">① 수집 목적:</span>
                   <span>가입 상담 및 지원금 안내</span>
@@ -138,13 +138,14 @@ export default function BannerSliderWithForm({ banners }: { banners: any[] }) {
                   <span className="font-semibold text-slate-700">② 수집 항목:</span>
                   <span>이름, 연락처</span>
                 </div>
-                <div className="pt-0.5 border-t border-slate-200/60 mt-0.5">
-                  <span className="font-semibold text-slate-700">③ 보유 기간:</span>
-                  <span className="text-slate-500 ml-1">개통 시 D+1095일 / 상담 시 D+14일 파기</span>
+                <div className="pt-1 border-t border-slate-200/60 mt-1">
+                  <span className="font-semibold text-slate-700 block mb-0.5">③ 보유 및 이용기간:</span>
+                  <p className="text-[11px] text-slate-500">· 개통 완료 시 : D+1095일</p>
+                  <p className="text-[11px] text-slate-500">· 단순 상담 시 : D+14일 후 파기</p>
                 </div>
               </div>
 
-              <label className="flex items-center gap-2 cursor-pointer pt-0.5">
+              <label className="flex items-center gap-2.5 cursor-pointer pt-1">
                 <input
                   type="checkbox"
                   id="agree"
@@ -152,7 +153,7 @@ export default function BannerSliderWithForm({ banners }: { banners: any[] }) {
                   onChange={(e) => setAgreed(e.target.checked)}
                   className="w-4 h-4 text-blue-600 border-slate-300 rounded focus:ring-blue-500"
                 />
-                <span className="text-xs font-semibold text-slate-800">
+                <span className="text-xs md:text-sm font-semibold text-slate-800">
                   개인정보 수집 및 이용에 동의합니다 <span className="text-blue-600">(필수)</span>
                 </span>
               </label>
@@ -161,7 +162,7 @@ export default function BannerSliderWithForm({ banners }: { banners: any[] }) {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full mt-1 bg-[#E7710F] active:scale-[0.98] text-white font-bold py-3.5 px-4 rounded-xl shadow-lg shadow-blue-600/30 transition-all text-sm disabled:bg-slate-400"
+              className="w-full mt-2 bg-[#E7710F] active:scale-[0.98] text-white font-bold py-4 px-4 rounded-xl shadow-lg shadow-blue-600/30 transition-all text-base disabled:bg-slate-400"
             >
               {isSubmitting ? '처리 중...' : '비밀지원금 안내 받기'}
             </button>
@@ -183,17 +184,17 @@ export default function BannerSliderWithForm({ banners }: { banners: any[] }) {
         >
           {banners.map((banner, index) => (
             <SwiperSlide key={banner.id || index} className="h-full">
-              {/* 우측 배너 고유 비율 유지 + 폼과 높이 동기화 */}
-              <div className="relative w-full h-full overflow-hidden aspect-[1/1] md:aspect-[2329/1300]">
+              {/* 💡 핵심 포인트: min-h를 주어 이미지 세로 프레임이 너무 납작하게 쪼그라드는 것을 방지하고 좌측 폼과 높이 균형을 맞춤 */}
+              <div className="relative w-full h-full min-h-[340px] md:min-h-[420px] lg:min-h-0 overflow-hidden flex items-center justify-center bg-[#e3eae5]">
 
-                {/* 모바일 배너 */}
+                {/* 모바일 배너 - 2048 × 2048 */}
                 <img
                   src={banner.link_url}
                   alt={banner.title || '모바일 배너 이미지'}
                   className="absolute inset-0 w-full h-full block md:hidden object-cover"
                 />
 
-                {/* PC 배너 */}
+                {/* PC 배너 - 2329 × 1300 */}
                 <img
                   src={banner.image_url}
                   alt={banner.title || 'PC 배너 이미지'}
