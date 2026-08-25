@@ -59,7 +59,7 @@ export default function ReviewsAdmin({ onSubmit }: { onSubmit: (data: FormData) 
         {/* 작성자 */}
         <div className="flex flex-col md:flex-row md:items-center gap-3 md:gap-8">
           <label className={labelClass}>작성자</label>
-          <input type="text" value={formData.user_name} className={`${inputClass} bg-slate-100`} />
+          <input type="text" value={``} className={`${inputClass}`} />
         </div>
 
         {/* 제목 */}
