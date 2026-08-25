@@ -188,25 +188,25 @@ export default function BannerSliderWithForm({ banners }: { banners: any[] }) {
   >
     {banners.map((banner, index) => (
       <SwiperSlide key={banner.id || index}>
-        {/* 모바일과 PC 비율을 자연스럽게 잡아주는 프레임 */}
-        <div className="w-full relative overflow-hidden aspect-[16/10] md:aspect-[21/9]">
+        {/* 고정 aspect-ratio를 제거하고 이미지 태그가 높이를 스스로 결정하게 함 */}
+        <div className="w-full relative overflow-hidden">
           
-          {/* 모바일 버전 이미지 (가로 1200, 세로 750 등의 비율 예시) */}
+          {/* 모바일 버전 이미지 (2048x2048 정사각형) */}
           <img 
             src={banner.link_url} 
             alt={banner.title || '모바일 배너 이미지'} 
-            width="1200"
-            height="750"
-            className="absolute inset-0 w-full h-full object-cover md:hidden" 
+            width="2048"
+            height="2048"
+            className="w-full h-auto object-cover md:hidden" 
           />
           
-          {/* PC 버전 이미지 (다른 사이트처럼 width, height를 줘서 브라우저가 비율을 칼같이 지키게 함) */}
+          {/* PC 버전 이미지 (2329x1300 가로형) */}
           <img 
             src={banner.image_url} 
             alt={banner.title || 'PC 배너 이미지'} 
-            width="2456"
-            height="880"
-            className="absolute inset-0 w-full h-full object-cover hidden md:block" 
+            width="2329"
+            height="1300"
+            className="w-full h-auto object-cover hidden md:block" 
           />
             
           {/* 텍스트 영역 */}
