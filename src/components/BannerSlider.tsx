@@ -175,48 +175,52 @@ export default function BannerSliderWithForm({ banners }: { banners: any[] }) {
           {/* ========================================================= */}
           {/* 2. Swiper 배너 슬라이드 영역 (PC / 모바일 이미지 분기)       */}
           {/* ========================================================= */}
-          <div className="w-full lg:flex-1 overflow-hidden rounded-2xl md:rounded-3xl shadow-xl bg-transparent">
-            <Swiper 
-              modules={[Autoplay, Pagination]} 
-              loop={true} 
-              autoplay={{ 
-                delay: 3500, 
-                disableOnInteraction: false 
-              }} 
-              pagination={{ clickable: true }} 
-              className="w-full aspect-[16/10] md:aspect-[21/9] lg:h-full" 
-            >
-            {banners.map((banner, index) => (
-                <SwiperSlide key={banner.id || index}>
-                  <div className="w-full h-full relative overflow-hidden">
-                    
-                  <img 
-                    src={banner.link_url} 
-                    alt={banner.title || '모바일 배너 이미지'} 
-                    className="w-full h-full object-cover md:hidden" 
-                  />
-                  
-                  <img 
-                    src={banner.image_url} 
-                    alt={banner.title || 'PC 배너 이미지'} 
-                    className="w-full h-full object-cover hidden md:block" 
-                  />
-                    
-                    <div className="absolute bottom-[15%] left-[6%] right-[6%] text-white z-10 pointer-events-none">
-                      <h2 className="text-xl md:text-4xl lg:text-5xl font-extrabold drop-shadow-md tracking-tight">
-                        {banner.title}
-                      </h2>
-                      <p className="text-xs md:text-lg lg:text-xl mt-2 text-slate-200 drop-shadow">
-                        {banner.subtitle}
-                      </p>
-                    </div>
+     <div className="w-full lg:flex-1 lg:self-start overflow-hidden rounded-2xl md:rounded-3xl shadow-xl bg-transparent">
+  <Swiper
+    modules={[Autoplay, Pagination]}
+    loop={true}
+    autoplay={{
+      delay: 3500,
+      disableOnInteraction: false,
+    }}
+    pagination={{ clickable: true }}
+    className="w-full"
+  >
+    {banners.map((banner, index) => (
+      <SwiperSlide key={banner.id || index}>
+        {/* 💡 핵심 1: 프레임 자체에 모바일(1/1 정사각형)과 PC(2329/1300 비율)의 실제 해상도 비율을 고정하여 빈 공간 차단 */}
+        <div className="relative w-full overflow-hidden aspect-[1/1] md:aspect-[2329/1300]">
 
-                    {/* <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none"></div> */}
-                  </div>
-                </SwiperSlide>
-              ))}
-            </Swiper>
+          {/* 모바일 배너 - 2048 × 2048 */}
+          <img
+            src={banner.link_url}
+            alt={banner.title || '모바일 배너 이미지'}
+            className="absolute inset-0 w-full h-full object-cover md:hidden"
+          />
+
+          {/* PC 배너 - 2329 × 1300 */}
+          <img
+            src={banner.image_url}
+            alt={banner.title || 'PC 배너 이미지'}
+            className="absolute inset-0 w-full h-full object-cover hidden md:block"
+          />
+
+          {/* 텍스트 */}
+          <div className="absolute bottom-[15%] left-[6%] right-[6%] text-white z-10 pointer-events-none">
+            <h2 className="text-xl md:text-4xl lg:text-5xl font-extrabold drop-shadow-md tracking-tight">
+              {banner.title}
+            </h2>
+
+            <p className="text-xs md:text-lg lg:text-xl mt-2 text-slate-200 drop-shadow">
+              {banner.subtitle}
+            </p>
           </div>
+
+        </div>
+      </SwiperSlide>
+    ))}
+  </Swiper>
+</div>
 
         </div>
       </div>
