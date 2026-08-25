@@ -4,13 +4,13 @@ import React, { useEffect, useState } from 'react';
 import useEmblaCarousel from 'embla-carousel-react';
 import AutoScroll from 'embla-carousel-auto-scroll';
 
-// --- 은행별 정확한 패턴 및 고유 색상 설정 ---
+// --- 은행별 정확한 패턴 및 고유 색상 설정 (인라인 스타일용 HEX 값 적용) ---
 const bankList = [
-  { name: '국민은행', pattern: '4363', bg: 'bg-[#FFCC00]', text: 'text-[#222222]', short: '국' },
-  { name: '신한은행', pattern: '110', bg: 'bg-[#0046FF]', text: 'text-white', short: '신' },
-  { name: '카카오뱅크', pattern: '3333', bg: 'bg-[#FEE500]', text: 'text-[#3C1E1E]', short: '카' },
-  { name: '우리은행', pattern: '1002', bg: 'bg-[#0072CE]', text: 'text-white', short: '우' },
-  { name: '하나은행', pattern: '506', bg: 'bg-[#00857E]', text: 'text-white', short: '하' },
+  { name: '국민은행', pattern: '4363', bgColor: '#FFCC00', textColor: '#222222', short: '국' },
+  { name: '신한은행', pattern: '110', bgColor: '#0046FF', textColor: '#ffffff', short: '신' },
+  { name: '카카오뱅크', pattern: '3333', bgColor: '#FEE500', textColor: '#3C1E1E', short: '카' },
+  { name: '우리은행', pattern: '1002', bgColor: '#0072CE', textColor: '#ffffff', short: '우' },
+  { name: '하나은행', pattern: '506', bgColor: '#00857E', textColor: '#ffffff', short: '하' },
 ];
 
 // --- 데이터 생성 로직 ---
@@ -51,8 +51,8 @@ const generateRandomItems = (count: number) => {
     return {
       bank: selected.name,
       short: selected.short,
-      bg: selected.bg,
-      text: selected.text,
+      bgColor: selected.bgColor,
+      textColor: selected.textColor,
       amount: randomAmount.toLocaleString() + ' 원',
       status: randomStatus,
       account: formattedAccount,
@@ -136,9 +136,12 @@ export default function RollingBanner() {
 
                   <div className="flex flex-col flex-grow mt-6 md:mt-10">
                     
-                    {/* 헤더 아이콘 및 은행명 */}
+                    {/* 헤더 아이콘 및 은행명 (인라인 스타일 적용으로 색상 누락 방지) */}
                     <div className="flex items-center gap-2.5 md:gap-3 mb-3 md:mb-6 pb-3 md:pb-4 border-b border-white/5">
-                      <div className={`w-9 h-9 md:w-12 md:h-12 rounded-full ${item.bg} ${item.text} flex items-center justify-center text-sm md:text-lg font-bold shadow-inner flex-shrink-0`}>
+                      <div 
+                        style={{ backgroundColor: item.bgColor, color: item.textColor }}
+                        className="w-9 h-9 md:w-12 md:h-12 rounded-full flex items-center justify-center text-sm md:text-lg font-bold shadow-inner flex-shrink-0"
+                      >
                         {item.short}
                       </div>
                       <div className="min-w-0">
