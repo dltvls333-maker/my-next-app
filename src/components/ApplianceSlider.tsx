@@ -57,7 +57,7 @@ const ApplianceSlider = () => {
 
                 {/* 2. 중앙 주황색 버튼 영역 (크기 통일) */}
                 <div className="my-2 flex justify-center">
-                  <div className="w-full max-w-[180px] bg-[#e67e22] text-white text-xs md:text-sm font-bold py-2.5 rounded-full shadow-sm text-center truncate px-2">
+                  <div className="w-full max-w-[180px] bg-[#0A685D] text-white text-xs md:text-sm font-bold py-2.5 rounded-full shadow-sm text-center truncate px-2">
                     {item.badge}
                   </div>
                 </div>
