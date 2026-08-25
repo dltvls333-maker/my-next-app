@@ -78,11 +78,11 @@ export default function BannerSliderWithForm({ banners }: { banners: any[] }) {
     <div className="w-full bg-transparent py-6 md:py-10">
   <div className="w-full px-4 md:px-8">
     
-    {/* 컨테이너: items-stretch를 빼고 items-start를 주어 각자 자기 이미지/콘텐츠 높이만큼만 예쁘게 차지하게 함 */}
-    <div className="flex flex-col-reverse xl:flex-row items-stretch  gap-6">
+    {/* 컨테이너 */}
+    <div className="flex flex-col-reverse lg:flex-row items-stretch gap-6">
       
       {/* 1. 비밀지원금 신청 폼 영역 */}
-      <div className="w-full xl:w-[420px] bg-white rounded-2xl md:rounded-3xl shadow-2xl p-6 md:p-8 flex flex-col justify-between shrink-0 border border-slate-100">
+      <div className="w-full lg:w-[420px] bg-white rounded-2xl md:rounded-3xl shadow-2xl p-6 md:p-8 flex flex-col justify-between shrink-0 border border-slate-100">
         <div className="flex flex-col h-full">
           <div className="mb-6 pb-4 border-b border-slate-100">
             <span className="inline-block bg-blue-50 text-blue-600 text-xs font-bold px-2.5 py-1 rounded-full mb-2">
@@ -171,34 +171,34 @@ export default function BannerSliderWithForm({ banners }: { banners: any[] }) {
       </div>
 
       {/* 2. Swiper 배너 슬라이드 영역 */}
-      <div className="w-full lg:flex-1 min-w-0 overflow-hidden rounded-2xl md:rounded-3xl shadow-xl bg-transparent"></div>
+      <div className="w-full lg:flex-1 overflow-hidden rounded-2xl md:rounded-3xl shadow-xl bg-transparent">
         <Swiper
-            modules={[Autoplay, Pagination]}
-            loop={true}
-            autoplay={{
-              delay: 3500,
-              disableOnInteraction: false,
-            }}
-            pagination={{ clickable: true }}
-            className="w-full h-full"
+          modules={[Autoplay, Pagination]}
+          loop={true}
+          autoplay={{
+            delay: 3500,
+            disableOnInteraction: false,
+          }}
+          pagination={{ clickable: true }}
+          className="w-full"
         >
           {banners.map((banner, index) => (
-            <SwiperSlide key={banner.id || index} className="!h-full">
-              {/* 이미지 비율(2329/1300 및 모바일 정사각형)에 맞춰 프레임이 딱 맞아떨어지게 설정 */}
-              <div className="relative w-full h-full min-h-0 overflow-hidden"></div>
+            <SwiperSlide key={banner.id || index}>
+              {/* 💡 핵심: 모바일과 PC 모두 h-auto를 통해 이미지 높이에 맞춰 프레임이 정상적으로 잡히도록 수정 */}
+              <div className="relative w-full overflow-hidden">
 
-                {/* 모바일 배너 */}
+                {/* 모바일 배너 - 2048 × 2048 (absolute 제거하여 화면에 정상 노출) */}
                 <img
                   src={banner.link_url}
                   alt={banner.title || '모바일 배너 이미지'}
-                  className="absolute inset-0 w-full h-full block md:hidden object-cover"
+                  className="w-full h-auto block md:hidden object-cover"
                 />
 
-                {/* PC 배너 */}
+                {/* PC 배너 - 2329 × 1300 */}
                 <img
                   src={banner.image_url}
                   alt={banner.title || 'PC 배너 이미지'}
-                  className="absolute inset-0 w-full h-full hidden md:block object-cover"
+                  className="w-full h-auto hidden md:block object-cover"
                 />
 
                 {/* 텍스트 */}
