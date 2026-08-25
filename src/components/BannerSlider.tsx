@@ -78,7 +78,7 @@ export default function BannerSliderWithForm({ banners }: { banners: any[] }) {
     <div className="w-full bg-transparent py-6 md:py-10">
   <div className="w-full px-4 md:px-8">
     
-    {/* 컨테이너 */}
+    {/* 컨테이너: 좌우 높이를 똑같이 맞추기 위해 items-stretch 유지 */}
     <div className="flex flex-col-reverse lg:flex-row items-stretch gap-6">
       
       {/* 1. 비밀지원금 신청 폼 영역 */}
@@ -171,7 +171,7 @@ export default function BannerSliderWithForm({ banners }: { banners: any[] }) {
       </div>
 
       {/* 2. Swiper 배너 슬라이드 영역 */}
-      <div className="w-full lg:flex-1 overflow-hidden rounded-2xl md:rounded-3xl shadow-xl bg-transparent">
+      <div className="w-full lg:flex-1 lg:self-stretch overflow-hidden rounded-2xl md:rounded-3xl shadow-xl bg-transparent flex flex-col">
         <Swiper
           modules={[Autoplay, Pagination]}
           loop={true}
@@ -180,25 +180,25 @@ export default function BannerSliderWithForm({ banners }: { banners: any[] }) {
             disableOnInteraction: false,
           }}
           pagination={{ clickable: true }}
-          className="w-full"
+          className="w-full h-full flex-1"
         >
           {banners.map((banner, index) => (
-            <SwiperSlide key={banner.id || index}>
-              {/* 💡 핵심: 고정 aspect-ratio를 완전히 제거하고, w-full h-auto를 주어 이미지가 줄어드는 만큼 프레임 세로 높이도 같이 찰지게 줄어들게 함 */}
-              <div className="relative w-full overflow-hidden">
+            <SwiperSlide key={banner.id || index} className="h-full">
+              {/* 💡 핵심 포인트: min-h를 주어 이미지 세로 프레임이 너무 납작하게 쪼그라드는 것을 방지하고 좌측 폼과 높이 균형을 맞춤 */}
+              <div className="relative w-full h-full min-h-[340px] md:min-h-[420px] lg:min-h-0 overflow-hidden flex items-center justify-center bg-[#e3eae5]">
 
                 {/* 모바일 배너 - 2048 × 2048 */}
                 <img
                   src={banner.link_url}
                   alt={banner.title || '모바일 배너 이미지'}
-                  className="w-full h-auto block md:hidden object-cover"
+                  className="absolute inset-0 w-full h-full block md:hidden object-cover"
                 />
 
                 {/* PC 배너 - 2329 × 1300 */}
                 <img
                   src={banner.image_url}
                   alt={banner.title || 'PC 배너 이미지'}
-                  className="w-full h-auto hidden md:block object-cover"
+                  className="absolute inset-0 w-full h-full hidden md:block object-cover"
                 />
 
                 {/* 텍스트 */}
