@@ -4,18 +4,17 @@ import React, { useEffect, useState } from 'react';
 import useEmblaCarousel from 'embla-carousel-react';
 import AutoScroll from 'embla-carousel-auto-scroll';
 
-// --- 은행별 색상 및 계좌 패턴 정의 ---
-const bankConfig: { [key: string]: { pattern: string; bg: string; text: string; short: string } } = {
-  '카카오뱅크': { pattern: '3333', bg: 'bg-[#FEE500]', text: 'text-[#3C1E1E]', short: '카' },
-  '신한은행': { pattern: '110', bg: 'bg-[#0046FF]', text: 'text-white', short: '신' },
-  '국민은행': { pattern: '4363', bg: 'bg-[#FFCC00]', text: 'text-[#222222]', short: '국' },
-  '하나은행': { pattern: '506', bg: 'bg-[#00857E]', text: 'text-white', short: '하' },
-  '우리은행': { pattern: '1002', bg: 'bg-[#0072CE]', text: 'text-white', short: '우' },
-};
+// --- 은행별 정확한 패턴 및 고유 색상 설정 ---
+const bankList = [
+  { name: '국민은행', pattern: '4363', bg: 'bg-[#FFCC00]', text: 'text-[#222222]', short: '국' },
+  { name: '신한은행', pattern: '110', bg: 'bg-[#0046FF]', text: 'text-white', short: '신' },
+  { name: '카카오뱅크', pattern: '3333', bg: 'bg-[#FEE500]', text: 'text-[#3C1E1E]', short: '카' },
+  { name: '우리은행', pattern: '1002', bg: 'bg-[#0072CE]', text: 'text-white', short: '우' },
+  { name: '하나은행', pattern: '506', bg: 'bg-[#00857E]', text: 'text-white', short: '하' },
+];
 
-// --- 1. 데이터 생성 로직 (은행별 맞춤 계좌 및 색상 적용) ---
+// --- 데이터 생성 로직 ---
 const generateRandomItems = (count: number) => {
-  const bankNames = Object.keys(bankConfig);
   const descriptions = ['인터넷 지원금', '보조금', '', '', ''];
   const statuses = ['입금대기', '입금완료'];
 
@@ -25,7 +24,6 @@ const generateRandomItems = (count: number) => {
     const date = new Date();
     date.setDate(date.getDate() - randomDays);
     
-    // 0~23시, 0~59분 사이의 랜덤 시간 생성
     const randomHours = Math.floor(Math.random() * 24);
     const randomMinutes = Math.floor(Math.random() * 60);
 
@@ -38,24 +36,23 @@ const generateRandomItems = (count: number) => {
     const minutesStr = randomMinutes.toString().padStart(2, '0');
     const dateString = `${month}/${day} ${hoursStr}:${minutesStr}`;
 
-    // 랜덤 은행 선택
-    const selectedBank = bankNames[Math.floor(Math.random() * bankNames.length)];
-    const config = bankConfig[selectedBank];
+    // 은행 랜덤 선택
+    const selected = bankList[Math.floor(Math.random() * bankList.length)];
 
-    // 해당 은행 고유 패턴으로 계좌번호 조합
-    const randomMiddle = Math.floor(Math.random() * 90 + 10); // 2자리 랜덤
-    const randomTail = Math.floor(Math.random() * 9000 + 1000); // 4자리 랜덤
-    const formattedAccount = `${config.pattern}-${randomMiddle}-***${randomTail}`;
+    // 계좌번호 조합 (지정된 패턴으로 정확히 시작)
+    const randomMiddle = Math.floor(Math.random() * 90 + 10);
+    const randomTail = Math.floor(Math.random() * 9000 + 1000);
+    const formattedAccount = `${selected.pattern}-${randomMiddle}-***${randomTail}`;
 
     const randomAmount = (Math.floor(Math.random() * (110 - 56 + 1)) + 56) * 10000;
     const randomDesc = descriptions[Math.floor(Math.random() * descriptions.length)];
     const randomStatus = statuses[Math.floor(Math.random() * statuses.length)];
 
     return {
-      bank: selectedBank,
-      short: config.short,
-      bg: config.bg,
-      text: config.text,
+      bank: selected.name,
+      short: selected.short,
+      bg: selected.bg,
+      text: selected.text,
       amount: randomAmount.toLocaleString() + ' 원',
       status: randomStatus,
       account: formattedAccount,
@@ -89,7 +86,6 @@ export default function RollingBanner() {
     ]
   );
 
-  // 마우스 올렸을 때 즉시 멈추고 뗄 때 즉시 시작하도록 핸들러 추가
   useEffect(() => {
     const autoScroll = emblaApi?.plugins()?.autoScroll;
     if (!autoScroll) return;
@@ -115,25 +111,21 @@ export default function RollingBanner() {
 
   return (
     <div className="w-full bg-slate-50 py-12 md:py-20">
-      {/* 1240px 제한 및 overflow-hidden 적용 */}
       <div className="max-w-[1240px] mx-auto px-4 overflow-hidden">
         <h3 className="text-center text-xl md:text-3xl font-extrabold mb-8 md:mb-16 text-slate-900 tracking-tight">
           실시간 입금 현황
         </h3>
         
-        {/* 롤링 배너 컨테이너 */}
         <div className="relative w-full overflow-hidden py-4" ref={emblaRef}>
-          {/* Flex 트랙 */}
           <div className="flex gap-3 md:gap-5">
             {items.map((item, index) => (
               <div 
                 key={`roll-${index}`} 
                 className="flex-[0_0_210px] md:flex-[0_0_280px] h-[310px] md:h-[400px] select-none"
               >
-                {/* --- 스마트폰 문자 카드 디자인 (호버 애니메이션 적용) --- */}
                 <div className="w-full h-full bg-[#1e1e1e] rounded-[24px] md:rounded-[32px] p-4 md:p-6 flex flex-col text-white shadow-lg shadow-slate-200 border border-slate-700/50 relative overflow-hidden transition-all duration-300 ease-out hover:-translate-y-2 hover:scale-[1.02] hover:shadow-2xl hover:border-blue-500/50 cursor-pointer">
                   
-                  {/* 상단바 (랜덤 시간이 적용됨) */}
+                  {/* 상단바 */}
                   <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1/3 h-5 md:h-7 bg-black rounded-b-xl z-10 flex items-center justify-between px-3 md:px-4">
                     <span className="text-[10px] md:text-[12px] font-semibold text-gray-100 tracking-tight">{item.topTime}</span>
                     <div className="flex gap-1 items-center">
@@ -142,10 +134,9 @@ export default function RollingBanner() {
                     </div>
                   </div>
 
-                  {/* 카드 내부 콘텐츠 */}
                   <div className="flex flex-col flex-grow mt-6 md:mt-10">
                     
-                    {/* 헤더 (은행별 고유 색상 및 글자 적용) */}
+                    {/* 헤더 아이콘 및 은행명 */}
                     <div className="flex items-center gap-2.5 md:gap-3 mb-3 md:mb-6 pb-3 md:pb-4 border-b border-white/5">
                       <div className={`w-9 h-9 md:w-12 md:h-12 rounded-full ${item.bg} ${item.text} flex items-center justify-center text-sm md:text-lg font-bold shadow-inner flex-shrink-0`}>
                         {item.short}
@@ -165,12 +156,10 @@ export default function RollingBanner() {
                           <p className="text-xs md:text-sm text-gray-300 mt-0.5">{item.desc}</p>
                         )}
                         
-                        {/* 금액 */}
                         <p className="text-xl md:text-3xl font-extrabold text-[#FFD700] tracking-tight mt-2 md:mt-4 mb-1">
                           {item.amount}
                         </p>
                         
-                        {/* 상태 */}
                         <span className={`inline-block text-[11px] md:text-sm font-semibold px-2 py-0.5 md:px-2.5 md:py-1 rounded-full mt-0.5 md:mt-1 ${
                           item.status === '입금완료' ? 'bg-blue-950 text-blue-300' : 'bg-orange-950 text-orange-300'
                         }`}>
@@ -178,13 +167,11 @@ export default function RollingBanner() {
                         </span>
                       </div>
 
-                      {/* 날짜 */}
                       <p className="text-[10px] md:text-xs text-gray-500 mt-3 md:mt-5 border-t border-white/5 pt-1.5 md:pt-2">
                         {item.date}
                       </p>
                     </div>
 
-                    {/* 홈버튼 라인 */}
                     <div className="w-1/3 h-1 bg-gray-700 rounded-full mx-auto mt-3 md:mt-5"></div>
                   </div>
                 </div>
