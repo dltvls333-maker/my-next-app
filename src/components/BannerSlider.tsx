@@ -79,10 +79,10 @@ export default function BannerSliderWithForm({ banners }: { banners: any[] }) {
   <div className="w-full px-4 md:px-8">
     
     {/* 컨테이너: items-stretch를 빼고 items-start를 주어 각자 자기 이미지/콘텐츠 높이만큼만 예쁘게 차지하게 함 */}
-    <div className="flex flex-col-reverse lg:flex-row items-start gap-6">
+    <div className="flex flex-col-reverse xl:flex-row items-start gap-6">
       
       {/* 1. 비밀지원금 신청 폼 영역 */}
-      <div className="w-full lg:w-[420px] bg-white rounded-2xl md:rounded-3xl shadow-2xl p-6 md:p-8 flex flex-col justify-between shrink-0 border border-slate-100">
+      <div className="w-full xl:w-[420px] bg-white rounded-2xl md:rounded-3xl shadow-2xl p-6 md:p-8 flex flex-col justify-between shrink-0 border border-slate-100">
         <div className="flex flex-col h-full">
           <div className="mb-6 pb-4 border-b border-slate-100">
             <span className="inline-block bg-blue-50 text-blue-600 text-xs font-bold px-2.5 py-1 rounded-full mb-2">
@@ -171,7 +171,7 @@ export default function BannerSliderWithForm({ banners }: { banners: any[] }) {
       </div>
 
       {/* 2. Swiper 배너 슬라이드 영역 */}
-      <div className="w-full lg:flex-1 overflow-hidden rounded-2xl md:rounded-3xl shadow-xl bg-transparent">
+      <div className="w-full xl:flex-1 overflow-hidden rounded-2xl md:rounded-3xl shadow-xl bg-transparent">
         <Swiper
           modules={[Autoplay, Pagination]}
           loop={true}
