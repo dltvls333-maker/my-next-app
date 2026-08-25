@@ -175,45 +175,41 @@ export default function BannerSliderWithForm({ banners }: { banners: any[] }) {
           {/* ========================================================= */}
           {/* 2. Swiper 배너 슬라이드 영역 (PC / 모바일 이미지 분기)       */}
           {/* ========================================================= */}
-          <div className="w-full lg:flex-1 overflow-hidden rounded-2xl md:rounded-3xl shadow-xl bg-transparent">
-  <Swiper 
-    modules={[Autoplay, Pagination]} 
-    loop={true} 
-    autoplay={{ 
-      delay: 3500, 
-      disableOnInteraction: false 
-    }} 
-    pagination={{ clickable: true }} 
+         <div className="w-full lg:flex-1 lg:self-start overflow-hidden rounded-2xl md:rounded-3xl shadow-xl bg-transparent">
+  <Swiper
+    modules={[Autoplay, Pagination]}
+    loop={true}
+    autoplay={{
+      delay: 3500,
+      disableOnInteraction: false,
+    }}
+    pagination={{ clickable: true }}
     className="w-full"
   >
     {banners.map((banner, index) => (
       <SwiperSlide key={banner.id || index}>
-        {/* 고정 aspect-ratio를 제거하고 이미지 태그가 높이를 스스로 결정하게 함 */}
-        <div className="w-full relative overflow-hidden">
-          
-          {/* 모바일 버전 이미지 (2048x2048 정사각형) */}
-          <img 
-            src={banner.link_url} 
-            alt={banner.title || '모바일 배너 이미지'} 
-            width="2048"
-            height="2048"
-            className="w-full h-auto object-cover md:hidden" 
+        <div className="relative w-full overflow-hidden">
+
+          {/* 모바일 배너 - 2048 × 2048 */}
+          <img
+            src={banner.link_url}
+            alt={banner.title || '모바일 배너 이미지'}
+            className="block w-full h-auto md:hidden"
           />
-          
-          {/* PC 버전 이미지 (2329x1300 가로형) */}
-          <img 
-            src={banner.image_url} 
-            alt={banner.title || 'PC 배너 이미지'} 
-            width="2329"
-            height="1300"
-            className="w-full h-auto object-cover hidden md:block" 
+
+          {/* PC 배너 - 2329 × 1300 */}
+          <img
+            src={banner.image_url}
+            alt={banner.title || 'PC 배너 이미지'}
+            className="hidden md:block w-full h-auto"
           />
-            
-          {/* 텍스트 영역 */}
+
+          {/* 텍스트 */}
           <div className="absolute bottom-[15%] left-[6%] right-[6%] text-white z-10 pointer-events-none">
             <h2 className="text-xl md:text-4xl lg:text-5xl font-extrabold drop-shadow-md tracking-tight">
               {banner.title}
             </h2>
+
             <p className="text-xs md:text-lg lg:text-xl mt-2 text-slate-200 drop-shadow">
               {banner.subtitle}
             </p>
