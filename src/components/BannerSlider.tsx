@@ -78,7 +78,7 @@ export default function BannerSliderWithForm({ banners }: { banners: any[] }) {
     <div className="w-full bg-transparent py-6 md:py-10">
   <div className="w-full px-4 md:px-8">
     
-    {/* 컨테이너: 좌우 높이를 똑같이 맞추기 위해 items-stretch 유지 */}
+    {/* 컨테이너 */}
     <div className="flex flex-col-reverse lg:flex-row items-stretch gap-6">
       
       {/* 1. 비밀지원금 신청 폼 영역 */}
@@ -184,8 +184,8 @@ export default function BannerSliderWithForm({ banners }: { banners: any[] }) {
         >
           {banners.map((banner, index) => (
             <SwiperSlide key={banner.id || index} className="h-full">
-              {/* 💡 핵심 포인트: min-h를 주어 이미지 세로 프레임이 너무 납작하게 쪼그라드는 것을 방지하고 좌측 폼과 높이 균형을 맞춤 */}
-              <div className="relative w-full h-full min-h-[340px] md:min-h-[420px] lg:min-h-0 overflow-hidden flex items-center justify-center bg-[#e3eae5]">
+              {/* 💡 핵심 수정: 모바일에서는 min-h를 빼고 자연스럽게 줄어들게 하고, 좌우 나란히 배치되는 데스크탑(lg:)에서만 min-h-[420px] 적용 */}
+              <div className="relative w-full h-full lg:min-h-[420px] overflow-hidden flex items-center justify-center bg-[#e3eae5]">
 
                 {/* 모바일 배너 - 2048 × 2048 */}
                 <img
