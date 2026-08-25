@@ -171,7 +171,7 @@ export default function BannerSliderWithForm({ banners }: { banners: any[] }) {
       </div>
 
       {/* 2. Swiper 배너 슬라이드 영역 */}
-      <div className="w-full lg:flex-1 lg:self-stretch overflow-hidden rounded-2xl md:rounded-3xl shadow-xl bg-transparent flex flex-col">
+      <div className="w-full lg:flex-1 overflow-hidden rounded-2xl md:rounded-3xl shadow-xl bg-transparent">
         <Swiper
           modules={[Autoplay, Pagination]}
           loop={true}
@@ -180,25 +180,25 @@ export default function BannerSliderWithForm({ banners }: { banners: any[] }) {
             disableOnInteraction: false,
           }}
           pagination={{ clickable: true }}
-          className="w-full h-full flex-1"
+          className="w-full"
         >
           {banners.map((banner, index) => (
-            <SwiperSlide key={banner.id || index} className="h-full">
-              {/* 💡 핵심 수정: 모바일에서는 min-h를 빼고 자연스럽게 줄어들게 하고, 좌우 나란히 배치되는 데스크탑(lg:)에서만 min-h-[420px] 적용 */}
-              <div className="relative w-full h-full lg:min-h-[420px] overflow-hidden flex items-center justify-center bg-[#e3eae5]">
+            <SwiperSlide key={banner.id || index}>
+              {/* 💡 핵심: 모바일과 PC 모두 h-auto를 통해 이미지 높이에 맞춰 프레임이 정상적으로 잡히도록 수정 */}
+              <div className="relative w-full overflow-hidden">
 
-                {/* 모바일 배너 - 2048 × 2048 */}
+                {/* 모바일 배너 - 2048 × 2048 (absolute 제거하여 화면에 정상 노출) */}
                 <img
                   src={banner.link_url}
                   alt={banner.title || '모바일 배너 이미지'}
-                  className="absolute inset-0 w-full h-full block md:hidden object-cover"
+                  className="w-full h-auto block md:hidden object-cover"
                 />
 
                 {/* PC 배너 - 2329 × 1300 */}
                 <img
                   src={banner.image_url}
                   alt={banner.title || 'PC 배너 이미지'}
-                  className="absolute inset-0 w-full h-full hidden md:block object-cover"
+                  className="w-full h-auto hidden md:block object-cover"
                 />
 
                 {/* 텍스트 */}
