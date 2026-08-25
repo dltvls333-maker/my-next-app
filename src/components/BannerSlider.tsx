@@ -79,7 +79,7 @@ export default function BannerSliderWithForm({ banners }: { banners: any[] }) {
   <div className="w-full px-4 md:px-8">
     
     {/* 컨테이너: items-stretch를 빼고 items-start를 주어 각자 자기 이미지/콘텐츠 높이만큼만 예쁘게 차지하게 함 */}
-    <div className="flex flex-col-reverse xl:flex-row items-start gap-6">
+    <div className="flex flex-col-reverse xl:flex-row items-stretch  gap-6">
       
       {/* 1. 비밀지원금 신청 폼 영역 */}
       <div className="w-full xl:w-[420px] bg-white rounded-2xl md:rounded-3xl shadow-2xl p-6 md:p-8 flex flex-col justify-between shrink-0 border border-slate-100">
@@ -171,21 +171,21 @@ export default function BannerSliderWithForm({ banners }: { banners: any[] }) {
       </div>
 
       {/* 2. Swiper 배너 슬라이드 영역 */}
-      <div className="w-full xl:flex-1 overflow-hidden rounded-2xl md:rounded-3xl shadow-xl bg-transparent">
+      <div className="w-full lg:flex-1 min-w-0 overflow-hidden rounded-2xl md:rounded-3xl shadow-xl bg-transparent"></div>
         <Swiper
-          modules={[Autoplay, Pagination]}
-          loop={true}
-          autoplay={{
-            delay: 3500,
-            disableOnInteraction: false,
-          }}
-          pagination={{ clickable: true }}
-          className="w-full"
+            modules={[Autoplay, Pagination]}
+            loop={true}
+            autoplay={{
+              delay: 3500,
+              disableOnInteraction: false,
+            }}
+            pagination={{ clickable: true }}
+            className="w-full h-full"
         >
           {banners.map((banner, index) => (
-            <SwiperSlide key={banner.id || index}>
+            <SwiperSlide key={banner.id || index} className="!h-full">
               {/* 이미지 비율(2329/1300 및 모바일 정사각형)에 맞춰 프레임이 딱 맞아떨어지게 설정 */}
-              <div className="relative w-full overflow-hidden aspect-[1/1] md:aspect-[2329/1300]">
+              <div className="relative w-full h-full min-h-0 overflow-hidden"></div>
 
                 {/* 모바일 배너 */}
                 <img
