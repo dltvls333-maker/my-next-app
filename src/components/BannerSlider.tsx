@@ -75,11 +75,11 @@ export default function BannerSliderWithForm({ banners }: { banners: any[] }) {
   };
 
   return (
-   <div className="w-full bg-transparent py-6 md:py-10">
+    <div className="w-full bg-transparent py-6 md:py-10">
   <div className="w-full px-4 md:px-8">
     
-    {/* 컨테이너: items-stretch를 주어 좌우 양쪽 높이가 무조건 똑같이 맞춰지게 강제함 */}
-    <div className="flex flex-col-reverse lg:flex-row items-stretch gap-6">
+    {/* 컨테이너: items-stretch를 빼고 items-start를 주어 각자 자기 이미지/콘텐츠 높이만큼만 예쁘게 차지하게 함 */}
+    <div className="flex flex-col-reverse lg:flex-row items-start gap-6">
       
       {/* 1. 비밀지원금 신청 폼 영역 */}
       <div className="w-full lg:w-[420px] bg-white rounded-2xl md:rounded-3xl shadow-2xl p-6 md:p-8 flex flex-col justify-between shrink-0 border border-slate-100">
@@ -170,8 +170,8 @@ export default function BannerSliderWithForm({ banners }: { banners: any[] }) {
         </div>
       </div>
 
-      {/* 2. Swiper 배너 슬라이드 영역 (높이를 폼과 100% 동기화) */}
-      <div className="w-full lg:flex-1 lg:self-stretch overflow-hidden rounded-2xl md:rounded-3xl shadow-xl bg-transparent flex flex-col">
+      {/* 2. Swiper 배너 슬라이드 영역 */}
+      <div className="w-full lg:flex-1 overflow-hidden rounded-2xl md:rounded-3xl shadow-xl bg-transparent">
         <Swiper
           modules={[Autoplay, Pagination]}
           loop={true}
@@ -180,12 +180,12 @@ export default function BannerSliderWithForm({ banners }: { banners: any[] }) {
             disableOnInteraction: false,
           }}
           pagination={{ clickable: true }}
-          className="w-full h-full flex-1"
+          className="w-full"
         >
           {banners.map((banner, index) => (
-            <SwiperSlide key={banner.id || index} className="h-full">
-              {/* 💡 핵심: aspect-ratio를 완전히 없애고 h-full을 주어 좌측 폼 박스의 세로 높이를 정확히 가득 채우게 함 */}
-              <div className="relative w-full h-full overflow-hidden">
+            <SwiperSlide key={banner.id || index}>
+              {/* 이미지 비율(2329/1300 및 모바일 정사각형)에 맞춰 프레임이 딱 맞아떨어지게 설정 */}
+              <div className="relative w-full overflow-hidden aspect-[1/1] md:aspect-[2329/1300]">
 
                 {/* 모바일 배너 */}
                 <img
