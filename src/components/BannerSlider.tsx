@@ -78,10 +78,57 @@ export default function BannerSliderWithForm({ banners }: { banners: any[] }) {
     <div className="w-full bg-transparent py-6 md:py-10">
   <div className="w-full px-4 md:px-8">
     
-    {/* 컨테이너: items-start로 상단 정렬하여 여백 원천 차단 */}
-    <div className="flex flex-col-reverse lg:flex-row items-start gap-6">
+    {/* 💡 핵심: 기본은 무조건 상하 배치(flex-col), 데스크탑(lg:) 이상에서만 좌우 나란히 배치 */}
+    <div className="flex flex-col lg:flex-row items-center lg:items-start gap-6">
       
-      {/* 1. 비밀지원금 신청 폼 영역 */}
+      {/* 1. Swiper 배너 슬라이드 영역 (상하 배치 시 위쪽에 노출) */}
+      <div className="w-full lg:flex-1 overflow-hidden rounded-2xl md:rounded-3xl shadow-xl bg-transparent">
+        <Swiper
+          modules={[Autoplay, Pagination]}
+          loop={true}
+          autoplay={{
+            delay: 3500,
+            disableOnInteraction: false,
+          }}
+          pagination={{ clickable: true }}
+          className="w-full"
+        >
+          {banners.map((banner, index) => (
+            <SwiperSlide key={banner.id || index}>
+              <div className="relative w-full overflow-hidden">
+
+                {/* 모바일 배너 */}
+                <img
+                  src={banner.link_url}
+                  alt={banner.title || '모바일 배너 이미지'}
+                  className="w-full h-auto block md:hidden object-cover"
+                />
+
+                {/* PC 배너 */}
+                <img
+                  src={banner.image_url}
+                  alt={banner.title || 'PC 배너 이미지'}
+                  className="w-full h-auto hidden md:block object-cover"
+                />
+
+                {/* 텍스트 */}
+                <div className="absolute bottom-[15%] left-[6%] right-[6%] text-white z-10 pointer-events-none">
+                  <h2 className="text-xl md:text-4xl lg:text-5xl font-extrabold drop-shadow-md tracking-tight">
+                    {banner.title}
+                  </h2>
+
+                  <p className="text-xs md:text-lg lg:text-xl mt-2 text-slate-200 drop-shadow">
+                    {banner.subtitle}
+                  </p>
+                </div>
+
+              </div>
+            </SwiperSlide>
+          ))}
+        </Swiper>
+      </div>
+
+      {/* 2. 비밀지원금 신청 폼 영역 (상하 배치 시 아래쪽에 노출) */}
       <div className="w-full lg:w-[420px] bg-white rounded-2xl md:rounded-3xl shadow-2xl p-6 md:p-8 shrink-0 border border-slate-100">
         <div className="mb-6 pb-4 border-b border-slate-100">
           <span className="inline-block bg-blue-50 text-blue-600 text-xs font-bold px-2.5 py-1 rounded-full mb-2">
@@ -166,53 +213,6 @@ export default function BannerSliderWithForm({ banners }: { banners: any[] }) {
             {isSubmitting ? '처리 중...' : '비밀지원금 안내 받기'}
           </button>
         </form>
-      </div>
-
-      {/* 2. Swiper 배너 슬라이드 영역 (aspect와 강제 높이를 완전히 빼고 w-full h-auto로 고유 비율 유지) */}
-      <div className="w-full lg:flex-1 overflow-hidden rounded-2xl md:rounded-3xl shadow-xl bg-transparent">
-        <Swiper
-          modules={[Autoplay, Pagination]}
-          loop={true}
-          autoplay={{
-            delay: 3500,
-            disableOnInteraction: false,
-          }}
-          pagination={{ clickable: true }}
-          className="w-full"
-        >
-          {banners.map((banner, index) => (
-            <SwiperSlide key={banner.id || index}>
-              <div className="relative w-full overflow-hidden">
-
-                {/* 모바일 배너 */}
-                <img
-                  src={banner.link_url}
-                  alt={banner.title || '모바일 배너 이미지'}
-                  className="w-full h-auto block md:hidden object-cover"
-                />
-
-                {/* PC 배너 (h-auto를 주어 이미지 해상도 비율대로 프레임이 딱 떨어지게 만듦) */}
-                <img
-                  src={banner.image_url}
-                  alt={banner.title || 'PC 배너 이미지'}
-                  className="w-full h-auto hidden md:block object-cover"
-                />
-
-                {/* 텍스트 */}
-                <div className="absolute bottom-[15%] left-[6%] right-[6%] text-white z-10 pointer-events-none">
-                  <h2 className="text-xl md:text-4xl lg:text-5xl font-extrabold drop-shadow-md tracking-tight">
-                    {banner.title}
-                  </h2>
-
-                  <p className="text-xs md:text-lg lg:text-xl mt-2 text-slate-200 drop-shadow">
-                    {banner.subtitle}
-                  </p>
-                </div>
-
-              </div>
-            </SwiperSlide>
-          ))}
-        </Swiper>
       </div>
 
     </div>
