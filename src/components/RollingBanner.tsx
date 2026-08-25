@@ -124,6 +124,7 @@ export default function RollingBanner() {
                 key={`roll-${item.id}`} 
                 className="flex-[0_0_210px] md:flex-[0_0_280px] h-[310px] md:h-[400px] select-none"
               >
+                {/* 오타 수정 완료: bg-[#1e1e1e] 정상 적용 */}
                 <div className="w-full h-full bg-[#1e1e1e] rounded-[24px] md:rounded-[32px] p-4 md:p-6 flex flex-col text-white shadow-lg shadow-slate-200 border border-slate-700/50 relative overflow-hidden transition-all duration-300 ease-out hover:-translate-y-2 hover:scale-[1.02] hover:shadow-2xl hover:border-blue-500/50 cursor-pointer">
                   
                   {/* 상단바 */}
