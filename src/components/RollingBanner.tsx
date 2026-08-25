@@ -4,10 +4,18 @@ import React, { useEffect, useState } from 'react';
 import useEmblaCarousel from 'embla-carousel-react';
 import AutoScroll from 'embla-carousel-auto-scroll';
 
-// --- 1. 데이터 생성 로직 (시간 랜덤화 적용) ---
+// --- 은행별 색상 및 계좌 패턴 정의 ---
+const bankConfig: { [key: string]: { pattern: string; bg: string; text: string; short: string } } = {
+  '카카오뱅크': { pattern: '3333', bg: 'bg-[#FEE500]', text: 'text-[#3C1E1E]', short: '카' },
+  '신한은행': { pattern: '110', bg: 'bg-[#0046FF]', text: 'text-white', short: '신' },
+  '국민은행': { pattern: '4363', bg: 'bg-[#FFCC00]', text: 'text-[#222222]', short: '국' },
+  '하나은행': { pattern: '506', bg: 'bg-[#00857E]', text: 'text-white', short: '하' },
+  '우리은행': { pattern: '1002', bg: 'bg-[#0072CE]', text: 'text-white', short: '우' },
+};
+
+// --- 1. 데이터 생성 로직 (은행별 맞춤 계좌 및 색상 적용) ---
 const generateRandomItems = (count: number) => {
-  const banks = ['카카오뱅크', '신한은행', '국민은행', '하나은행', '우리은행'];
-  const accountPatterns = ['3333-01', '110-32', '100-24', '285-09', '1002-45'];
+  const bankNames = Object.keys(bankConfig);
   const descriptions = ['인터넷 지원금', '보조금', '', '', ''];
   const statuses = ['입금대기', '입금완료'];
 
@@ -24,31 +32,36 @@ const generateRandomItems = (count: number) => {
     date.setHours(randomHours);
     date.setMinutes(randomMinutes);
     
-    // MM/DD HH:mm 형식으로 변환 (본문 날짜/시간용)
     const month = (date.getMonth() + 1).toString().padStart(2, '0');
     const day = date.getDate().toString().padStart(2, '0');
     const hoursStr = randomHours.toString().padStart(2, '0');
     const minutesStr = randomMinutes.toString().padStart(2, '0');
     const dateString = `${month}/${day} ${hoursStr}:${minutesStr}`;
 
-    // 상단바 시간용 (본문 시간과 미세하게 다르거나 동일하게 연출 가능, 여기서는 동일한 시분 사용 혹은 독립적인 랜덤 시분 부여)
-    const topHoursStr = randomHours.toString().padStart(2, '0');
-    const topMinutesStr = randomMinutes.toString().padStart(2, '0');
+    // 랜덤 은행 선택
+    const selectedBank = bankNames[Math.floor(Math.random() * bankNames.length)];
+    const config = bankConfig[selectedBank];
 
-    // 기타 데이터 생성
+    // 해당 은행 고유 패턴으로 계좌번호 조합
+    const randomMiddle = Math.floor(Math.random() * 90 + 10); // 2자리 랜덤
+    const randomTail = Math.floor(Math.random() * 9000 + 1000); // 4자리 랜덤
+    const formattedAccount = `${config.pattern}-${randomMiddle}-***${randomTail}`;
+
     const randomAmount = (Math.floor(Math.random() * (110 - 56 + 1)) + 56) * 10000;
-    const randomPattern = accountPatterns[Math.floor(Math.random() * accountPatterns.length)];
     const randomDesc = descriptions[Math.floor(Math.random() * descriptions.length)];
     const randomStatus = statuses[Math.floor(Math.random() * statuses.length)];
 
     return {
-      bank: banks[Math.floor(Math.random() * banks.length)],
+      bank: selectedBank,
+      short: config.short,
+      bg: config.bg,
+      text: config.text,
       amount: randomAmount.toLocaleString() + ' 원',
       status: randomStatus,
-      account: `${randomPattern}-***${Math.floor(Math.random() * 9000 + 1000)}`,
+      account: formattedAccount,
       desc: randomDesc,
       date: dateString,
-      topTime: `${topHoursStr}:${topMinutesStr}` 
+      topTime: `${hoursStr}:${minutesStr}` 
     };
   });
 };
@@ -132,10 +145,10 @@ export default function RollingBanner() {
                   {/* 카드 내부 콘텐츠 */}
                   <div className="flex flex-col flex-grow mt-6 md:mt-10">
                     
-                    {/* 헤더 */}
+                    {/* 헤더 (은행별 고유 색상 및 글자 적용) */}
                     <div className="flex items-center gap-2.5 md:gap-3 mb-3 md:mb-6 pb-3 md:pb-4 border-b border-white/5">
-                      <div className="w-9 h-9 md:w-12 md:h-12 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-lg md:text-2xl font-bold shadow-inner flex-shrink-0">
-                        {item.bank.charAt(0)}
+                      <div className={`w-9 h-9 md:w-12 md:h-12 rounded-full ${item.bg} ${item.text} flex items-center justify-center text-sm md:text-lg font-bold shadow-inner flex-shrink-0`}>
+                        {item.short}
                       </div>
                       <div className="min-w-0">
                         <div className="text-xs md:text-lg font-bold text-white truncate">[Web 발신]</div>
