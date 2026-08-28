@@ -78,7 +78,7 @@ export default function Header() {
               <img 
                 src={logo?.logo_path || "/images/logo.png"} 
                 alt={logo?.logo_name || "로고"} 
-                className="h-10 md:h-12 w-auto object-contain"
+                className="h-18 md:h-12 w-auto object-contain"
               />
             </a>
           </div>

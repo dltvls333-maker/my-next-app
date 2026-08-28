@@ -31,7 +31,7 @@ const ApplianceSlider = () => {
             <span className="t-green">디코비즈</span>가 드리는 가전제품
           </h2>
         </div>
-
+        
         {/* 슬라이더 영역 */}
         <Swiper
           modules={[Autoplay, Navigation]}
