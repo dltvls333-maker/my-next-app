@@ -2,7 +2,7 @@ import React from 'react';
 import { MessageSquare, FileText, CalendarCheck, Wallet, Headphones, ChevronRight } from 'lucide-react';
 
 const ResponsiveImage = () => {
-  // 디코비즈 가입 절차 데이터
+  // 바로넷 가입 절차 데이터
   const steps = [
     {
       step: '01',
@@ -35,7 +35,7 @@ const ResponsiveImage = () => {
     {
       step: '05',
       title: '평생관리',
-      desc: '디코비즈만의 안심 케어',
+      desc: '바로넷만의 안심 케어',
       icon: <Headphones className="w-7 h-7 text-slate-600" />,
       active: false,
     },
@@ -51,7 +51,7 @@ const ResponsiveImage = () => {
             상담부터 설치, 현금 입금까지!
           </span>
           <h2 className="text-2xl md:text-4xl font-black text-slate-900 tracking-tight">
-            디코비즈 <span className="text-[#0A685D]">원스톱 서비스</span>
+            바로넷 <span className="text-[#0A685D]">원스톱 서비스</span>
           </h2>
           <p className="text-xs md:text-base text-slate-500 mt-2">
             귀찮을 일 없이 빠르고 편안하게 가입을 도와드립니다.

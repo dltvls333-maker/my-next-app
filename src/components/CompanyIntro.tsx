@@ -8,7 +8,7 @@ const CompanyIntro = () => {
         {/* 상단 타이틀 영역 (가입절차 컴포넌트와 동일한 폰트/색상 일치) */}
         <div className="text-center flex flex-col items-center mb-12 md:mb-16">
           <span className="inline-block bg-[#0A685D]/10 text-[#0A685D] text-xs md:text-sm font-bold px-4 py-1.5 rounded-full mb-3 tracking-wide">
-            디코비즈는 다릅니다!
+            바로넷은 다릅니다!
           </span>
           <h2 className="text-2xl md:text-4xl font-black text-slate-900 tracking-tight">
             혜택은 더하고, <span className="text-[#0A685D]">부담은 덜었습니다.</span>

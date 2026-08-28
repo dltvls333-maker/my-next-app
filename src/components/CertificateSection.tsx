@@ -35,7 +35,7 @@ const CertificateSection = () => {
             </span>
             
             <h2 className="text-2xl md:text-4xl font-black text-slate-900 tracking-tight leading-tight">
-              디코비즈는 <span className="text-[#0A685D]">믿고 가입</span>하셔도 좋습니다.
+              바로넷은 <span className="text-[#0A685D]">믿고 가입</span>하셔도 좋습니다.
             </h2>
             
             <p className="text-sm md:text-base text-slate-500 leading-relaxed">

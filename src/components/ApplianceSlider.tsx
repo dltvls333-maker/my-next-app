@@ -28,7 +28,7 @@ const ApplianceSlider = () => {
         {/* 타이틀 영역 */}
         <div className="mb-10 text-center">
           <h2 className="text-3xl md:text-4xl font-bold text-slate-900">
-            <span className="t-green">디코비즈</span>가 드리는 가전제품
+            <span className="t-green">바로넷</span>이 드리는 가전제품
           </h2>
         </div>
         
