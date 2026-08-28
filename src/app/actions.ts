@@ -23,14 +23,14 @@ export async function updateLogo(formData: FormData) {
 
     // DB 업데이트
     // Supabase DB 업데이트
-    const { error: dbError } = await supabase
-      .from('site_settings')
-      .update({ logo_path: `${urlData.publicUrl}?t=${Date.now()}` })
-      .eq('id', 1);
+const { error: dbError } = await supabase
+  .from('site_settings')
+  .update({ logo_path: `${urlData.publicUrl}?t=${Date.now()}` })
+  .eq('id', 1);
 
-    if (dbError) {
-      throw new Error("DB 업데이트 실패: " + dbError.message);
-    }
+if (dbError) {
+  throw new Error("DB 업데이트 실패: " + dbError.message);
+}
   }
   revalidatePath('/admin');
 }
