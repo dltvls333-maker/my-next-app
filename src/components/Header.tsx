@@ -76,7 +76,7 @@ export default function Header() {
           <div className="flex-shrink-0">
             <a href="/" className="flex items-center">
               <img 
-                src={logo?.logo_path} 
+                src={logo?.logo_path || "/images/logo.png"} 
                 alt={logo?.logo_name || "로고"} 
                 className="h-18 md:h-12 w-auto object-contain"
               />
