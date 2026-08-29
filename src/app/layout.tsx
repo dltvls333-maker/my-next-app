@@ -17,8 +17,8 @@ const geistMono = Geist_Mono({
 
 // 타이틀과 한글 설명을 사이트에 맞게 수정했습니다.
 export const metadata: Metadata = {
-  title: "주식회사 이음통신",
-  description: "Next.js와 MariaDB로 구축하는 올인원 플랫폼",
+  title: "바로넷",
+  description: "바로넷",
 };
 
 export default function RootLayout({
