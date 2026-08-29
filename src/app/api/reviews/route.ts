@@ -1,8 +1,13 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import bcrypt from 'bcrypt';
-import { writeFile, mkdir } from 'fs/promises';
-import path from 'path';
+import { createClient } from '@supabase/supabase-js';
+
+// Supabase 클라이언트 초기화 (서버 전용 키 또는 일반 키 사용)
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+);
 
 export async function POST(req: Request) {
   try {
@@ -15,33 +20,37 @@ export async function POST(req: Request) {
     const title = formData.get('title') as string;
     const content = formData.get('content') as string;
     
-    // 💡 프론트엔드에서 보낸 'images[]' 파일들 추출
+    // 프론트에서 보낸 'images[]' 파일 추출
     const files = formData.getAll('images[]') as File[];
     let imageUrl = null;
     
     if (files && files.length > 0 && files[0].size > 0) {
-      const file = files[0]; // 첫 번째 이미지 파일을 로컬에 저장
-      const bytes = await file.arrayBuffer();
-      const buffer = Buffer.from(bytes);
+      const file = files[0];
+      const arrayBuffer = await file.arrayBuffer();
+      const buffer = Buffer.from(arrayBuffer);
 
-      // Railway 서버 로컬 폴더(public/uploads) 경로 설정
-      const uploadDir = path.join(process.cwd(), 'public', 'uploads');
+      // 고유 파일명 생성
+      const fileName = `${Date.now()}-${file.name.replace(/\s/g, '_')}`;
       
-      try {
-        await mkdir(uploadDir, { recursive: true });
-      } catch (e) {
-        // 폴더가 이미 존재하면 무시
+      // Supabase Storage 업로드 (버킷 이름이 'reviews'라고 가정)
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from('reviews') // 💡 Supabase 스토리지에 'reviews' 버킷이 있어야 합니다.
+        .upload(fileName, buffer, {
+          contentType: file.type,
+          upsert: false,
+        });
+
+      if (uploadError) {
+        console.error("Supabase 업로드 에러:", uploadError);
+        throw new Error(`이미지 업로드 실패: ${uploadError.message}`);
       }
 
-      // 고유 파일명 생성 (공백 제거)
-      const uniqueFilename = `${Date.now()}-${file.name.replace(/\s/g, '_')}`;
-      const filePath = path.join(uploadDir, uniqueFilename);
-      
-      // 파일 쓰기
-      await writeFile(filePath, buffer);
-      
-      // DB에 저장될 웹 접근 경로
-      imageUrl = `/uploads/${uniqueFilename}`;
+      // 업로드된 이미지의 공개 URL(Public URL) 가져오기
+      const { data: publicUrlData } = supabase.storage
+        .from('reviews')
+        .getPublicUrl(fileName);
+
+      imageUrl = publicUrlData.publicUrl;
     }
     
     // IP 주소 추출
@@ -87,7 +96,7 @@ export async function POST(req: Request) {
         password: hashedPassword,
         title,
         content,
-        image_url: imageUrl, // 💡 Railway 로컬에 저장된 이미지 경로 저장
+        image_url: imageUrl, // Supabase 공개 이미지 URL 저장
         ip_address,
         created_at: kstDate,
       },
