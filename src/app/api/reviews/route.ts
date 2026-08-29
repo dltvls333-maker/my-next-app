@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import bcrypt from 'bcrypt';
+import { writeFile, mkdir } from 'fs/promises';
+import path from 'path';
 
 export async function POST(req: Request) {
   try {
@@ -13,17 +15,33 @@ export async function POST(req: Request) {
     const title = formData.get('title') as string;
     const content = formData.get('content') as string;
     
-    // 프론트에서 보낸 Supabase 이미지 URL들 수신 (JSON 문자열 파싱)
-    const imageUrlsJson = formData.get('image_urls') as string;
+    // 💡 프론트엔드에서 보낸 'images[]' 파일들 추출
+    const files = formData.getAll('images[]') as File[];
     let imageUrl = null;
     
-    if (imageUrlsJson) {
+    if (files && files.length > 0 && files[0].size > 0) {
+      const file = files[0]; // 첫 번째 이미지 파일을 로컬에 저장
+      const bytes = await file.arrayBuffer();
+      const buffer = Buffer.from(bytes);
+
+      // Railway 서버 로컬 폴더(public/uploads) 경로 설정
+      const uploadDir = path.join(process.cwd(), 'public', 'uploads');
+      
       try {
-        const imageUrls = JSON.parse(imageUrlsJson);
-        imageUrl = imageUrls.length > 0 ? imageUrls[0] : null; // 첫 번째 이미지 URL 저장
+        await mkdir(uploadDir, { recursive: true });
       } catch (e) {
-        imageUrl = null;
+        // 폴더가 이미 존재하면 무시
       }
+
+      // 고유 파일명 생성 (공백 제거)
+      const uniqueFilename = `${Date.now()}-${file.name.replace(/\s/g, '_')}`;
+      const filePath = path.join(uploadDir, uniqueFilename);
+      
+      // 파일 쓰기
+      await writeFile(filePath, buffer);
+      
+      // DB에 저장될 웹 접근 경로
+      imageUrl = `/uploads/${uniqueFilename}`;
     }
     
     // IP 주소 추출
@@ -40,12 +58,8 @@ export async function POST(req: Request) {
     });
 
     if (lastReview) {
-      // DB에 저장된 시간과 현재 시간을 둘 다 한국 시간(KST) 기준으로 정확히 밀리초 변환
       const lastReviewTime = new Date(lastReview.created_at).getTime();
-      
-      // 현재 KST 시간 구하기
       const nowKst = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Seoul' })).getTime();
-      
       const timeDiff = (nowKst - lastReviewTime) / 1000;
       
       if (timeDiff < 10) {
@@ -73,7 +87,7 @@ export async function POST(req: Request) {
         password: hashedPassword,
         title,
         content,
-        image_url: imageUrl, // Supabase 이미지 URL 저장
+        image_url: imageUrl, // 💡 Railway 로컬에 저장된 이미지 경로 저장
         ip_address,
         created_at: kstDate,
       },
