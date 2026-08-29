@@ -19,6 +19,17 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "바로넷",
   description: "바로넷",
+  openGraph: {
+    title: "바로넷",
+    description: "바로넷 인터넷 가입 비교",
+    images: [
+      {
+        url: '/layout_img/1.jpg', // 👈 카카오톡 공유 시 보여줄 이미지 경로 (public 폴더 기준 또는 절대 주소)
+        width: 800,
+        height: 400,
+      },
+    ],
+  },
 };
 
 export default function RootLayout({
