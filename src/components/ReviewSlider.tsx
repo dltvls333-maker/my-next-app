@@ -3,7 +3,8 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 // 1. 이름 마스킹 함수
 const maskName = (name: string) => {
   if (!name || name.length < 2) return name;
