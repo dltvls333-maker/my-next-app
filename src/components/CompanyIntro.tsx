@@ -14,7 +14,7 @@ const CompanyIntro = () => {
             혜택은 더하고, <span className="text-[#0A685D]">부담은 덜었습니다.</span>
           </h2>
           <p className="text-xs md:text-base text-slate-500 mt-2">
-            고객님의 현명한 통신 생활을 위한 디코비즈만의 4가지 약속입니다.
+            고객님의 현명한 통신 생활을 위한 바로넷만의 4가지 약속입니다.
           </p>
         </div>
 
