@@ -3,14 +3,18 @@ import { prisma } from '@/lib/prisma';
 import bcrypt from 'bcrypt';
 import { createClient } from '@supabase/supabase-js';
 
-// Supabase 클라이언트 초기화 (서버 전용 키 또는 일반 키 사용)
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
-
 export async function POST(req: Request) {
   try {
+    // 💡 요청이 들어오는 시점에 클라이언트를 생성하여 환경 변수 누락 방지
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+    if (!supabaseUrl || !supabaseKey) {
+      throw500('Supabase 환경 변수가 설정되지 않았습니다.');
+    }
+
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
     const formData = await req.formData();
     
     // 폼 데이터 추출
@@ -29,12 +33,11 @@ export async function POST(req: Request) {
       const arrayBuffer = await file.arrayBuffer();
       const buffer = Buffer.from(arrayBuffer);
 
-      // 고유 파일명 생성
       const fileName = `${Date.now()}-${file.name.replace(/\s/g, '_')}`;
       
-      // Supabase Storage 업로드 (버킷 이름이 'reviews'라고 가정)
+      // Supabase Storage 'reviews' 버킷 업로드
       const { data: uploadData, error: uploadError } = await supabase.storage
-        .from('reviews') // 💡 Supabase 스토리지에 'reviews' 버킷이 있어야 합니다.
+        .from('reviews')
         .upload(fileName, buffer, {
           contentType: file.type,
           upsert: false,
@@ -45,7 +48,7 @@ export async function POST(req: Request) {
         throw new Error(`이미지 업로드 실패: ${uploadError.message}`);
       }
 
-      // 업로드된 이미지의 공개 URL(Public URL) 가져오기
+      // 공개 URL 가져오기
       const { data: publicUrlData } = supabase.storage
         .from('reviews')
         .getPublicUrl(fileName);
@@ -84,7 +87,6 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: '필수 데이터가 누락되었습니다.' }, { status: 400 });
     }
 
-    // 한국 시간(KST) 기준 Date 객체 생성
     const kstDate = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Seoul' }));
 
     // Prisma 저장 (Railway DB)
@@ -96,7 +98,7 @@ export async function POST(req: Request) {
         password: hashedPassword,
         title,
         content,
-        image_url: imageUrl, // Supabase 공개 이미지 URL 저장
+        image_url: imageUrl,
         ip_address,
         created_at: kstDate,
       },
@@ -107,4 +109,8 @@ export async function POST(req: Request) {
     console.error("서버 상세 에러:", error);
     return NextResponse.json({ error: 'DB 저장 실패', details: String(error) }, { status: 500 });
   }
+}
+
+function throw500(message: string) {
+  throw new Error(message);
 }
