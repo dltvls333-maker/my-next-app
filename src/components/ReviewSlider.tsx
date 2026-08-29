@@ -22,7 +22,7 @@ export default function ReviewSlider({ reviews }: { reviews: any[] }) {
   if (!reviews || reviews.length === 0) return <div className="text-center py-10">후기가 없습니다.</div>;
 
   // 무한 롤링을 위해 데이터를 2배로 복제
-  const duplicatedReviews = [...reviews, ...reviews];
+  const duplicatedReviews = reviews
   
   // 데이터 개수에 비례하여 애니메이션 속도 결정 (개당 4초)
   const duration = reviews.length * 4;
