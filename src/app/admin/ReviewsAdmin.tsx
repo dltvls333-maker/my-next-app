@@ -1,12 +1,13 @@
 'use client';
 
-import React, { useState, DragEvent, ChangeEvent } from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { X, UploadCloud, Image as ImageIcon } from 'lucide-react';
+import { X, UploadCloud } from 'lucide-react';
 
 export default function ReviewsAdmin({ onSubmit }: { onSubmit: (data: FormData) => void }) {
   const router = useRouter();
   const [selectedCategory, setSelectedCategory] = useState('인터넷');
+  // 작성자도 상태(formData)로 관리하도록 수정
   const [formData, setFormData] = useState({ user_name: '관리자', title: '', content: '' });
   const [fileList, setFileList] = useState<File[]>([]);
 
@@ -26,10 +27,10 @@ export default function ReviewsAdmin({ onSubmit }: { onSubmit: (data: FormData) 
     data.append('title', formData.title);
     data.append('content', formData.content);
     fileList.forEach((file) => data.append('images[]', file));
+    
     await onSubmit(data);
     alert('후기가 등록 되었습니다.');
-    // 작업 후 리다이렉트
-     router.push('/admin');
+    router.push('/admin');
   };
 
   const categories = ['인터넷', 'TV', '휴대폰', '렌탈'];
@@ -37,9 +38,7 @@ export default function ReviewsAdmin({ onSubmit }: { onSubmit: (data: FormData) 
   const labelClass = "font-bold text-slate-800 w-28 shrink-0 text-sm";
 
   return (
-    <div className="mx-auto max-w-[1240px] bg-white  border-slate-100 ">
-      
-
+    <div className="mx-auto max-w-[1240px] bg-white border-slate-100">
       <form onSubmit={handleSubmit} className="space-y-8">
         {/* 카테고리 */}
         <div className="flex flex-col md:flex-row md:items-center gap-3 md:gap-8">
@@ -56,10 +55,16 @@ export default function ReviewsAdmin({ onSubmit }: { onSubmit: (data: FormData) 
           </div>
         </div>
 
-        {/* 작성자 */}
+        {/* 작성자 (수정됨) */}
         <div className="flex flex-col md:flex-row md:items-center gap-3 md:gap-8">
           <label className={labelClass}>작성자</label>
-          <input type="text" className={`${inputClass}`} />
+          <input 
+            type="text" 
+            className={inputClass} 
+            value={formData.user_name} 
+            onChange={(e) => setFormData({ ...formData, user_name: e.target.value })} 
+            required 
+          />
         </div>
 
         {/* 제목 */}
@@ -89,34 +94,30 @@ export default function ReviewsAdmin({ onSubmit }: { onSubmit: (data: FormData) 
             </label>
             <div className="mt-4 grid grid-cols-4 gap-2">
               {fileList.map((file, i) => {
-                // 1. 파일 객체를 브라우저용 URL로 변환
                 const previewUrl = URL.createObjectURL(file);
-                
                 return (
-                <div key={i} className="relative aspect-square bg-slate-100 rounded overflow-hidden border">
-                    {/* 2. 아이콘 대신 실제 이미지 렌더링 */}
+                  <div key={i} className="relative aspect-square bg-slate-100 rounded overflow-hidden border">
                     <img 
-                    src={previewUrl} 
-                    alt="preview" 
-                    className="w-full h-full object-cover" 
-                    onLoad={() => URL.revokeObjectURL(previewUrl)} // 메모리 누수 방지
+                      src={previewUrl} 
+                      alt="preview" 
+                      className="w-full h-full object-cover" 
+                      onLoad={() => URL.revokeObjectURL(previewUrl)}
                     />
-                    
                     <button 
-                    type="button" 
-                    onClick={() => removeFile(i)} 
-                    className="absolute top-1 right-1 bg-black/50 text-white rounded-full p-0.5 hover:bg-black/70"
+                      type="button" 
+                      onClick={() => removeFile(i)} 
+                      className="absolute top-1 right-1 bg-black/50 text-white rounded-full p-0.5 hover:bg-black/70"
                     >
-                    <X size={12} />
+                      <X size={12} />
                     </button>
-                </div>
+                  </div>
                 );
-            })}
+              })}
             </div>
           </div>
         </div>
 
-        <div className="flex justify-end gap-3 pt-8 ">
+        <div className="flex justify-end gap-3 pt-8">
           <button type="submit" className="px-6 py-2.5 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition font-semibold">등록하기</button>
         </div>
       </form>
