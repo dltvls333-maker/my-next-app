@@ -13,7 +13,7 @@ export default async function HomePage() {
     // take: 20, 
     orderBy: { created_at: 'desc' },
   });
-
+  console.log(data)
   const reviews = data.map(r => ({
     ...r,
     date: r.created_at.toLocaleDateString(),
