@@ -47,7 +47,7 @@ export default function Footer() {
                 src={logo?.logo_path || "/images/logo.png"} 
                 alt={logo?.logo_name || "로고"} 
                 className="h-10 md:h-12 w-auto object-contain"
-                style={{ height: '60px', width: 'auto', marginLeft:'-15px', }}
+                style={{ height: '60px', width: 'auto', marginLeft:'-7px', }}
               />
             </a>
 
