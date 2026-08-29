@@ -30,15 +30,39 @@ const userData = session?.user;
     
     let imageUrl = null;
 
+    // 💡 Supabase Storage 업로드 로직
     if (files.length > 0 && files[0].size > 0) {
       const file = files[0];
-      const buffer = Buffer.from(await file.arrayBuffer());
-      const uploadDir = path.join(process.cwd(), 'public/uploads');
-      if (!existsSync(uploadDir)) await mkdir(uploadDir, { recursive: true });
-      
-      const fileName = `${Date.now()}_${file.name.replace(/\s/g, '_')}`;
-      await writeFile(path.join(uploadDir, fileName), buffer);
-      imageUrl = `/uploads/${fileName}`;
+      const arrayBuffer = await file.arrayBuffer();
+      const buffer = Buffer.from(arrayBuffer);
+
+      // Supabase 클라이언트 동적 생성 (환경 변수 사용)
+      const { createClient } = await import('@supabase/supabase-js');
+      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+      const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+      if (supabaseUrl && supabaseKey) {
+        const supabase = createClient(supabaseUrl, supabaseKey);
+        const fileName = `admin-${Date.now()}_${file.name.replace(/\s/g, '_')}`;
+
+        // Supabase 'reviews' 버킷에 업로드 (버킷 이름이 다른 경우 수정하세요)
+        const { error: uploadError } = await supabase.storage
+          .from('reviews')
+          .upload(fileName, buffer, {
+            contentType: file.type,
+            upsert: false,
+          });
+
+        if (!uploadError) {
+          const { data: publicUrlData } = supabase.storage
+            .from('reviews')
+            .getPublicUrl(fileName);
+          
+          imageUrl = publicUrlData.publicUrl;
+        } else {
+          console.error("Supabase 업로드 에러:", uploadError.message);
+        }
+      }
     }
 
     const saltRounds = 10;
@@ -55,10 +79,10 @@ const userData = session?.user;
         user_name,
         title,
         content,
-        image_url: imageUrl,
+        image_url: imageUrl, // Supabase 퍼블릭 URL이 저장됩니다
         phone_last: '0000',    
         password: hashedPassword,      
-        ip_address:ip_address,  
+        ip_address: ip_address,  
       }
     });
   }
