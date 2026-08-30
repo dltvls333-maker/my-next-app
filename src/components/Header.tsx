@@ -64,7 +64,7 @@ export default function Header() {
       {/* 상단 광고 배너 */}
       {isBannerVisible && (
         <div className="bg-[#2d433f] text-white py-2.5 px-4 text-center text-[13px] md:text-[14px] flex justify-center items-center relative">
-          <p>🎉 지금 가입하면 최대 250만원 지원! 이음통신 특별 혜택을 확인하세요.</p>
+          <p>🎉 지금 가입하면 최대 250만원 지원! 바로넷 특별 혜택을 확인하세요.</p>
           <button onClick={() => setIsBannerVisible(false)} className="absolute right-4 hover:text-slate-300 transition">✕</button>
         </div>
       )}
