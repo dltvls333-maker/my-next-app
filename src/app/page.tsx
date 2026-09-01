@@ -49,14 +49,14 @@ export default async function HomePage() {
       <CertificateSection />
       <ApplianceSlider />
       <ReviewSlider reviews={reviews} />
-      <div style={{ maxWidth: '100%', margin: '0 auto' }}>
+      {/* <div style={{ maxWidth: '100%', margin: '0 auto' }}>
         <CommonImage
           pcSrc="/layout_img/rental.png"
           mobileSrc="/layout_img/M_rental.png"
           alt="렌탈 서비스 배너"
           priority={true}
         />
-      </div>
+      </div> */}
     </main>
   );
 }
