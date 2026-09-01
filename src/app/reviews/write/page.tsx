@@ -11,7 +11,22 @@ export default function ReviewWritePage() {
     phone_last: '',
     password: '',
     title: '',
-    content: '',
+    content: `1. 가입하신 고객님 성함
+(Ex. 홍길*)
+
+
+
+2. 가입하신 고객님 핸드폰 뒤에 4자리
+(Ex. 0123)
+
+
+
+3. 가입하신 상품
+(Ex. SK브로드밴드 인터넷 / TV)
+
+
+
+4. 가입 후기`,
   });
 
   // 💡 원본 File 객체 배열로 상태 관리
