@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
+
 // 1. 이름 마스킹 함수
 const maskName = (name: string) => {
   if (!name || name.length < 2) return name;
@@ -18,12 +19,20 @@ const StarRating = () => (
   </div>
 );
 
+// 3. 이미지 존재 여부 확인 함수
+const hasImage = (url: any) => {
+  if (!url) return false;
+  if (typeof url !== 'string') return false;
+  const trimmed = url.trim().toLowerCase();
+  return trimmed !== '' && trimmed !== 'null' && trimmed !== 'undefined' && trimmed !== 'none';
+};
+
 export default function ReviewSlider({ reviews }: { reviews: any[] }) {
   // 데이터가 없을 경우 방어 코드
   if (!reviews || reviews.length === 0) return <div className="text-center py-10">후기가 없습니다.</div>;
 
   // 무한 롤링을 위해 데이터를 2배로 복제
-  const duplicatedReviews = reviews
+  const duplicatedReviews = [...reviews, ...reviews];
   
   // 데이터 개수에 비례하여 애니메이션 속도 결정 (개당 4초)
   const duration = reviews.length * 4;
@@ -56,16 +65,14 @@ export default function ReviewSlider({ reviews }: { reviews: any[] }) {
                 <div 
                   className="w-[280px] md:w-[380px] bg-white rounded-2xl md:rounded-[28px] p-4 md:p-5 shadow-[0_4px_20px_rgba(0,0,0,0.04)] md:shadow-[0_10px_30px_rgba(0,0,0,0.04)] border border-slate-100 flex flex-row items-center gap-4 md:gap-5 hover:shadow-lg transition h-full"
                 >
-                  {/* 좌측: 이미지가 찌그러짐 없이 꽉 차도록 수정된 영역 */}
-                  {review.image_url && (
-                    <div className="w-[90px] h-[90px] md:w-[130px] md:h-[130px] flex-shrink-0 rounded-xl md:rounded-2xl overflow-hidden relative bg-slate-100">
-                      <img 
-                        src={review.image_url} 
-                        className="w-full h-full object-cover" 
-                        alt="후기 이미지" 
-                      />
-                    </div>
-                  )}
+                  {/* 좌측: 이미지가 없을 경우 default_img.jpg 출력 */}
+                  <div className="w-[90px] h-[90px] md:w-[130px] md:h-[130px] flex-shrink-0 rounded-xl md:rounded-2xl overflow-hidden relative bg-slate-100 flex items-center justify-center">
+                    <img 
+                      src={hasImage(review.image_url) ? review.image_url : '/images/default_img.jpg'} 
+                      className={`transition-transform duration-500 hover:scale-105 ${hasImage(review.image_url) ? 'w-full h-full object-cover' : 'max-w-full max-h-full object-contain p-2'}`} 
+                      alt="후기 이미지" 
+                    />
+                  </div>
                   
                   {/* 우측: 텍스트 영역 */}
                   <div className="flex flex-col justify-center flex-1 min-w-0 text-left">
