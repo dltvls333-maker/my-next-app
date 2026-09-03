@@ -64,10 +64,10 @@ export default function Footer() {
             </span>
             <div className="pt-2">
               <a 
-                href="tel:1661-0588" 
+                href="tel:1833-5660" 
                 className="text-3xl sm:text-4xl font-black text-white tracking-tight hover:text-blue-500 transition-colors duration-200 block"
               >
-                1661-0588
+                1833-5660
               </a>
               <span className="text-[12px] text-zinc-500 block mt-1 tracking-tight">
                 평일 09:00 ~ 18:00 (주말/공휴일 휴무)

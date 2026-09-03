@@ -98,7 +98,7 @@ export default function Header() {
               ))}
             </nav>
             <a href="tel:1661-0588" className="flex items-center gap-2 px-5 py-2.5 bg-white border border-[#2d433f] rounded-full text-[#ff6600] font-bold hover:bg-slate-50 transition text-[16px] shrink-0">
-              <span className="text-[#ff6600]">📞</span> 1661-0588
+              <span className="text-[#ff6600]">📞</span> 1833-5660
             </a>
           </div>
 
