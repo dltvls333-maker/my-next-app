@@ -110,7 +110,7 @@ export default function Footer() {
                         
             {/* 3층: 하단 고지사항 */}
             <p className="text-[11px] text-zinc-600 leading-relaxed max-w-3xl pt-0.5">
-              고지사항: 이음통신은 각 통신사 및 렌탈사의 공식 접수처입니다. 본 사이트에서 가입 시 제공되는 사은품 및 지원금 혜택은 요금제 규칙에 따라 변동될 수 있습니다.
+              고지사항: 바로넷은 각 통신사 및 렌탈사의 공식 접수처입니다. 본 사이트에서 가입 시 제공되는 사은품 및 지원금 혜택은 요금제 규칙에 따라 변동될 수 있습니다.
             </p>
           </div>
 
@@ -121,7 +121,7 @@ export default function Footer() {
               <a href="#" className="text-zinc-300 font-semibold hover:text-white transition-colors">개인정보처리방침</a>
             </div>
             <p className="text-zinc-600 tracking-tight lg:pt-1">
-              © 2026 EUM TELECOM. All rights reserved.
+              © 2026 BARO TELECOM. All rights reserved.
             </p>
           </div>
 
