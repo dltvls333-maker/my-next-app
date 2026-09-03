@@ -13,7 +13,7 @@ const INITIAL_MENUS: MenuItem[] = [
   { name: '인터넷', link: '/internet' },
   { name: '휴대폰', link: '/phone' },
   { name: '가전렌탈', link: '/rental' },
-  { name: '고객후기', link: '/review' },
+  { name: '고객후기', link: '/reviews' },
 ];
 
 export default function Header() {
