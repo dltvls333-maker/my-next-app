@@ -3,7 +3,7 @@ export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { Search, ChevronLeft, ChevronRight, Trash2, Star } from 'lucide-react';
+import { Search, ChevronLeft, ChevronRight, Trash2, Camera, Star } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 
 const maskName = (name: string) => {
@@ -164,17 +164,23 @@ export default function ReviewClient({ initialReviews }: { initialReviews: any[]
                 </div>
               )}
 
-              <Link href={`/reviews/${review.id}`} className="block aspect-[4/3] overflow-hidden rounded-xl relative bg-slate-100 flex items-center justify-center">
-                <img 
-                  src={hasImage(review.image_url) ? review.image_url : '/images/default_img.jpg'} 
-                  alt={review.title} 
-                  className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105" 
-                />
-                <span className="absolute top-3 left-3 font-bold text-[10px] tracking-wider text-indigo-700 bg-indigo-50 px-2.5 py-1 rounded-full uppercase shadow-inner z-10">
+              <Link href={`/reviews/${review.id}`} className="block aspect-[4/3] overflow-hidden rounded-xl relative bg-slate-100">
+                {hasImage(review.image_url) ? (
+                  <img 
+                    src={review.image_url} 
+                    alt={review.title} 
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" 
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-slate-300">
+                    <Camera size={40} strokeWidth={1.5} />
+                  </div>
+                )}
+                <span className="absolute top-3 left-3 font-bold text-[10px] tracking-wider text-indigo-700 bg-indigo-50 px-2.5 py-1 rounded-full uppercase shadow-inner">
                   {review.category}
                 </span>
                 {isNewPost(review.date) && (
-                  <span className="absolute top-3 right-3 bg-red-500 text-white text-[10px] font-extrabold px-1.5 py-0.5 rounded-full leading-none z-10">
+                  <span className="absolute top-3 right-3 bg-red-500 text-white text-[10px] font-extrabold px-1.5 py-0.5 rounded-full leading-none">
                     N
                   </span>
                 )}
