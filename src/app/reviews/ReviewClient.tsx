@@ -93,7 +93,7 @@ export default function ReviewClient({ initialReviews }: { initialReviews: any[]
           <div className="text-center md:text-left relative z-10">
             <h1 className="text-3xl md:text-4xl font-extrabold text-slate-950 tracking-tight">고객 후기</h1>
             <p className="text-slate-600 mt-3 md:mt-4 text-xs md:text-sm font-medium leading-relaxed">
-              이음통신을 이용하신 고객님들의 실제 목소리입니다. <br />
+              바로넷을 이용하신 고객님들의 실제 목소리입니다. <br />
               소중한 경험을 나누어 주셔서 감사합니다.
             </p>
           </div>

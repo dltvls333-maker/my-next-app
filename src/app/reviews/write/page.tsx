@@ -83,15 +83,15 @@ export default function ReviewWritePage() {
 
         <form onSubmit={handleSubmit} className="space-y-8">
           {/* 카테고리 */}
-          <div className="flex items-center gap-8 border-b border-slate-200 pb-8">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-8 border-b border-slate-200 pb-8">
             <label className={labelClass}>카테고리</label>
-            <div className="flex gap-3">
+            <div className="flex flex-wrap gap-2 sm:gap-3">
               {categories.map((item) => (
                 <button
                   key={item}
                   type="button"
                   onClick={() => setSelectedCategory(item)}
-                  className={`px-6 py-2 rounded-full border transition-all duration-200 font-medium ${
+                  className={`px-5 sm:px-6 py-2 rounded-full border transition-all duration-200 font-medium text-sm sm:text-base ${
                     selectedCategory === item 
                       ? 'bg-slate-900 text-white border-slate-900 shadow-md' 
                       : 'bg-white text-slate-600 border-slate-200 hover:border-slate-400 hover:bg-slate-50'
