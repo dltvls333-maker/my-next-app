@@ -26,7 +26,11 @@ export default function ReviewWritePage() {
 
 
 
-4. 가입 후기`,
+4. 가입 후기
+
+
+
+`,
   });
 
   // 💡 원본 File 객체 배열로 상태 관리
