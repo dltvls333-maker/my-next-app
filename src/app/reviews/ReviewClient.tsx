@@ -164,17 +164,17 @@ export default function ReviewClient({ initialReviews }: { initialReviews: any[]
                 </div>
               )}
 
-              <Link href={`/reviews/${review.id}`} className="block aspect-[4/3] overflow-hidden rounded-xl relative bg-slate-100">
+              <Link href={`/reviews/${review.id}`} className="block aspect-[4/3] overflow-hidden rounded-xl relative bg-slate-100 flex items-center justify-center">
                 <img 
                   src={hasImage(review.image_url) ? review.image_url : '/images/default_img.jpg'} 
                   alt={review.title} 
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" 
+                  className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105" 
                 />
-                <span className="absolute top-3 left-3 font-bold text-[10px] tracking-wider text-indigo-700 bg-indigo-50 px-2.5 py-1 rounded-full uppercase shadow-inner">
+                <span className="absolute top-3 left-3 font-bold text-[10px] tracking-wider text-indigo-700 bg-indigo-50 px-2.5 py-1 rounded-full uppercase shadow-inner z-10">
                   {review.category}
                 </span>
                 {isNewPost(review.date) && (
-                  <span className="absolute top-3 right-3 bg-red-500 text-white text-[10px] font-extrabold px-1.5 py-0.5 rounded-full leading-none">
+                  <span className="absolute top-3 right-3 bg-red-500 text-white text-[10px] font-extrabold px-1.5 py-0.5 rounded-full leading-none z-10">
                     N
                   </span>
                 )}
