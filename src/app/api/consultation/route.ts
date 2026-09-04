@@ -12,7 +12,10 @@ export async function POST(request: Request) {
     // 앞뒤 공백 제거
     const name = rawName.trim();
     const phone = rawPhone.trim();
-
+console.log('===== [상담 신청 데이터 수신] =====');
+    console.log('- 고객명 (name):', `"${name}"`);
+    console.log('- 연락처 (phone):', `"${phone}"`);
+    console.log('==================================');
     if (!name || !phone) {
       return NextResponse.json({ message: '이름과 연락처를 모두 입력해주세요.' }, { status: 400 });
     }
