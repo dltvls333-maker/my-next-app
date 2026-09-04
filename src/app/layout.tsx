@@ -43,6 +43,29 @@ export default function RootLayout({
       lang="ko" 
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
+      <head>
+        {/* 당근마켓 전환코드 (당근픽셀) */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function (w, d) {
+                if (w.karrotPixel) return;
+                var k = { stub: true, queue: [] };
+                k.init = function () { k.queue.push(['init', arguments, Date.now()]); };
+                k.track = function () { k.queue.push(['track', arguments, Date.now()]); };
+                w.karrotPixel = k;
+                var s = d.createElement('script');
+                s.async = true;
+                s.src = 'https://karrot-pixel.business.daangn.com/karrot-pixel.js';
+                var f = d.getElementsByTagName('script')[0];
+                f && f.parentNode ? f.parentNode.insertBefore(s, f) : d.head.appendChild(s);
+              })(window, document);
+              window.karrotPixel.init('1788481911089983001');
+              window.karrotPixel.track('ViewPage');
+            `,
+          }}
+        />
+      </head>
       <body className="min-h-full flex flex-col bg-slate-50 text-slate-900">
         
         {/* 💡 2. body 태그 바로 아래에 헤더를 넣어 모든 페이지 상단에 고정합니다! */}
