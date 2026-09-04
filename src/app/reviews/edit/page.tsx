@@ -52,7 +52,6 @@ function ReviewEditContent() {
 
         // 💡 서버에서 받아온 기존 이미지 설정 (배열 형태 또는 단일 문자열인 경우 처리)
         if (data.image_url) {
-          // 콤마로 구분되어 있거나 배열인 경우에 맞춰 처리
           const images = Array.isArray(data.image_url) 
             ? data.image_url 
             : data.image_url.includes(',') 
@@ -92,7 +91,7 @@ function ReviewEditContent() {
     }
     
     // 새로 첨부한 파일들이 있다면 append
-    fileList.update?.length ?? fileList.forEach((file) => {
+    fileList.forEach((file) => {
       data.append('images[]', file);
     });
 
@@ -253,7 +252,7 @@ function ReviewEditContent() {
              </div>
              <div className="flex items-center gap-8 border-b border-slate-200 pb-8">
                <label className={labelClass}>비밀번호</label>
-               <input name="password" type="password" placeholder="수정/삭제용 비밀번호" className={inputClass} 
+               <input name="password" type="password" placeholder="수정/삭제용 비밀번호 (관리자 생략 가능)" className={inputClass} 
                   value={formData.password}
                   onChange={(e) => setFormData({...formData, password: e.target.value})} />
              </div>
