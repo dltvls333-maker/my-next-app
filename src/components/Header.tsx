@@ -97,15 +97,15 @@ export default function Header() {
                 </a>
               ))}
             </nav>
-            <a href="tel:1661-0588" className="flex items-center gap-2 px-5 py-2.5 bg-white border border-[#2d433f] rounded-full text-[#ff6600] font-bold hover:bg-slate-50 transition text-[16px] shrink-0">
+            <a href="tel:1833-5660" className="flex items-center gap-2 px-5 py-2.5 bg-white border border-[#2d433f] rounded-full text-[#ff6600] font-bold hover:bg-slate-50 transition text-[16px] shrink-0">
               <span className="text-[#ff6600]">📞</span> 1833-5660
             </a>
           </div>
 
           {/* 모바일 햄버거 메뉴 + 전화번호 */}
           <div className="flex md:hidden items-center gap-3">
-            <a href="tel:1661-0588" className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-[#2d433f] rounded-full text-[#ff6600] font-bold text-[14px]">
-              <span className="text-[#ff6600]">📞</span> 1661-0588
+            <a href="tel:1833-5660" className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-[#2d433f] rounded-full text-[#ff6600] font-bold text-[14px]">
+              <span className="text-[#ff6600]">📞</span> 1833-5660
             </a>
             <button onClick={() => setIsOpen(!isOpen)} className="p-2 text-[#475569]">
               <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
