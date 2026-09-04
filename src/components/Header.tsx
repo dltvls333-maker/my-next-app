@@ -11,8 +11,8 @@ interface MenuItem {
 const INITIAL_MENUS: MenuItem[] = [
   { name: '홈', link: '/' },
   { name: '인터넷', link: '/internet' },
-  { name: '휴대폰', link: '/phone' },
-  { name: '가전렌탈', link: '/rental' },
+  // { name: '휴대폰', link: '/phone' },
+  // { name: '가전렌탈', link: '/rental' },
   { name: '고객후기', link: '/reviews' },
 ];
 

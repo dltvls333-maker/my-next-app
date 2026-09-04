@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
+import iconv from 'iconv-lite';
 
 const prisma = new PrismaClient();
 
@@ -12,10 +13,7 @@ export async function POST(request: Request) {
     // 앞뒤 공백 제거
     const name = rawName.trim();
     const phone = rawPhone.trim();
-console.log('===== [상담 신청 데이터 수신] =====');
-    console.log('- 고객명 (name):', `"${name}"`);
-    console.log('- 연락처 (phone):', `"${phone}"`);
-    console.log('==================================');
+
     if (!name || !phone) {
       return NextResponse.json({ message: '이름과 연락처를 모두 입력해주세요.' }, { status: 400 });
     }
@@ -54,26 +52,28 @@ console.log('===== [상담 신청 데이터 수신] =====');
       },
     });
 
-    // 2. 외부 Cafe24 서버로 데이터 전송 (공백 제거 후 서버 투 서버 방식 전송)
+    // 2. 외부 Cafe24 서버로 데이터 전송 (EUC-KR 인코딩 적용)
     try {
-      const externalData = new URLSearchParams();
-      externalData.append('c_code_dbgroup', '52');
-      externalData.append('c_name', name);
-      externalData.append('c_tel2', phone);
+      // 파라미터 문자열을 EUC-KR 바이너리(Buffer)로 인코딩
+      const queryString = `c_code_dbgroup=52&c_name=${encodeURIComponent(name)}&c_tel2=${encodeURIComponent(phone)}`;
+      const encodedBody = iconv.encode(queryString, 'euc-kr');
 
       const cafeResponse = await fetch('http://tstory12.cafe24.com/gaip/gaip_a_ok.asp', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
+          'Content-Type': 'application/x-www-form-urlencoded; charset=euc-kr',
         },
-        body: externalData.toString(),
+        body: encodedBody,
       });
 
-      const responseText = await cafeResponse.text();
-      console.log('===== [Cafe24 응답 결과] =====');
+      // 응답도 EUC-KR로 받아와서 로그로 확인
+      const buffer = await cafeResponse.arrayBuffer();
+      const responseText = iconv.decode(Buffer.from(buffer), 'euc-kr');
+
+      console.log('===== [Cafe24 응답 결과 (EUC-KR)] =====');
       console.log('- Status:', cafeResponse.status);
       console.log('- Response Text:', responseText);
-      console.log('==============================');
+      console.log('======================================');
     } catch (extError) {
       console.error('외부 Cafe24 데이터 전송 네트워크 오류:', extError);
     }

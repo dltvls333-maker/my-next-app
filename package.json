@@ -16,6 +16,7 @@
     "embla-carousel-auto-scroll": "^8.6.0",
     "embla-carousel-react": "^8.6.0",
     "framer-motion": "^12.42.0",
+    "iconv-lite": "^0.7.3",
     "lucide-react": "^1.22.0",
     "mysql2": "^3.23.2",
     "next": "16.2.9",
