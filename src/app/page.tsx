@@ -8,9 +8,9 @@ import CertificateSection from '@/components/CertificateSection';
 import ApplianceSlider from '@/components/ApplianceSlider';
 import ReviewSlider from '@/components/ReviewSlider';
 import CommonImage from '@/components/Rental';
-
+export const dynamic = 'force-dynamic';
 export default async function HomePage() {
-  export const dynamic = 'force-dynamic';
+  
   const data = await prisma.review.findMany({
     // take: 20, 
     orderBy: { created_at: 'desc' },
