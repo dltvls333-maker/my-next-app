@@ -60,6 +60,9 @@ export default function BannerSliderWithForm({ banners }: { banners: any[] }) {
       const result = await response.json();
 
       if (response.ok) {
+        if (typeof window !== 'undefined') {
+          (window as any).karrotPixel?.track('SubmitApplication');
+        }
         alert('비밀지원금 신청이 정상적으로 접수되었습니다.');
         setName('');
         setPhone('');

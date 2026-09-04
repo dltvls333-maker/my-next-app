@@ -55,6 +55,9 @@ export default function ConsultationForm() {
       const result = await response.json();
 
       if (response.ok) {
+        if (typeof window !== 'undefined') {
+          (window as any).karrotPixel?.track('SubmitApplication');
+        }
         alert('상담 신청이 정상적으로 완료되었습니다.');
         setIsModalOpen(false);
         setName('');
