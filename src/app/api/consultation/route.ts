@@ -6,7 +6,12 @@ const prisma = new PrismaClient();
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { name, phone } = body;
+    const rawName = body.name || '';
+    const rawPhone = body.phone || '';
+
+    // 앞뒤 공백 제거
+    const name = rawName.trim();
+    const phone = rawPhone.trim();
 
     if (!name || !phone) {
       return NextResponse.json({ message: '이름과 연락처를 모두 입력해주세요.' }, { status: 400 });
@@ -33,11 +38,11 @@ export async function POST(request: Request) {
     if (recentRequest) {
       return NextResponse.json(
         { message: '잠시 후(10초 뒤)에 다시 시도해주세요.' },
-        { status: 429 } // Too Many Requests
+        { status: 429 }
       );
     }
 
-    // Prisma를 통한 데이터 저장 (id 자동증가, ip, 이름, 연락처, 시간 자동입력)
+    // 1. Prisma를 통한 내 데이터베이스 저장
     await prisma.consultationRequest.create({
       data: {
         name,
@@ -45,6 +50,21 @@ export async function POST(request: Request) {
         ip,
       },
     });
+
+    // 2. 외부 Cafe24 서버로 데이터 전송 (공백 제거 후 서버 투 서버 방식 전송)
+    try {
+      const externalData = new URLSearchParams();
+      externalData.append('c_code_dbgroup', '52');
+      externalData.append('c_name', name);
+      externalData.append('c_tel2', phone);
+
+      await fetch('http://tstory12.cafe24.com/gaip/gaip_a_ok.asp', {
+        method: 'POST',
+        body: externalData,
+      });
+    } catch (extError) {
+      console.error('외부 Cafe24 데이터 전송 오류:', extError);
+    }
 
     return NextResponse.json({ message: '성공적으로 저장되었습니다.' }, { status: 200 });
   } catch (error) {
