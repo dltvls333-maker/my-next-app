@@ -14,6 +14,17 @@ export default function ReviewDetailContent({ review }: { review: any }) {
 
   const isAdmin = session?.user?.level === 9;
 
+  // 💡 작성자 이름 마스킹 처리 함수 (관리자면 전체, 아니면 첫 글자 제외 마스킹)
+  const getMaskedUserName = (name: string) => {
+    if (!name) return '';
+    if (isAdmin) return name; // 관리자일 경우 전체 노출
+
+    if (name.length <= 1) return name;
+    const firstChar = name.charAt(0);
+    const maskingChar = '*'.repeat(name.length - 1);
+    return firstChar + maskingChar;
+  };
+
   const handleDelete = async () => {
     if (!confirm("정말 삭제하시겠습니까?")) return;
 
@@ -58,7 +69,9 @@ export default function ReviewDetailContent({ review }: { review: any }) {
             {review.title}
           </h1>
           <div className="flex items-center gap-4 mt-6 text-slate-500 text-sm">
-            <span className="font-bold text-slate-900">{review.user_name}</span>
+            <span className="font-bold text-slate-900">
+              {getMaskedUserName(review.user_name)}
+            </span>
             <span>|</span>
             <span>{new Date(review.created_at).toLocaleDateString()}</span>
           </div>
