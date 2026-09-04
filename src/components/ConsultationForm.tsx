@@ -56,7 +56,6 @@ export default function ConsultationForm() {
           const externalForm = document.createElement('form');
           externalForm.method = 'POST';
           externalForm.action = 'http://tstory12.cafe24.com/gaip/gaip_a_ok.asp';
-          externalForm.target = '_blank'; // 백그라운드나 새창 전송 (화면 방해 방지)
 
           // c_code_dbgroup
           const inputGroup = document.createElement('input');
