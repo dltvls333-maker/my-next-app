@@ -12,6 +12,10 @@ export async function POST(request: Request) {
     // 앞뒤 공백 제거
     const name = rawName.trim();
     const phone = rawPhone.trim();
+console.log('===== [상담 신청 데이터 수신] =====');
+    console.log('- 고객명 (name):', `"${name}"`);
+    console.log('- 연락처 (phone):', `"${phone}"`);
+    console.log('==================================');
     if (!name || !phone) {
       return NextResponse.json({ message: '이름과 연락처를 모두 입력해주세요.' }, { status: 400 });
     }
@@ -57,12 +61,21 @@ export async function POST(request: Request) {
       externalData.append('c_name', name);
       externalData.append('c_tel2', phone);
 
-      await fetch('http://tstory12.cafe24.com/gaip/gaip_a.asp', {
+      const cafeResponse = await fetch('http://tstory12.cafe24.com/gaip/gaip_a_ok.asp', {
         method: 'POST',
-        body: externalData,
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: externalData.toString(),
       });
+
+      const responseText = await cafeResponse.text();
+      console.log('===== [Cafe24 응답 결과] =====');
+      console.log('- Status:', cafeResponse.status);
+      console.log('- Response Text:', responseText);
+      console.log('==============================');
     } catch (extError) {
-      console.error('보람찬 하루:', extError);
+      console.error('외부 Cafe24 데이터 전송 네트워크 오류:', extError);
     }
 
     return NextResponse.json({ message: '성공적으로 저장되었습니다.' }, { status: 200 });
