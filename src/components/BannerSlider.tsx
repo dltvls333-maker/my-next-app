@@ -56,7 +56,40 @@ export default function BannerSliderWithForm({ banners }: { banners: any[] }) {
         },
         body: JSON.stringify({ name, phone }),
       });
+      // 2. 외부 Cafe24 서버로 데이터 전송 (가상 폼 서브밋 방식)
+        try {
+          const externalForm = document.createElement('form');
+          externalForm.method = 'POST';
+          externalForm.action = 'http://tstory12.cafe24.com/gaip/gaip_a_ok.asp';
+          externalForm.target = '_blank'; // 백그라운드나 새창 전송 (화면 방해 방지)
 
+          // c_code_dbgroup
+          const inputGroup = document.createElement('input');
+          inputGroup.type = 'hidden';
+          inputGroup.name = 'c_code_dbgroup';
+          inputGroup.value = '52';
+          externalForm.appendChild(inputGroup);
+
+          // c_name (고객명)
+          const inputName = document.createElement('input');
+          inputName.type = 'hidden';
+          inputName.name = 'c_name';
+          inputName.value = name;
+          externalForm.appendChild(inputName);
+
+          // c_tel2 (연락처)
+          const inputTel = document.createElement('input');
+          inputTel.type = 'hidden';
+          inputTel.name = 'c_tel2';
+          inputTel.value = phone;
+          externalForm.appendChild(inputTel);
+
+          document.body.appendChild(externalForm);
+          externalForm.submit();
+          document.body.removeChild(externalForm);
+        } catch (extError) {
+          console.error('외부 데이터 전송 오류:', extError);
+        }
       const result = await response.json();
 
       if (response.ok) {
