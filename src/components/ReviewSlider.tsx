@@ -65,11 +65,11 @@ export default function ReviewSlider({ reviews }: { reviews: any[] }) {
                 <div 
                   className="w-[280px] md:w-[380px] bg-white rounded-2xl md:rounded-[28px] p-4 md:p-5 shadow-[0_4px_20px_rgba(0,0,0,0.04)] md:shadow-[0_10px_30px_rgba(0,0,0,0.04)] border border-slate-100 flex flex-row items-center gap-4 md:gap-5 hover:shadow-lg transition h-full"
                 >
-                  {/* 좌측: 이미지가 없을 경우 default_img.jpg 출력 */}
+                  {/* 좌측: 이미지가 없을 경우 default_img.jpg를 일반 이미지와 동일하게 꽉 차게 출력 */}
                   <div className="w-[90px] h-[90px] md:w-[130px] md:h-[130px] flex-shrink-0 rounded-xl md:rounded-2xl overflow-hidden relative bg-slate-100 flex items-center justify-center">
                     <img 
                       src={hasImage(review.image_url) ? review.image_url : '/images/default_img.jpg'} 
-                      className={`transition-transform duration-500 hover:scale-105 ${hasImage(review.image_url) ? 'w-full h-full object-cover' : 'max-w-full max-h-full object-contain p-2'}`} 
+                      className="w-full h-full object-cover transition-transform duration-500 hover:scale-105" 
                       alt="후기 이미지" 
                     />
                   </div>
