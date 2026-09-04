@@ -52,28 +52,38 @@ export async function POST(request: Request) {
       },
     });
 
-    // 2. 외부 Cafe24 서버로 데이터 전송 (EUC-KR 인코딩 적용)
+    // 2. 외부 Cafe24 서버로 데이터 전송 (EUC-KR 퍼센트 인코딩 직접 적용)
     try {
-      // 파라미터 문자열을 EUC-KR 바이너리(Buffer)로 인코딩
-      const queryString = `c_code_dbgroup=52&c_name=${encodeURIComponent(name)}&c_tel2=${encodeURIComponent(phone)}`;
-      const encodedBody = iconv.encode(queryString, 'euc-kr');
+      // 한글 및 전체 데이터를 EUC-KR 바이너리로 변환 후 %XX 형식의 퍼센트 인코딩으로 수동 직렬화
+      const eucKrName = iconv.encode(name, 'euc-kr');
+      const eucKrPhone = iconv.encode(phone, 'euc-kr');
+
+      const encodedName = Array.from(eucKrName)
+        .map((b) => `%${b.toString(16).padStart(2, '0').toUpperCase()}`)
+        .join('');
+
+      const encodedPhone = Array.from(eucKrPhone)
+        .map((b) => `%${b.toString(16).padStart(2, '0').toUpperCase()}`)
+        .join('');
+
+      const rawBody = `c_code_dbgroup=52&c_name=${encodedName}&c_tel2=${encodedPhone}`;
 
       const cafeResponse = await fetch('http://tstory12.cafe24.com/gaip/gaip_a_ok.asp', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/x-www-form-urlencoded; charset=euc-kr',
+          'Content-Type': 'application/x-www-form-urlencoded',
         },
-        body: encodedBody,
+        body: rawBody,
       });
 
-      // 응답도 EUC-KR로 받아와서 로그로 확인
+      // 응답 결과 확인
       const buffer = await cafeResponse.arrayBuffer();
       const responseText = iconv.decode(Buffer.from(buffer), 'euc-kr');
 
-      console.log('===== [Cafe24 응답 결과 (EUC-KR)] =====');
+      console.log('===== [Cafe24 응답 결과 (EUC-KR 수동 인코딩)] =====');
       console.log('- Status:', cafeResponse.status);
       console.log('- Response Text:', responseText);
-      console.log('======================================');
+      console.log('==================================================');
     } catch (extError) {
       console.error('외부 Cafe24 데이터 전송 네트워크 오류:', extError);
     }
