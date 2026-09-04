@@ -1,9 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import bcrypt from 'bcrypt';
-import { writeFile, mkdir } from 'fs/promises';
-import path from 'path';
-import { existsSync } from 'fs';
+import { createClient } from '@supabase/supabase-js';
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 
@@ -38,7 +36,6 @@ export async function GET(
     return NextResponse.json(review);
   } catch (error) {
     console.error("GET 에러:", error);
-
     return NextResponse.json(
       { error: "조회 실패" },
       { status: 500 }
@@ -54,13 +51,16 @@ export async function PUT(
     const { id } = await params;  
     const reviewId = Number(id);
 
-    // 💡 프론트엔드에서 FormData로 전송했으므로 req.json() 대신 req.formData()를 사용해야 합니다.
+    const session = (await getServerSession(authOptions as any)) as any;
+    const isAdmin = session?.user?.level === 9;
+
     const formData = await req.formData();
     const category = formData.get('category') as string;
     const user_name = formData.get('user_name') as string;
     const phone_last = formData.get('phone_last') as string;
     const title = formData.get('title') as string;
     const content = formData.get('content') as string;
+    const passwordInput = formData.get('password') as string;
     const imageFiles = formData.getAll('images[]') as File[];
 
     const existingReview = await prisma.review.findUnique({
@@ -71,46 +71,65 @@ export async function PUT(
       return NextResponse.json({ error: '게시글 없음' }, { status: 404 });
     }
 
-    let imageUrls: string[] = [];
-
-    // 새 이미지가 첨부된 경우 서버에 파일 저장 처리
-    if (imageFiles && imageFiles.length > 0 && imageFiles[0].size > 0) {
-      const uploadDir = path.join(process.cwd(), 'public', 'uploads');
-      if (!existsSync(uploadDir)) {
-        await mkdir(uploadDir, { recursive: true });
+    if (!isAdmin) {
+      if (!passwordInput) {
+        return NextResponse.json({ error: '비밀번호를 입력해주세요.' }, { status: 400 });
       }
-
-      for (const file of imageFiles) {
-        const bytes = await file.arrayBuffer();
-        const buffer = Buffer.from(bytes);
-
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-        const filename = `${uniqueSuffix}-${file.name.replace(/\s+/g, '_')}`;
-        const filepath = path.join(uploadDir, filename);
-
-        await writeFile(filepath, buffer);
-        imageUrls.push(`/uploads/${filename}`);
+      const isMatch = await bcrypt.compare(passwordInput, existingReview.password);
+      if (!isMatch) {
+        return NextResponse.json({ error: '비밀번호가 틀렸습니다.' }, { status: 401 });
       }
     }
 
-    const updateData: any = {
-      category,
-      user_name,
-      phone_last,
-      title,
-      content,
-    };
+    let imageUrl = existingReview.image_url;
 
-    // 새 이미지가 업로드된 경우에만 이미지 경로 업데이트
-    if (imageUrls.length > 0) {
-      updateData.image_url = imageUrls.join(',');
+    // 💡 Supabase Storage를 통한 이미지 업로드 처리
+    if (imageFiles && imageFiles.length > 0 && imageFiles[0].size > 0) {
+      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+      const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+      if (!supabaseUrl || !supabaseKey) {
+        return NextResponse.json({ error: 'Supabase 환경 변수가 설정되지 않았습니다.' }, { status: 500 });
+      }
+
+      const supabase = createClient(supabaseUrl, supabaseKey);
+      const file = imageFiles[0];
+      const arrayBuffer = await file.arrayBuffer();
+      const buffer = Buffer.from(arrayBuffer);
+
+      const fileName = `${Date.now()}-${file.name.replace(/\s/g, '_')}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('reviews')
+        .upload(fileName, buffer, {
+          contentType: file.type,
+          upsert: false,
+        });
+
+      if (uploadError) {
+        console.error("Supabase 업로드 에러:", uploadError);
+        return NextResponse.json({ error: `이미지 업로드 실패: ${uploadError.message}` }, { status: 500 });
+      }
+
+      const { data: publicUrlData } = supabase.storage
+        .from('reviews')
+        .getPublicUrl(fileName);
+
+      imageUrl = publicUrlData.publicUrl;
     }
 
     const updated = await prisma.review.update({
       where: {
         id: reviewId,
       },
-      data: updateData,
+      data: {
+        category,
+        user_name,
+        phone_last,
+        title,
+        content,
+        image_url: imageUrl,
+      },
     });
 
     return NextResponse.json({
@@ -119,9 +138,8 @@ export async function PUT(
     });
   } catch (error) {
     console.error("PUT 에러:", error);
-
     return NextResponse.json(
-      { error: "수정 실패" },
+      { error: "수정 실패", details: String(error) },
       { status: 500 }
     );
   }
