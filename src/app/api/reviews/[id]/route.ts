@@ -96,9 +96,9 @@ export async function PUT(
       const file = imageFiles[0];
       const arrayBuffer = await file.arrayBuffer();
       const buffer = Buffer.from(arrayBuffer);
-
-      const fileName = `${Date.now()}-${file.name.replace(/\s/g, '_')}`;
-
+// 한글 및 공백으로 인한 Invalid key 에러를 막기 위해 영문/숫자 무작위 이름으로 변환
+      const fileExt = file.name.split('.').pop() || 'jpg';
+      const fileName = `${Date.now()}-${Math.random().toString(36).substring(2, 9)}.${fileExt}`;
       const { error: uploadError } = await supabase.storage
         .from('reviews')
         .upload(fileName, buffer, {
