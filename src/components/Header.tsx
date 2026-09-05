@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { usePathname } from 'next/navigation'; // 1. usePathname 임포트
 
 interface MenuItem {
   name: string;
@@ -15,14 +14,26 @@ const INITIAL_MENUS: MenuItem[] = [
 ];
 
 export default function Header() {
-  const pathname = usePathname(); // 2. 현재 경로 실시간 감지
   const [isOpen, setIsOpen] = useState(false);
   const [isBannerVisible, setIsBannerVisible] = useState(true);
   const [logo, setLogo] = useState<{ logo_path: string; logo_name: string } | null>(null);
   const [menuItems, setMenuItems] = useState<MenuItem[]>(INITIAL_MENUS);
+  const [activeMenuName, setActiveMenuName] = useState<string>('홈');
 
-  // 로고 및 메뉴 데이터 비동기 로드
   useEffect(() => {
+    // 1. 브라우저가 렌더링된 직후 실제 URL 경로 확인
+    const currentPath = window.location.pathname;
+
+    // 2. 현재 경로에 맞는 메뉴 찾기 (예: /reviews 이면 '고객후기' 매칭)
+    if (currentPath === '/reviews') {
+      setActiveMenuName('고객후기');
+    } else if (currentPath.startsWith('/internet')) {
+      setActiveMenuName('인터넷');
+    } else {
+      setActiveMenuName('홈');
+    }
+
+    // 로고 데이터 로드
     fetch('/api/logo')
       .then((res) => res.json())
       .then((data) => {
@@ -30,23 +41,23 @@ export default function Header() {
       })
       .catch((err) => console.error("로고 로드 실패:", err));
 
+    // 메뉴 데이터 로드
     fetch('/api/menu')
       .then((res) => res.json())
       .then((data) => {
         if (data && data.length > 0) {
           setMenuItems(data);
+          // API로 불러온 메뉴가 있다면 경로 매칭 재확인
+          const matched = data.find((item: MenuItem) => 
+            currentPath === item.link || (item.link !== '/' && currentPath.startsWith(item.link))
+          );
+          if (matched) {
+            setActiveMenuName(matched.name);
+          }
         }
       })
       .catch((err) => console.error("메뉴 로드 실패:", err));
   }, []);
-
-  // 3. 현재 경로(pathname)와 메뉴의 link를 비교하여 활성화 여부 판단 함수 작성
-  const checkIsActive = (itemLink: string) => {
-    if (itemLink === '/') {
-      return pathname === '/';
-    }
-    return pathname.startsWith(itemLink);
-  };
 
   return (
     <header className="sticky top-0 z-50 w-full bg-white border-b border-slate-100 shadow-[0_1px_3px_0_rgba(0,0,0,0.05)]">
@@ -76,7 +87,7 @@ export default function Header() {
           <div className="hidden md:flex items-center gap-10">
             <nav className="flex space-x-10 items-center">
               {menuItems.map((item, index) => {
-                const isActive = checkIsActive(item.link);
+                const isActive = activeMenuName === item.name;
                 return (
                   <a 
                     key={index} 
@@ -110,7 +121,7 @@ export default function Header() {
         <div className="md:hidden py-3 px-2 border-t border-slate-100 overflow-x-auto whitespace-nowrap scrollbar-none">
           <nav className="flex items-center justify-around w-full text-[15px] font-semibold text-[#334155]">
             {menuItems.map((item, index) => {
-              const isActive = checkIsActive(item.link); // 4. 실시간 경로 기반 활성화 체크
+              const isActive = activeMenuName === item.name;
               return (
                 <a 
                   key={index} 
@@ -132,7 +143,7 @@ export default function Header() {
       {isOpen && (
         <div className="md:hidden bg-white border-t border-slate-100 p-4 space-y-1">
           {menuItems.map((item, index) => {
-            const isActive = checkIsActive(item.link);
+            const isActive = activeMenuName === item.name;
             return (
               <a 
                 key={index} 
