@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 
 export default function SkPlan() {
-  // 처음에는 인터넷과 TV 모두 아무것도 선택되지 않도록 빈 값("")으로 설정
-  const [selectedInternet, setSelectedInternet] = useState("");
+  // 인터넷은 첫 번째(100m)를 기본 선택, TV는 빈 값("")으로 설정하여 미선택 상태로 시작
+  const [selectedInternet, setSelectedInternet] = useState("100m");
   const [selectedTv, setSelectedTv] = useState("");
 
   // 인터넷 상품 데이터
@@ -19,13 +19,9 @@ export default function SkPlan() {
     { id: "all", title: "ALL", channel: "257채널", desc: "최다 채널 TV", price: 19800 },
   ];
 
-  // 선택된 인터넷 가격 (선택 안 되었으면 0원)
+  // 선택된 요금 계산
   const currentInternetPrice = internetOptions.find(i => i.id === selectedInternet)?.price || 0;
-  
-  // 선택된 TV 가격 (선택 안 되었으면 0원)
   const currentTvPrice = tvOptions.find(t => t.id === selectedTv)?.price || 0;
-  
-  // 총 예상 요금 (인터넷 + TV 합계, 둘 다 안 골랐으면 0원)
   const totalEstimatedPrice = currentInternetPrice + currentTvPrice;
 
   return (
@@ -35,16 +31,19 @@ export default function SkPlan() {
           <div className="text-stone-500 text-sm font-semibold tracking-widest uppercase">
             SK Broadband
           </div>
+          
           <div className="text-black text-4xl lg:text-5xl font-extrabold tracking-tight">
             SK 요금제 안내
           </div>
+          
           <div className="w-16 h-1 bg-[#0f382b] mt-2 mb-4"></div>
+          
           <div className="text-stone-600 text-lg lg:text-xl font-medium">
             귀하의 라이프스타일에 최적화된 통신 요금을 선택하세요.
           </div>
         </div>
 
-        {/* 1. 인터넷 - SK 전용 상품 선택 섹션 */}
+        {/* 1. 인터넷 선택 카드 영역 (첫 번째 기본 선택) */}
         <div className="mb-10">
           <div className="text-black text-xl lg:text-2xl font-bold mb-4">인터넷 - SK 전용 상품</div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -53,9 +52,7 @@ export default function SkPlan() {
               return (
                 <div
                   key={net.id}
-                  onClick={() => {
-                    setSelectedInternet(isSelected ? "" : net.id);
-                  }}
+                  onClick={() => setSelectedInternet(net.id)}
                   className={`cursor-pointer flex flex-col justify-between p-6 rounded-[14px] border-2 transition-all bg-white shadow-[0_4px_24px_0_rgba(0,0,0,0.08)] ${
                     isSelected ? "border-[#0f382b] ring-2 ring-[#0f382b]/20 bg-[#eef4f1]/50" : "border-stone-200 hover:border-stone-300"
                   }`}
@@ -74,7 +71,7 @@ export default function SkPlan() {
           </div>
         </div>
 
-        {/* 2. TV 선택 섹션 (기본 선택 없음) */}
+        {/* 2. TV 선택 카드 영역 (처음엔 선택 안 됨) */}
         <div className="mb-10">
           <div className="text-black text-xl lg:text-2xl font-bold mb-4">TV (선택사항)</div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -83,9 +80,7 @@ export default function SkPlan() {
               return (
                 <div
                   key={tv.id}
-                  onClick={() => {
-                    setSelectedTv(isSelected ? "" : tv.id);
-                  }}
+                  onClick={() => setSelectedTv(isSelected ? "" : tv.id)}
                   className={`cursor-pointer flex flex-col justify-between p-6 rounded-[14px] border-2 transition-all bg-white shadow-[0_4px_24px_0_rgba(0,0,0,0.08)] ${
                     isSelected ? "border-[#0f382b] ring-2 ring-[#0f382b]/20 bg-[#eef4f1]/50" : "border-stone-200 hover:border-stone-300"
                   }`}
@@ -114,14 +109,12 @@ export default function SkPlan() {
           )}
         </div>
 
-        {/* 하단 예상 금액 결과 박스 (그린 톤 적용) */}
+        {/* 하단 예상 금액 결과 박스 */}
         <div className="bg-[#0f382b] rounded-[14px] p-6 lg:p-8 text-white flex flex-col md:flex-row items-center justify-between shadow-lg my-8">
           <div className="mb-4 md:mb-0">
             <div className="text-lg lg:text-xl font-bold">매월 납부하실 예상 금액</div>
             <div className="text-emerald-100 text-xs lg:text-sm mt-1">
-              {selectedInternet === "" && selectedTv === "" 
-                ? "인터넷 또는 TV 상품을 선택하시면 합산 금액이 표시됩니다." 
-                : `${selectedInternet ? internetOptions.find(i => i.id === selectedInternet)?.title : "인터넷 미선택"} ${selectedTv ? `+ ${tvOptions.find(t => t.id === selectedTv)?.title} TV` : ""} 요금 합계입니다.`}
+              {selectedInternet ? internetOptions.find(i => i.id === selectedInternet)?.title : "인터넷 미선택"} {selectedTv ? `+ ${tvOptions.find(t => t.id === selectedTv)?.title} TV` : "(TV 미선택)"} 요금 합계입니다.
             </div>
           </div>
           <div className="text-right">
@@ -134,7 +127,7 @@ export default function SkPlan() {
         </div>
       </section>
 
-      {/* 지원금 및 할인 정보 섹션 */}
+      {/* 지원금 섹션 */}
       <section className="container py-10 lg:py-20">
         <div className="flex items-center justify-center gap-2 text-center pb-8">
           <span className="text-3xl lg:text-5xl">🎁</span>
