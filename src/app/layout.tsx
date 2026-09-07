@@ -38,7 +38,6 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    // 한국어 검색엔진 수집을 위해 lang="en"을 lang="ko"로 변경했습니다.
     <html
       lang="ko" 
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}

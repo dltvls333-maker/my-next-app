@@ -8,33 +8,33 @@ import CertificateSection from '@/components/CertificateSection';
 import ApplianceSlider from '@/components/ApplianceSlider';
 import ReviewSlider from '@/components/ReviewSlider';
 import CommonImage from '@/components/Rental';
-export const dynamic = 'force-dynamic';
+
 export default async function HomePage() {
-  
-  const data = await prisma.review.findMany({
-    // take: 20, 
-    orderBy: { created_at: 'desc' },
-  });
-  console.log(data)
+  // 두 개의 DB 쿼리를 병렬(Promise.all)로 동시에 실행하여 로딩 속도와 타임아웃 위험을 대폭 줄입니다.
+  const [data, banners] = await Promise.all([
+    prisma.review.findMany({
+      // take: 20, // 필요시 주석 해제하여 갯수 제한
+      orderBy: { created_at: 'desc' },
+    }),
+    prisma.banners.findMany({
+      where: { is_active: true },
+      orderBy: { sort_order: 'asc' },
+      select: {
+        id: true,
+        title: true,
+        subtitle: true,
+        image_url: true,
+        link_url: true,
+        sort_order: true,
+        is_active: true,
+      }
+    })
+  ]);
+
   const reviews = data.map(r => ({
     ...r,
     date: r.created_at.toLocaleDateString(),
   }));
-  // select를 사용하면 Prisma가 날짜 필드(에러의 주범)를 아예 DB에서 가져오지 않습니다.
-  const banners = await prisma.banners.findMany({
-    where: { is_active: true },
-    orderBy: { sort_order: 'asc' },
-    select: {
-      id: true,
-      title: true,
-      subtitle: true,
-      image_url: true,
-      link_url: true,
-      sort_order: true,
-      is_active: true,
-      // created_at, updated_at을 호출하지 않으므로 에러가 날 이유가 없습니다!
-    }
-  });
 
   return (
     <main className="w-full flex-grow">
