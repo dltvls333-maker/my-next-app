@@ -1,29 +1,6 @@
-import React, { useState } from "react";
+import React from "react";
 
 export default function SkPlan() {
-  // 인터넷은 첫 번째(100m) 기본 선택, TV는 선택되지 않도록 빈 값("")으로 시작
-  const [selectedInternet, setSelectedInternet] = useState("100m");
-  const [selectedTv, setSelectedTv] = useState("");
-
-  // 인터넷 상품 데이터
-  const internetOptions = [
-    { id: "100m", title: "100Mbps", type: "광랜 인터넷", desc: "1~2인 가구 추천", price: 23100 },
-    { id: "500m", title: "500Mbps", type: "기가라이트 인터넷", desc: "3~4인 가구 추천", price: 34100 },
-    { id: "1g", title: "1Gbps", type: "기가 인터넷", desc: "방송 송출 및 전문작업용", price: 39600 },
-  ];
-
-  // TV 상품 데이터
-  const tvOptions = [
-    { id: "economy", title: "이코노미", channel: "183채널", desc: "경제적인 금액대의 TV", price: 13200 },
-    { id: "standard", title: "스탠다드", channel: "236채널", desc: "실속형 TV", price: 16500 },
-    { id: "all", title: "ALL", channel: "257채널", desc: "최다 채널 TV", price: 19800 },
-  ];
-
-  // 선택된 요금 계산
-  const currentInternetPrice = internetOptions.find(i => i.id === selectedInternet)?.price || 0;
-  const currentTvPrice = tvOptions.find(t => t.id === selectedTv)?.price || 0;
-  const totalEstimatedPrice = currentInternetPrice + currentTvPrice;
-
   return (
     <div>
       <section className="container benefit">
@@ -43,86 +20,46 @@ export default function SkPlan() {
           </div>
         </div>
 
-        {/* 1. 인터넷 선택 카드 영역 (첫 번째 기본 선택) */}
-        <div className="mb-8">
-          <div className="text-black text-xl lg:text-2xl font-bold mb-4">인터넷 - SK 전용 상품</div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {internetOptions.map((net) => {
-              const isSelected = selectedInternet === net.id;
-              return (
-                <div
-                  key={net.id}
-                  onClick={() => setSelectedInternet(net.id)}
-                  className={`cursor-pointer flex flex-col justify-between p-6 rounded-[14px] border-2 transition-all bg-white shadow-[0_4px_24px_0_rgba(0,0,0,0.08)] ${
-                    isSelected ? "border-[#0f382b] ring-2 ring-[#0f382b]/20 bg-[#eef4f1]/50" : "border-stone-200 hover:border-stone-300"
-                  }`}
-                >
-                  <div>
-                    <div className="text-[#0f382b] text-sm font-bold">{net.type}</div>
-                    <div className="text-black text-xl lg:text-2xl font-extrabold mt-1">{net.title}</div>
-                    <div className="text-stone-500 text-sm font-medium mt-1">{net.desc}</div>
-                  </div>
-                  <div className="text-[#0f382b] text-lg lg:text-xl font-extrabold mt-6">
-                    월 {net.price.toLocaleString()}원
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* 2. TV 선택 카드 영역 (처음엔 선택 안 됨) */}
-        <div className="mb-10">
-          <div className="text-black text-xl lg:text-2xl font-bold mb-4">TV (선택사항)</div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {tvOptions.map((tv) => {
-              const isSelected = selectedTv === tv.id;
-              return (
-                <div
-                  key={tv.id}
-                  onClick={() => setSelectedTv(isSelected ? "" : tv.id)}
-                  className={`cursor-pointer flex flex-col justify-between p-6 rounded-[14px] border-2 transition-all bg-white shadow-[0_4px_24px_0_rgba(0,0,0,0.08)] ${
-                    isSelected ? "border-[#0f382b] ring-2 ring-[#0f382b]/20 bg-[#eef4f1]/50" : "border-stone-200 hover:border-stone-300"
-                  }`}
-                >
-                  <div>
-                    <div className="text-[#0f382b] text-sm font-bold">{tv.title}</div>
-                    <div className="text-black text-xl lg:text-2xl font-extrabold mt-1">{tv.channel}</div>
-                    <div className="text-stone-500 text-sm font-medium mt-1">{tv.desc}</div>
-                  </div>
-                  <div className="text-[#0f382b] text-lg lg:text-xl font-extrabold mt-6">
-                    월 {tv.price.toLocaleString()}원
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-          {selectedTv !== "" && (
-            <div className="text-center mt-3">
-              <button 
-                onClick={() => setSelectedTv("")}
-                className="text-xs text-stone-500 underline hover:text-red-500"
-              >
-                TV 선택 해제하기
-              </button>
+        {/* 인터넷 + WIFI 요금표 */}
+        <div className="w-full overflow-x-auto lg:my-10 my-6">
+          <div className="min-w-[767px] mx-auto rounded-[10px] overflow-hidden shadow-[0_4px_24px_0_rgba(0,0,0,0.08)]">
+            <div className="bg-[#0f382b] border-t border-x border-stone-300 flex items-center justify-center h-10 lg:h-16 relative">
+              <span className="text-white text-base lg:text-xl font-bold">인터넷 + WIFI</span>
             </div>
-          )}
-        </div>
-
-        {/* 하단 예상 금액 결과 박스 */}
-        <div className="bg-[#0f382b] rounded-[14px] p-6 lg:p-8 text-white flex flex-col md:flex-row items-center justify-between shadow-lg my-8">
-          <div className="mb-4 md:mb-0">
-            <div className="text-lg lg:text-xl font-bold">매월 납부하실 예상 금액</div>
-            <div className="text-emerald-100 text-xs lg:text-sm mt-1">
-              {selectedInternet ? internetOptions.find(i => i.id === selectedInternet)?.title : "인터넷 미선택"} {selectedTv ? `+ ${tvOptions.find(t => t.id === selectedTv)?.title} TV` : "(TV 미선택 - 요금 미포함)"} 요금 합계입니다.
+            
+            {/* 상품 영역 */}
+            <div className="grid grid-cols-3 border border-stone-300">
+              {[
+                { t: "100Mbps", d: "광랜 인터넷", s: "1~2인 가구 추천" },
+                { t: "500Mbps", d: "기가라이트 인터넷", s: "3~4인 가구 추천" },
+                { t: "1Gbps", d: "기가 인터넷", s: "방송 송출 및 전문작업용" }
+              ].map((v, i) => (
+                <div key={i} className={`flex flex-col items-center justify-center bg-white py-5 gap-1 ${i !== 0 ? 'border-l border-stone-300' : ''}`}>
+                  <span className="text-[#0f382b] text-xl lg:text-3xl font-extrabold tracking-tight">{v.t}</span>
+                  <span className="text-black text-sm lg:text-lg font-bold">{v.d}</span>
+                  <span className="text-stone-500 text-xs lg:text-sm font-medium">{v.s}</span>
+                </div>
+              ))}
             </div>
-          </div>
-          <div className="text-right">
-            <span className="text-sm lg:text-base font-medium mr-2">예상 월 요금:</span>
-            <span className="text-3xl lg:text-4xl font-extrabold text-[#FFD93D]">
-              {totalEstimatedPrice.toLocaleString()}원
-            </span>
-            <div className="text-emerald-100 text-xs mt-1">3년 약정 기준 / VAT 포함</div>
+            
+            {/* 요금 영역 */}
+            <div className="grid grid-cols-3 border border-stone-300 !border-t-0">
+              {["23,100원", "34,100원", "39,600원"].map((p, i) => (
+                <div key={i} className={`flex items-center justify-center bg-white py-4 ${i !== 0 ? 'border-l border-stone-300' : ''}`}>
+                  <span className="text-black text-sm lg:text-xl font-bold">월 {p}</span>
+                </div>
+              ))}
+            </div>
+
+            {/* 할인 영역 */}
+            <div className="grid grid-cols-3 border border-stone-300 !border-t-0">
+              {["18,700원", "23,100원", "31,900원"].map((p, i) => (
+                <div key={i} className={`flex items-center gap-2 justify-center bg-white py-4 ${i !== 0 ? 'border-l border-stone-300' : ''}`}>
+                  <span className="text-stone-600 text-xs lg:text-sm font-medium">모바일 결합시</span>
+                  <span className="text-[#0f382b] text-base lg:text-2xl font-extrabold">{p}</span>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
