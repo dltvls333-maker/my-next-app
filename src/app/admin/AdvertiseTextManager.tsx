@@ -42,12 +42,12 @@ export default function AdvertiseTextManager({ initialText }: AdvertiseTextManag
           className="w-80 px-4 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm"
         />
         <button 
-          type="submit"
-          disabled={loading}
-          className="bg-slate-900 hover:bg-slate-800 text-white px-5 py-2.5 rounded-xl text-sm font-bold transition whitespace-nowrap disabled:opacity-50"
-        >
-          {loading ? '저장 중...' : '저장'}
-        </button>
+            type="submit"
+            disabled={loading}
+            className="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl text-sm font-bold transition whitespace-nowrap disabled:opacity-50"
+            >
+            {loading ? '저장 중...' : '저장'}
+            </button>
       </div>
     </form>
   );
