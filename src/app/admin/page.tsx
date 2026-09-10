@@ -140,6 +140,15 @@ const userData = session?.user;
       </div>
       </div>
       <div className="bg-white p-8 rounded-3xl shadow-sm border border-slate-100">
+
+        {/* 상단 텍스트 관리 섹션 */}
+        <div className="flex justify-between items-center mb-12 pb-8 border-b border-slate-100">
+          <div>
+            <h2 className="text-xl font-bold text-slate-900">상단 텍스트 관리</h2>
+            <p className="text-slate-500 text-sm">사이트 최상단 광고 텍스트를 변경합니다.</p>
+          </div>
+        </div>
+
         {/* 로고 관리 섹션 */}
         <div className="flex justify-between items-center mb-12 pb-8 border-b border-slate-100">
           <div>

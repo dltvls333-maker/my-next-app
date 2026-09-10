@@ -129,3 +129,9 @@ model product_prices {
   @@index([internet_plan_id], map: "product_prices_internet_plan_id_fkey")
   @@index([tv_plan_id], map: "product_prices_tv_plan_id_fkey")
 }
+
+
+model advertise_text {
+  id   Int    @id @default(autoincrement())
+  text String @db.VarChar(255)
+}

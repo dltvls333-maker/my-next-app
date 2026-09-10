@@ -265,9 +265,9 @@ export default function InternetCarrierPage() {
           <div className="relative flex flex-col md:flex-row justify-between items-center gap-4 md:gap-6">
             <div className="text-center md:text-left">
               <h3 className="text-base md:text-xl font-bold text-white mb-1">매월 납부하실 예상 금액</h3>
-<p className="text-xs md:text-sm text-emerald-100/90">
-  {selectedPlan.label} {selectedTv ? `+ ${selectedTv.label} TV` : "(TV 미선택 - 요금 미포함)"} 요금 합계입니다.
-</p>
+              <p className="text-xs md:text-sm text-emerald-100/90">
+                {selectedPlan.label} {selectedTv ? `+ ${selectedTv.label} TV` : "(TV 미선택 - 요금 미포함)"} 요금 합계입니다.
+              </p>
             </div>
 
             <div className="text-center md:text-right">
