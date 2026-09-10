@@ -19,12 +19,13 @@ export default function Header() {
   const [logo, setLogo] = useState<{ logo_path: string; logo_name: string } | null>(null);
   const [menuItems, setMenuItems] = useState<MenuItem[]>(INITIAL_MENUS);
   const [activeMenuName, setActiveMenuName] = useState<string>('홈');
+  
+  // ★ 상단 텍스트 상태 추가
+  const [advertiseText, setAdvertiseText] = useState<string>('🎉 지금 가입하면 최대 250만원 지원! 바로넷 특별 혜택을 확인하세요.');
 
   useEffect(() => {
-    // 1. 브라우저가 렌더링된 직후 실제 URL 경로 확인
     const currentPath = window.location.pathname;
 
-    // 2. 현재 경로에 맞는 메뉴 찾기 (예: /reviews 이면 '고객후기' 매칭)
     if (currentPath === '/reviews') {
       setActiveMenuName('고객후기');
     } else if (currentPath.startsWith('/internet')) {
@@ -47,7 +48,6 @@ export default function Header() {
       .then((data) => {
         if (data && data.length > 0) {
           setMenuItems(data);
-          // API로 불러온 메뉴가 있다면 경로 매칭 재확인
           const matched = data.find((item: MenuItem) => 
             currentPath === item.link || (item.link !== '/' && currentPath.startsWith(item.link))
           );
@@ -57,6 +57,16 @@ export default function Header() {
         }
       })
       .catch((err) => console.error("메뉴 로드 실패:", err));
+
+    // ★ 상단 텍스트 데이터 로드
+    fetch('/api/advertise-text')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data && data.text) {
+          setAdvertiseText(data.text);
+        }
+      })
+      .catch((err) => console.error("상단 텍스트 로드 실패:", err));
   }, []);
 
   return (
@@ -64,7 +74,7 @@ export default function Header() {
       {/* 상단 광고 배너 */}
       {isBannerVisible && (
         <div className="bg-[#2d433f] text-white py-2.5 px-4 text-center text-[13px] md:text-[14px] flex justify-center items-center relative">
-          <p>🎉 지금 가입하면 최대 250만원 지원! 바로넷 특별 혜택을 확인하세요.</p>
+          <p>{advertiseText}</p>
           <button onClick={() => setIsBannerVisible(false)} className="absolute right-4 hover:text-slate-300 transition">✕</button>
         </div>
       )}
