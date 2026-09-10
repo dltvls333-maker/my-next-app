@@ -6,7 +6,19 @@ export default function Footer() {
   // DB에서 가져온 로고 정보를 저장할 상태
  const [logo, setLogo] = useState<{ logo_path: string; logo_name: string } | null>(null);
   const [info, setInfo] = useState<CompanyInfo | null>(null);
+const [footerText, setFooterText] = useState('');
 
+  useEffect(() => {
+    // ★ DB에서 푸터 텍스트 불러오기
+    fetch('/api/footer-text')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data && data.text) {
+          setFooterText(data.text);
+        }
+      })
+      .catch((err) => console.error("푸터 텍스트 로드 실패:", err));
+  }, []);
   // 로고 로드 (기존 코드 유지)
   useEffect(() => {
     fetch('/api/logo')
@@ -53,7 +65,7 @@ export default function Footer() {
 
             </div>
             <p className="text-[13px] text-zinc-500 font-normal tracking-tight leading-relaxed">
-              고객과 통신, 가전을 가장 투명하고 합리적인 혜택으로 이어주는 스마트 비즈니스 파트너십 플랫폼.
+              {footerText}
             </p>
           </div>
 

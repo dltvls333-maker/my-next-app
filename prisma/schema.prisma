@@ -135,3 +135,9 @@ model advertise_text {
   id   Int    @id @default(autoincrement())
   text String @db.VarChar(255)
 }
+
+
+model footer_text {
+  id   Int    @id @default(autoincrement())
+  text String @db.VarChar(500)
+}

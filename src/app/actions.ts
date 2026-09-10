@@ -13,6 +13,17 @@ export async function updateAdvertiseText(text: string) {
   revalidatePath('/admin');
   revalidatePath('/'); // 메인 화면에도 바로 반영되도록 설정
 }
+
+// 푸터 텍스트 수정/생성 함수
+export async function updateFooterText(text: string) {
+  await prisma.footer_text.upsert({
+    where: { id: 1 },
+    update: { text: text },
+    create: { id: 1, text: text },
+  });
+  revalidatePath('/admin');
+  revalidatePath('/');
+}
 // 로고 수정 함수 (로컬 파일 시스템 대신 필요에 따라 Supabase나 공용 스토리지 처리 권장)
 export async function updateLogo(formData: FormData) {
   const file = formData.get('image') as File | null;

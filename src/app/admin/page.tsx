@@ -15,6 +15,7 @@ import LogoutButton from "./LogoutButton";
 import { authOptions } from "@/lib/auth"; 
 import Link from "next/link"; // ★ Link 컴포넌트 추가
 import AdvertiseTextManager from './AdvertiseTextManager';
+import FooterTextManager from './FooterTextManager';
 export default async function AdminPage() {
 const session = (await getServerSession(authOptions as any)) as any;
 const userData = session?.user;
@@ -91,6 +92,7 @@ const userData = session?.user;
   const siteSettings = await prisma.site_settings.findUnique({ where: { id: 1 } });
   const info = await prisma.companyinfo.findUnique({ where: { id: 1 } });
   const advertiseText = await prisma.advertise_text.findFirst();
+  const footerText = await prisma.footer_text.findFirst();
   return (
     <main className="max-w-[1240px] mx-auto p-4 md:p-8">
       <div className="py-10">
@@ -152,7 +154,9 @@ const userData = session?.user;
           </div>
           <LogoManager initialLogo={siteSettings?.logo_path || '/logo.png'} />
         </div>
-        
+
+        {/* 푸터 텍스트 섹션 */}
+        <FooterTextManager initialText={footerText?.text || ''} />
         {/* 헤더 섹션 */}
         <div className="flex justify-between items-center mb-8">
           <div>
