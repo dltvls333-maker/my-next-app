@@ -5,8 +5,6 @@ import Header from "@/components/Header"; // 💡 1. Header
 import Footer from "@/components/Footer"; // 💡 2. Footer
 import ConsultationForm from '@/components/ConsultationForm';
 import { Providers } from "./providers";
-const advertiseTextData = await prisma.advertise_text.findFirst();
-const initialAdvertiseText = advertiseTextData?.text || '';
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
