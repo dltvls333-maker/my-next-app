@@ -20,8 +20,7 @@ export default function Header() {
   const [menuItems, setMenuItems] = useState<MenuItem[]>(INITIAL_MENUS);
   const [activeMenuName, setActiveMenuName] = useState<string>('홈');
   
-  // ★ 상단 텍스트 상태 추가
-  const [advertiseText, setAdvertiseText] = useState<string>('🎉 지금 가입하면 최대 250만원 지원! 바로넷 특별 혜택을 확인하세요.');
+  const [advertiseText, setAdvertiseText] = useState<string>('');
 
   useEffect(() => {
     const currentPath = window.location.pathname;
