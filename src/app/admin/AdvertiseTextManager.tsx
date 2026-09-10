@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { updateAdvertiseText } from './actions'; // 경로에 맞게 수정하세요
 
 interface AdvertiseTextManagerProps {
   initialText: string;
@@ -15,20 +16,11 @@ export default function AdvertiseTextManager({ initialText }: AdvertiseTextManag
     setLoading(true);
 
     try {
-      const response = await fetch('/api/admin/advertise-text', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text }),
-      });
-
-      if (response.ok) {
-        alert('상단 텍스트가 수정되었습니다.');
-      } else {
-        alert('저장에 실패했습니다.');
-      }
+      await updateAdvertiseText(text);
+      alert('상단 텍스트가 수정되었습니다.');
     } catch (error) {
       console.error(error);
-      alert('오류가 발생했습니다.');
+      alert('저장 중 오류가 발생했습니다.');
     } finally {
       setLoading(false);
     }
@@ -41,7 +33,6 @@ export default function AdvertiseTextManager({ initialText }: AdvertiseTextManag
         <p className="text-slate-500 text-sm">사이트 최상단 광고 텍스트를 변경합니다.</p>
       </div>
 
-      {/* 인풋창과 저장 버튼 영역 */}
       <div className="flex items-center gap-3">
         <input 
           type="text" 
