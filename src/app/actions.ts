@@ -164,17 +164,65 @@ export async function updateCompanyInfo(formData: FormData) {
 }
 
 
-// 가전제품 정보 수정 액션
+// 가전제품 정보 수정 액션 (Supabase 업로드 포함)
 export async function updateAppliance(id: number, formData: FormData) {
   const title = formData.get('title') as string;
   const badge = formData.get('badge') as string;
-  const src = formData.get('src') as string;
+  const orderNum = Number(formData.get('orderNum')) || 0;
+  const existingSrc = formData.get('existingSrc') as string;
+  const file = formData.get('image') as File;
 
-  await prisma.appliance.update({
-    where: { id },
-    data: { title, badge, src },
-  });
+  let imageUrl = existingSrc; //새 이미지가 없으면 기존 이미지 경로 유지
 
-  revalidatePath('/admin');
-  revalidatePath('/'); // 프론트엔드 화면도 갱신
+  // 💡 새 이미지 파일이 첨부된 경우 Supabase 'appliance' 버킷에 업로드
+  if (file && file.size > 0) {
+    const arrayBuffer = await file.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+
+    const { createClient } = await import('@supabase/supabase-js');
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+    if (supabaseUrl && supabaseKey) {
+      const supabase = createClient(supabaseUrl, supabaseKey);
+      const fileName = `appliance-${id}-${Date.now()}_${file.name.replace(/\s/g, '_')}`;
+
+      // 방금 만드신 'appliance' 버킷 사용
+      const { error: uploadError } = await supabase.storage
+        .from('appliance')
+        .upload(fileName, buffer, {
+          contentType: file.type,
+          upsert: false,
+        });
+
+      if (!uploadError) {
+        const { data: publicUrlData } = supabase.storage
+          .from('appliance')
+          .getPublicUrl(fileName);
+        
+        imageUrl = publicUrlData.publicUrl;
+      } else {
+        console.error("Supabase 업로드 에러:", uploadError.message);
+      }
+    }
+  }
+
+  try {
+    await (prisma as any).Appliance.update({
+      where: { id: Number(id) },
+      data: { 
+        title, 
+        badge, 
+        src: imageUrl, 
+        orderNum 
+      },
+    });
+
+    revalidatePath('/admin');
+    revalidatePath('/'); // 프론트엔드 화면 갱신
+    return { success: true };
+  } catch (error) {
+    console.error("가전제품 DB 업데이트 에러:", error);
+    throw new Error('수정 실패');
+  }
 }

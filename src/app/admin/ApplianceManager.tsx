@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { updateAppliance } from '../actions';
-import { supabase } from '@/lib/supabase';
 
 interface ApplianceItem {
   id: number;
@@ -17,30 +16,22 @@ interface ApplianceManagerProps {
 }
 
 export default function ApplianceManager({ initialAppliances }: ApplianceManagerProps) {
-  // DB에 데이터가 없을 경우를 대비한 기본 8개 틀 데이터 (디폴트)
-  const defaultAppliances: ApplianceItem[] = [
-    { id: 1, src: '/HP_Image/1.jpg', title: 'LG무선청소기 A9', badge: '무료 + 비밀지원금', orderNum: 1 },
-    { id: 2, src: '/HP_Image/2.jpg', title: '삼성 UHD 4K 50인치', badge: '무료 + 비밀지원금', orderNum: 2 },
-    { id: 3, src: '/HP_Image/3.jpg', title: '삼성 UHD 4K 55인치', badge: '무료 + 비밀지원금', orderNum: 3 },
-    { id: 4, src: '/HP_Image/4.jpg', title: '삼성 UHD 4K 65인치', badge: '추가금', orderNum: 4 },
-    { id: 5, src: '/HP_Image/5.jpg', title: '삼성 무빙스타일 32인치 M5', badge: '무료 + 비밀지원금', orderNum: 5 },
-    { id: 6, src: '/HP_Image/6.jpg', title: 'LG UHD TV 50인치', badge: '무료 + 비밀지원금', orderNum: 6 },
-    { id: 7, src: '/HP_Image/7.jpg', title: 'LG UHD TV 55인치', badge: '무료', orderNum: 7 },
-    { id: 8, src: '/HP_Image/8.jpg', title: 'LG 공기청정기 19평', badge: '무료', orderNum: 8 },
-  ];
-
-  // DB 데이터가 비어있으면 기본 8개 틀을 사용하도록 처리
-  const listToDisplay = initialAppliances && initialAppliances.length > 0 ? initialAppliances : defaultAppliances;
-
-  // 각 아이템별 입력 상태 관리
-  const [formDataMap, setFormDataMap] = useState<{ [key: number]: { title: string; badge: string; src: string; orderNum: number } }>(
-    listToDisplay.reduce((acc, item) => {
-      acc[item.id] = { title: item.title, badge: item.badge, src: item.src, orderNum: item.orderNum };
+  // 각 아이템별 입력 상태 및 선택된 파일 상태 관리
+  const [formDataMap, setFormDataMap] = useState<{ 
+    [key: number]: { title: string; badge: string; orderNum: number; previewSrc: string; selectedFile: File | null } 
+  }>(
+    initialAppliances.reduce((acc, item) => {
+      acc[item.id] = { 
+        title: item.title, 
+        badge: item.badge, 
+        orderNum: item.orderNum, 
+        previewSrc: item.src, 
+        selectedFile: null 
+      };
       return acc;
     }, {} as any)
   );
 
-  const [uploadingId, setUploadingId] = useState<number | null>(null);
   const [loadingId, setLoadingId] = useState<number | null>(null);
 
   // 텍스트/숫자 입력 핸들러
@@ -51,35 +42,16 @@ export default function ApplianceManager({ initialAppliances }: ApplianceManager
     }));
   };
 
-  // Supabase 이미지 파일 업로드 핸들러
-  const handleImageUpload = async (id: number, e: React.ChangeEvent<HTMLInputElement>) => {
+  // 파일 선택 시 미리보기 URL 생성 및 파일 객체 보관 (업로드는 저장 버튼 누를 때 진행)
+  const handleFileChange = (id: number, e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    try {
-      setUploadingId(id);
-      const fileExt = file.name.split('.').pop();
-      const fileName = `appliance-${id}-${Date.now()}.${fileExt}`;
-      const filePath = `appliances/${fileName}`;
-
-      const { error: uploadError } = await supabase.storage
-        .from('images') // 본인의 Supabase 버킷 이름
-        .upload(filePath, file);
-
-      if (uploadError) throw uploadError;
-
-      const { data: publicUrlData } = supabase.storage
-        .from('images')
-        .getPublicUrl(filePath);
-
-      handleChange(id, 'src', publicUrlData.publicUrl);
-      alert('이미지가 첨부되었습니다. 하단의 [수정 저장] 버튼을 눌러주세요.');
-    } catch (error) {
-      console.error(error);
-      alert('이미지 업로드 중 오류가 발생했습니다.');
-    } finally {
-      setUploadingId(null);
-    }
+    const previewUrl = URL.createObjectURL(file);
+    setFormDataMap((prev) => ({
+      ...prev,
+      [id]: { ...prev[id], previewSrc: previewUrl, selectedFile: file },
+    }));
   };
 
   // 개별 수정 저장 핸들러
@@ -87,37 +59,45 @@ export default function ApplianceManager({ initialAppliances }: ApplianceManager
     e.preventDefault();
     setLoadingId(id);
 
-    const data = formDataMap[id];
+    const current = formDataMap[id];
     const form = new FormData();
-    form.append('title', data.title);
-    form.append('badge', data.badge);
-    form.append('src', data.src);
-    form.append('orderNum', String(data.orderNum));
+    form.append('title', current.title);
+    form.append('badge', current.badge);
+    form.append('orderNum', String(current.orderNum));
+    form.append('existingSrc', initialAppliances.find(item => item.id === id)?.src || '');
+    
+    if (current.selectedFile) {
+      form.append('image', current.selectedFile);
+    }
 
     try {
       await updateAppliance(id, form);
-      alert('가전제품 정보가 수정되었습니다.');
+      alert('가전제품 정보와 이미지가 Railway DB 및 Supabase(appliance 버킷)에 안전하게 저장되었습니다.');
+      window.location.reload();
     } catch (error) {
       console.error(error);
-      alert('저장 중 오류가 발생했습니다. (DB에 해당 ID 행이 없다면 먼저 행을 추가해야 할 수 있습니다)');
+      alert('저장 중 오류가 발생했습니다.');
     } finally {
       setLoadingId(null);
     }
   };
+
+  if (!initialAppliances || initialAppliances.length === 0) {
+    return <div className="p-4 text-slate-400 text-sm">등록된 가전제품 데이터가 없습니다.</div>;
+  }
 
   return (
     <div className="mb-12 pb-8 border-b border-slate-100">
       <div className="mb-6 flex justify-between items-center">
         <div>
           <h2 className="text-xl font-bold text-slate-900">가전제품 정보 수정</h2>
-          <p className="text-slate-500 text-sm">등록된 가전제품 텍스트, 이미지, 노출 순서를 수정할 수 있습니다.</p>
+          <p className="text-slate-500 text-sm">등록된 가전제품 텍스트, 이미지 파일, 노출 순서를 수정할 수 있습니다.</p>
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {listToDisplay.map((item) => {
-          const current = formDataMap[item.id] || item;
-          const isUploading = uploadingId === item.id;
+        {initialAppliances.map((item) => {
+          const current = formDataMap[item.id] || { title: item.title, badge: item.badge, orderNum: item.orderNum, previewSrc: item.src, selectedFile: null };
           const isLoading = loadingId === item.id;
 
           return (
@@ -145,20 +125,20 @@ export default function ApplianceManager({ initialAppliances }: ApplianceManager
                 {/* 이미지 미리보기 및 파일 선택 */}
                 <div className="flex flex-col items-center gap-2">
                   <div className="w-24 h-24 bg-white border rounded-xl flex items-center justify-center overflow-hidden p-1">
-                    <img src={current.src} alt={current.title} className="max-h-full max-w-full object-contain" />
+                    <img src={current.previewSrc} alt={current.title} className="max-h-full max-w-full object-contain" />
                   </div>
                   <input 
                     type="file" 
                     accept="image/*" 
                     id={`file-${item.id}`} 
                     className="hidden" 
-                    onChange={(e) => handleImageUpload(item.id, e)} 
+                    onChange={(e) => handleFileChange(item.id, e)} 
                   />
                   <label 
                     htmlFor={`file-${item.id}`} 
                     className="bg-white border border-slate-300 hover:bg-slate-100 text-slate-700 text-xs font-bold px-3 py-1.5 rounded-lg cursor-pointer transition text-center w-full"
                   >
-                    {isUploading ? '업로드중...' : '파일 변경'}
+                    파일 변경
                   </label>
                 </div>
 
