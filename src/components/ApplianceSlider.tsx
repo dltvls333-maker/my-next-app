@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Navigation } from 'swiper/modules';
 
@@ -9,18 +9,41 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 
+interface ApplianceItem {
+  id: number;
+  title: string;
+  badge: string;
+  src: string;
+  orderNum: number;
+}
+
 const ApplianceSlider = () => {
-  // 실제 파일명(1.jpg ~ 8.jpg)과 제품명/배지를 정확히 매칭한 데이터
-  const appliances = [
-    { id: 1, src: '/HP_Image/1.jpg', title: 'LG무선청소기 A9', badge: '무료 + 비밀지원금' },
-    { id: 2, src: '/HP_Image/2.jpg', title: '삼성 UHD 4K 50인치', badge: '무료 + 비밀지원금' },
-    { id: 3, src: '/HP_Image/3.jpg', title: '삼성 UHD 4K 55인치', badge: '무료 + 비밀지원금' },
-    { id: 4, src: '/HP_Image/4.jpg', title: '삼성 UHD 4K 65인치', badge: '추가금' },
-    { id: 5, src: '/HP_Image/5.jpg', title: '삼성 무빙스타일 32인치 M5', badge: '무료 + 비밀지원금' },
-    { id: 6, src: '/HP_Image/6.jpg', title: 'LG UHD TV 50인치', badge: '무료 + 비밀지원금' },
-    { id: 7, src: '/HP_Image/7.jpg', title: 'LG UHD TV 55인치', badge: '무료' },
-    { id: 8, src: '/HP_Image/8.jpg', title: 'LG 공기청정기 19평', badge: '무료' },
-  ];
+  const [appliances, setAppliances] = useState<ApplianceItem[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // DB에서 데이터 불러오기
+  useEffect(() => {
+    fetch('/api/appliances')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && data.data) {
+          setAppliances(data.data);
+        }
+      })
+      .catch((err) => console.error('가전제품 데이터 로딩 실패:', err))
+      .finally(() => setLoading(false));
+  }, []);
+
+  // 로딩 중이거나 데이터가 없을 때의 예외 처리 (디자인 구조는 동일한 section 유지)
+  if (loading || appliances.length === 0) {
+    return (
+      <section className="w-full py-16 bg-slate-50">
+        <div className="max-w-6xl mx-auto px-4 text-center text-slate-400">
+          가전제품 목록을 불러오는 중입니다...
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="w-full py-16 bg-slate-50">

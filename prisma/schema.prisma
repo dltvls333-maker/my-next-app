@@ -141,3 +141,12 @@ model footer_text {
   id   Int    @id @default(autoincrement())
   text String @db.VarChar(500)
 }
+model Appliance {
+  id       Int    @id @default(autoincrement())
+  title    String
+  badge    String
+  src      String @db.Text
+  orderNum Int    @default(0)
+
+  @@map("Appliance") 
+}
