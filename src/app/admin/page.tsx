@@ -13,13 +13,14 @@ import { headers } from 'next/headers';
 import bcrypt from 'bcrypt'
 import LogoutButton from "./LogoutButton"; 
 import { authOptions } from "@/lib/auth"; 
-import Link from "next/link"; // ★ Link 컴포넌트 추가
+import Link from "next/link"; 
 import AdvertiseTextManager from './AdvertiseTextManager';
 import FooterTextManager from './FooterTextManager';
 import ApplianceManager from './ApplianceManager';
+
 export default async function AdminPage() {
-const session = (await getServerSession(authOptions as any)) as any;
-const userData = session?.user;
+  const session = (await getServerSession(authOptions as any)) as any;
+  const userData = session?.user;
   
   async function handleServerSubmit(formData: FormData) {
     'use server'; 
@@ -32,13 +33,11 @@ const userData = session?.user;
     
     let imageUrl = null;
 
-    // 💡 Supabase Storage 업로드 로직
     if (files.length > 0 && files[0].size > 0) {
       const file = files[0];
       const arrayBuffer = await file.arrayBuffer();
       const buffer = Buffer.from(arrayBuffer);
 
-      // Supabase 클라이언트 동적 생성 (환경 변수 사용)
       const { createClient } = await import('@supabase/supabase-js');
       const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
       const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
@@ -47,7 +46,6 @@ const userData = session?.user;
         const supabase = createClient(supabaseUrl, supabaseKey);
         const fileName = `admin-${Date.now()}_${file.name.replace(/\s/g, '_')}`;
 
-        // Supabase 'reviews' 버킷에 업로드 (버킷 이름이 다른 경우 수정하세요)
         const { error: uploadError } = await supabase.storage
           .from('reviews')
           .upload(fileName, buffer, {
@@ -81,7 +79,7 @@ const userData = session?.user;
         user_name,
         title,
         content,
-        image_url: imageUrl, // Supabase 퍼블릭 URL이 저장됩니다
+        image_url: imageUrl,
         phone_last: '0000',    
         password: hashedPassword,      
         ip_address: ip_address,  
@@ -89,11 +87,23 @@ const userData = session?.user;
     });
   }
 
+  // 데이터 조회 로직들 (상단에 모아둠)
   const banners = await prisma.banners.findMany({ orderBy: { sort_order: 'asc' } });
   const siteSettings = await prisma.site_settings.findUnique({ where: { id: 1 } });
   const info = await prisma.companyinfo.findUnique({ where: { id: 1 } });
   const advertiseText = await prisma.advertise_text.findFirst();
   const footerText = await prisma.footer_text.findFirst();
+
+  // ★ Appliance 데이터 안전하게 조회 (에러 방지용 try-catch 및 대소문자 매핑 대비)
+  let appliances: any[] = [];
+  try {
+    appliances = await (prisma as any).Appliance.findMany({
+      orderBy: { id: 'asc' },
+    });
+  } catch (e) {
+    console.error("Appliance 테이블 조회 실패 (테이블을 확인해주세요):", e);
+  }
+
   return (
     <main className="max-w-[1240px] mx-auto p-4 md:p-8">
       <div className="py-10">
@@ -105,7 +115,6 @@ const userData = session?.user;
           <p className="text-slate-500 mt-1">최고관리자님, 오늘도 환영합니다.</p>
         </div>
         
-        {/* ★ 문의 카테고리 링크 버튼 및 로그아웃 버튼 영역 */}
         <div className="flex items-center gap-3">
           <Link 
             href="/admin/inquiries" 
@@ -142,54 +151,65 @@ const userData = session?.user;
         </div>
       </div>
       </div>
-      <div className="bg-white p-8 rounded-3xl shadow-sm border border-slate-100">
+
+      <div className="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 space-y-12">
 
         {/* 상단 텍스트 관리 섹션 */}
         <AdvertiseTextManager initialText={advertiseText?.text || ''} />
 
         {/* 로고 관리 섹션 */}
-        <div className="flex justify-between items-center mb-12 pb-8 border-b border-slate-100">
+        <div className="flex justify-between items-center pb-8 border-b border-slate-100">
           <div>
             <h2 className="text-xl font-bold text-slate-900">로고 관리</h2>
             <p className="text-slate-500 text-sm">사이트 상단 로고를 변경합니다.</p>
           </div>
           <LogoManager initialLogo={siteSettings?.logo_path || '/logo.png'} />
         </div>
-        <ApplianceManager initialAppliances={appliances} />
+
         {/* 푸터 텍스트 섹션 */}
         <FooterTextManager initialText={footerText?.text || ''} />
+
+        {/* ★ 가전제품 관리 섹션 (데이터 조회가 끝난 위치에 배치) */}
+        <ApplianceManager initialAppliances={appliances} />
+
         {/* 헤더 섹션 */}
-        <div className="flex justify-between items-center mb-8">
-          <div>
-            <h1 className="text-xl font-bold text-slate-900">메인 슬라이드 관리</h1>
-            <p className="text-slate-500 text-sm">홈페이지 상단 슬라이더를 관리합니다.</p>
+        <div>
+          <div className="flex justify-between items-center mb-8">
+            <div>
+              <h1 className="text-xl font-bold text-slate-900">메인 슬라이드 관리</h1>
+              <p className="text-slate-500 text-sm">홈페이지 상단 슬라이더를 관리합니다.</p>
+            </div>
+            <form action={createEmptyBanner}>
+              <button type="submit" className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2.5 rounded-xl font-bold transition">
+                + 배너 등록하기
+              </button>
+            </form>
           </div>
-          <form action={createEmptyBanner}>
-            <button type="submit" className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2.5 rounded-xl font-bold transition">
-              + 배너 등록하기
-            </button>
-          </form>
+
+          {/* 배너 카드 그리드 */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {banners.map((banner) => (
+              <BannerCard key={banner.id} banner={banner} />
+            ))}
+          </div>
         </div>
 
-        {/* 배너 카드 그리드 */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {banners.map((banner) => (
-            <BannerCard key={banner.id} banner={banner} />
-          ))}
-        </div>
-        <div className="flex justify-between items-center mb-12 pb-8 border-b border-slate-100"></div>
-          <div>
+        <div className="pt-8 border-t border-slate-100">
+          <div className="mb-6">
             <h1 className="text-xl font-bold text-slate-900">회사 정보관리</h1>
             <p className="text-slate-500 text-sm">회사정보를 관리합니다.</p>
           </div>
-        <CompanyInfoManager initialInfo={info} />
+          <CompanyInfoManager initialInfo={info} />
+        </div>
 
-        <div className="flex justify-between items-center mb-12 pb-8 border-b border-slate-100"></div>
-          <div>
+        <div className="pt-8 border-t border-slate-100">
+          <div className="mb-6">
             <h1 className="text-xl font-bold text-slate-900">후기 작성</h1>
             <p className="text-slate-500 text-sm">후기를 작성합니다.</p>
           </div>
-        <ReviewsAdmin onSubmit={handleServerSubmit} />
+          <ReviewsAdmin onSubmit={handleServerSubmit} />
+        </div>
+
       </div>
     </main>
   );
