@@ -16,7 +16,7 @@ interface ApplianceManagerProps {
 }
 
 export default function ApplianceManager({ initialAppliances }: ApplianceManagerProps) {
-  // 각 아이템별 입력 상태 및 선택된 파일 상태 관리
+  // 8개 전체 데이터를 하나의 상태로 관리
   const [formDataMap, setFormDataMap] = useState<{ 
     [key: number]: { title: string; badge: string; orderNum: number; previewSrc: string; selectedFile: File | null } 
   }>(
@@ -32,7 +32,7 @@ export default function ApplianceManager({ initialAppliances }: ApplianceManager
     }, {} as any)
   );
 
-  const [loadingId, setLoadingId] = useState<number | null>(null);
+  const [loading, setLoading] = useState(false);
 
   // 텍스트/숫자 입력 핸들러
   const handleChange = (id: number, field: string, value: any) => {
@@ -42,7 +42,7 @@ export default function ApplianceManager({ initialAppliances }: ApplianceManager
     }));
   };
 
-  // 파일 선택 시 미리보기 URL 생성 및 파일 객체 보관 (업로드는 저장 버튼 누를 때 진행)
+  // 파일 선택 시 미리보기 및 파일 객체 보관
   const handleFileChange = (id: number, e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -54,31 +54,35 @@ export default function ApplianceManager({ initialAppliances }: ApplianceManager
     }));
   };
 
-  // 개별 수정 저장 핸들러
-  const handleSubmit = async (id: number, e: React.FormEvent) => {
+  // 💡 8개 전체 일괄 저장 핸들러
+  const handleBatchSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoadingId(id);
-
-    const current = formDataMap[id];
-    const form = new FormData();
-    form.append('title', current.title);
-    form.append('badge', current.badge);
-    form.append('orderNum', String(current.orderNum));
-    form.append('existingSrc', initialAppliances.find(item => item.id === id)?.src || '');
-    
-    if (current.selectedFile) {
-      form.append('image', current.selectedFile);
-    }
+    setLoading(true);
 
     try {
-      await updateAppliance(id, form);
-      alert('가전제품 정보와 이미지가 Railway DB 및 Supabase(appliance 버킷)에 안전하게 저장되었습니다.');
+      // 8개의 아이템을 각각 순회하며 서버 액션 호출
+      for (const item of initialAppliances) {
+        const current = formDataMap[item.id];
+        const form = new FormData();
+        form.append('title', current.title);
+        form.append('badge', current.badge);
+        form.append('orderNum', String(current.orderNum));
+        form.append('existingSrc', item.src);
+        
+        if (current.selectedFile) {
+          form.append('image', current.selectedFile);
+        }
+
+        await updateAppliance(item.id, form);
+      }
+
+      alert('8개의 가전제품 정보가 모두 Railway DB와 Supabase에 안전하게 저장되었습니다!');
       window.location.reload();
     } catch (error) {
       console.error(error);
       alert('저장 중 오류가 발생했습니다.');
     } finally {
-      setLoadingId(null);
+      setLoading(false);
     }
   };
 
@@ -87,23 +91,28 @@ export default function ApplianceManager({ initialAppliances }: ApplianceManager
   }
 
   return (
-    <div className="mb-12 pb-8 border-b border-slate-100">
+    <form onSubmit={handleBatchSubmit} className="mb-12 pb-8 border-b border-slate-100">
       <div className="mb-6 flex justify-between items-center">
         <div>
-          <h2 className="text-xl font-bold text-slate-900">가전제품 정보 수정</h2>
-          <p className="text-slate-500 text-sm">등록된 가전제품 텍스트, 이미지 파일, 노출 순서를 수정할 수 있습니다.</p>
+          <h2 className="text-xl font-bold text-slate-900">가전제품 정보 일괄 수정</h2>
+          <p className="text-slate-500 text-sm">모든 항목을 자유롭게 수정하신 후 맨 아래 저장 버튼을 눌러주세요.</p>
         </div>
+        <button 
+          type="submit" 
+          disabled={loading}
+          className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-xl text-sm font-bold transition disabled:opacity-50 shadow-md"
+        >
+          {loading ? '일괄 저장 중...' : '💾 전체 가전제품 수정 저장'}
+        </button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {initialAppliances.map((item) => {
-          const current = formDataMap[item.id] || { title: item.title, badge: item.badge, orderNum: item.orderNum, previewSrc: item.src, selectedFile: null };
-          const isLoading = loadingId === item.id;
+          const current = formDataMap[item.id];
 
           return (
-            <form 
+            <div 
               key={item.id} 
-              onSubmit={(e) => handleSubmit(item.id, e)}
               className="bg-slate-50 border border-slate-200 rounded-2xl p-5 flex flex-col justify-between shadow-sm gap-4"
             >
               <div className="flex items-center justify-between border-b pb-3">
@@ -167,20 +176,21 @@ export default function ApplianceManager({ initialAppliances }: ApplianceManager
                   </div>
                 </div>
               </div>
-
-              <div className="flex justify-end pt-2 border-t border-slate-200">
-                <button 
-                  type="submit" 
-                  disabled={isLoading}
-                  className="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-xl text-xs font-bold transition disabled:opacity-50"
-                >
-                  {isLoading ? '저장 중...' : '수정 저장'}
-                </button>
-              </div>
-            </form>
+            </div>
           );
         })}
       </div>
-    </div>
+
+      {/* 하단 일괄 저장 버튼 추가 */}
+      <div className="mt-8 flex justify-end">
+        <button 
+          type="submit" 
+          disabled={loading}
+          className="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-3.5 rounded-xl text-sm font-bold transition disabled:opacity-50 shadow-lg"
+        >
+          {loading ? '일괄 저장 중...' : '💾 전체 가전제품 수정 저장'}
+        </button>
+      </div>
+    </form>
   );
 }
