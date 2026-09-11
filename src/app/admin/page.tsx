@@ -94,39 +94,14 @@ export default async function AdminPage() {
   const advertiseText = await prisma.advertise_text.findFirst();
   const footerText = await prisma.footer_text.findFirst();
 
-  // ★ Railway DB에서 가전제품 목록 조회 (비어있으면 기본 8개 자동 생성)
+  // 1. 다른 설정 데이터 조회하는 곳 근처에 추가
   let appliances: any[] = [];
   try {
     appliances = await (prisma as any).Appliance.findMany({
       orderBy: { orderNum: 'asc' },
     });
-
-    // DB가 비어있다면 초기 기본 8개 데이터를 자동으로 DB에 삽입합니다.
-    if (appliances.length === 0) {
-      const defaultData = [
-        { id: 1, src: '/HP_Image/1.jpg', title: 'LG무선청소기 A9', badge: '무료 + 비밀지원금', orderNum: 1 },
-        { id: 2, src: '/HP_Image/2.jpg', title: '삼성 UHD 4K 50인치', badge: '무료 + 비밀지원금', orderNum: 2 },
-        { id: 3, src: '/HP_Image/3.jpg', title: '삼성 UHD 4K 55인치', badge: '무료 + 비밀지원금', orderNum: 3 },
-        { id: 4, src: '/HP_Image/4.jpg', title: '삼성 UHD 4K 65인치', badge: '추가금', orderNum: 4 },
-        { id: 5, src: '/HP_Image/5.jpg', title: '삼성 무빙스타일 32인치 M5', badge: '무료 + 비밀지원금', orderNum: 5 },
-        { id: 6, src: '/HP_Image/6.jpg', title: 'LG UHD TV 50인치', badge: '무료 + 비밀지원금', orderNum: 6 },
-        { id: 7, src: '/HP_Image/7.jpg', title: 'LG UHD TV 55인치', badge: '무료', orderNum: 7 },
-        { id: 8, src: '/HP_Image/8.jpg', title: 'LG 공기청정기 19평', badge: '무료', orderNum: 8 },
-      ];
-
-      for (const item of defaultData) {
-        await (prisma as any).Appliance.create({
-          data: item,
-        }).catch(() => {});
-      }
-
-      // 방금 생성된 데이터를 다시 조회하여 관리자 컴포넌트로 전달
-      appliances = await (prisma as any).Appliance.findMany({
-        orderBy: { orderNum: 'asc' },
-      });
-    }
   } catch (e) {
-    console.error("Appliance 데이터 조회 에러:", e);
+    console.error("Appliance 조회 실패:", e);
   }
 
   return (
