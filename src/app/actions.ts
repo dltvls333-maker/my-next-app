@@ -162,3 +162,19 @@ export async function updateCompanyInfo(formData: FormData) {
   });
   revalidatePath('/admin');
 }
+
+
+// 가전제품 정보 수정 액션
+export async function updateAppliance(id: number, formData: FormData) {
+  const title = formData.get('title') as string;
+  const badge = formData.get('badge') as string;
+  const src = formData.get('src') as string;
+
+  await prisma.appliance.update({
+    where: { id },
+    data: { title, badge, src },
+  });
+
+  revalidatePath('/admin');
+  revalidatePath('/'); // 프론트엔드 화면도 갱신
+}

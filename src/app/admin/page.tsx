@@ -16,6 +16,7 @@ import { authOptions } from "@/lib/auth";
 import Link from "next/link"; // ★ Link 컴포넌트 추가
 import AdvertiseTextManager from './AdvertiseTextManager';
 import FooterTextManager from './FooterTextManager';
+import ApplianceManager from './ApplianceManager';
 export default async function AdminPage() {
 const session = (await getServerSession(authOptions as any)) as any;
 const userData = session?.user;
@@ -154,7 +155,7 @@ const userData = session?.user;
           </div>
           <LogoManager initialLogo={siteSettings?.logo_path || '/logo.png'} />
         </div>
-
+        <ApplianceManager initialAppliances={appliances} />
         {/* 푸터 텍스트 섹션 */}
         <FooterTextManager initialText={footerText?.text || ''} />
         {/* 헤더 섹션 */}
